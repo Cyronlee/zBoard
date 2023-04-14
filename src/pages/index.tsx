@@ -1,6 +1,7 @@
-import { Center, Heading, VStack, Box } from '@chakra-ui/react';
-import BuildStatusOverview from '@/components/BuildStatusOverview';
 import { siteConfig } from '@/../config/site.config';
+import { Center, Heading, VStack, HStack, Box } from '@chakra-ui/react';
+import BuildStatusOverview from '@/components/BuildStatusOverview';
+import TicketStatusOverview from '@/components/TicketStatusOverview';
 
 export default function Home() {
   return (
@@ -14,7 +15,10 @@ export default function Home() {
         >
           {siteConfig.siteName}
         </Heading>
-        <BuildStatusOverview></BuildStatusOverview>
+        <HStack>
+          <BuildStatusOverview></BuildStatusOverview>
+          <TicketStatusOverview></TicketStatusOverview>
+        </HStack>
       </VStack>
     </Box>
   );
