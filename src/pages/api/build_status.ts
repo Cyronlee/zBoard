@@ -37,7 +37,6 @@ const getBuildStatus = async ({ projectName, projectSlug, branch }) => {
 
 const getLatestPipeline = async (projectSlug: string, branch: string) => {
   let pipelines = await fetchPipelines(projectSlug, branch);
-  console.log(`${projectSlug}: ${branch}`);
   return _.orderBy(<any>pipelines.items, 'updated_at', 'desc')[0];
 };
 

@@ -43,7 +43,6 @@ const RefreshWrapper = <T,>({
 
   useEffect(() => {
     triggerRefresh();
-    console.log('refreshed');
     if (refreshInterval > 0) {
       const interval = setInterval(() => {
         triggerRefresh();
