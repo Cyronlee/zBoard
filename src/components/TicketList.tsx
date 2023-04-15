@@ -17,7 +17,7 @@ export interface Ticket {
 }
 
 const TicketList = ({ tickets }: TicketListProps) => {
-  const renderTicketInfo = (ticket) => {
+  const renderTicketInfo = (ticket: Ticket) => {
     let colorScheme;
     if (ticket.status === 'new') colorScheme = 'yellow';
     else if (ticket.status === 'open') colorScheme = 'red';
