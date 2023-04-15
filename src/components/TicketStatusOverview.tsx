@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   Box,
+  BoxProps,
   Center,
   Flex,
   Heading,
@@ -10,23 +11,13 @@ import {
   StatLabel,
   StatNumber,
   Text,
+  SystemProps,
 } from '@chakra-ui/react';
-import moment from 'moment';
-import { RepeatIcon } from '@chakra-ui/icons';
 import TicketList, { Ticket } from './TicketList';
-import _ from 'lodash';
 import { useErrorToast } from '@/lib/customToast';
 import RefreshWrapper from '@/components/RefreshWrapper';
-import BuildStatusCard, { BuildStatus } from '@/components/BuildStatusCard';
 
-interface TicketOverviewData {
-  new: Ticket[];
-  open: Ticket[];
-  pending: Ticket[];
-  hold: Ticket[];
-}
-
-const TicketOverview = () => {
+const TicketOverview = (props: SystemProps) => {
   const toastError = useErrorToast();
 
   const fetchData = async () => {
@@ -41,6 +32,8 @@ const TicketOverview = () => {
 
   return (
     <RefreshWrapper
+      {...props}
+      maxWidth="384px"
       title="Ticket Status:"
       onRefresh={fetchData}
       refreshInterval={60000}

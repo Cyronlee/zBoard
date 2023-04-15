@@ -15,9 +15,9 @@ export default function Home() {
         >
           {siteConfig.siteName}
         </Heading>
-        <HStack>
-          <BuildStatusOverview></BuildStatusOverview>
-          <TicketStatusOverview></TicketStatusOverview>
+        <HStack h="448px" w="100%">
+          <BuildStatusOverview flex="75%" h="100%"></BuildStatusOverview>
+          <TicketStatusOverview flex="25%" h="100%"></TicketStatusOverview>
         </HStack>
       </VStack>
     </Box>

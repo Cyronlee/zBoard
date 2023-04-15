@@ -1,4 +1,4 @@
-import { Badge, Box, Flex, Text, Link } from '@chakra-ui/react';
+import { Badge, Box, Flex, Text, Link, VStack } from '@chakra-ui/react';
 import moment from 'moment';
 import _ from 'lodash';
 import React from 'react';
@@ -25,7 +25,7 @@ const TicketList = ({ tickets }: TicketListProps) => {
     else colorScheme = 'blue';
 
     return (
-      <Box width="sm" p="4px">
+      <Box width="100%">
         <Flex justifyContent="space-between">
           <Flex>
             <Badge fontSize="sm" mr="4px" colorScheme={colorScheme}>
@@ -47,9 +47,9 @@ const TicketList = ({ tickets }: TicketListProps) => {
 
   return (
     <>
-      <Box mt="8px" maxH="256px" overflowY="scroll">
+      <VStack mt="8px" maxH="256px" overflowY="scroll">
         {tickets.map((ticket) => renderTicketInfo(ticket))}
-      </Box>
+      </VStack>
     </>
   );
 };
