@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { circleCIConfig } from '@/../config/circle_ci.config';
 import { getBuildStatusFakeData } from '@/../../fake/build_status.fake';
 import { delay1s } from '@/lib/delay';
+import { any } from 'prop-types';
 
 const handler: NextApiHandler = async (req, res) => {
   getAllBuildStatus()
@@ -21,7 +22,15 @@ const getAllBuildStatus = async () => {
   );
 };
 
-const getBuildStatus = async ({ projectName, projectSlug, branch }) => {
+const getBuildStatus = async ({
+  projectName,
+  projectSlug,
+  branch,
+}: {
+  projectName: string;
+  projectSlug: string;
+  branch: string;
+}) => {
   const latestPipeline: any = await getLatestPipeline(projectSlug, branch);
   const { login, avatar_url } = latestPipeline.trigger.actor;
   const latestWorkflow: any = await getLatestWorkflow(latestPipeline.id);

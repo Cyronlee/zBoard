@@ -10,6 +10,7 @@ import {
   HStack,
   Text,
   VStack,
+  Icon,
 } from '@chakra-ui/react';
 import { BiTime } from 'react-icons/bi';
 
@@ -26,7 +27,7 @@ export interface BuildStatus {
   commitSubject: string;
 }
 
-const statusColorScheme = {
+const statusColorScheme: any = {
   success: 'green',
   on_hold: 'purple',
   running: 'blue',
@@ -56,7 +57,7 @@ const BuildStatusCard = ({ buildStatus }: BuildStatusCardProps) => {
           {buildStatus.status}
         </Badge>
         <Flex align="center">
-          <BiTime w="12px" h="12px"></BiTime>
+          <Icon as={BiTime} w="12px" h="12px" />
           <Text ml="4px">{startTime}</Text>
         </Flex>
       </HStack>

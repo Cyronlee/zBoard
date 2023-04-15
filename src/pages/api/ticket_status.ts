@@ -1,7 +1,7 @@
 import { NextApiHandler } from 'next';
 import _ from 'lodash';
 import { zendeskConfig } from '@/../config/zendesk.config';
-import { getTicketStatusFakeData } from '@/../fake/ticket_status.fake';
+import { getTicketStatusFakeData } from '../../../fake/ticket_status.fake';
 import { delay1s } from '@/lib/delay';
 import { btoa } from 'buffer';
 
@@ -23,7 +23,7 @@ const fetchTickets = async () => {
   const apiToken = zendeskConfig.apiToken;
   const basicToken = btoa(`${emailAddress}/token:${apiToken}`);
   let nextPageUrl = `${zendeskConfig.baseUrl}/api/v2/views/${zendeskConfig.viewId}/tickets?sort_by=updated_at&sort_order=desc`;
-  let allTickets = [];
+  let allTickets: any = [];
   while (nextPageUrl) {
     const response = await fetch(nextPageUrl, {
       headers: {
@@ -37,13 +37,27 @@ const fetchTickets = async () => {
     nextPageUrl = json.next_page;
     allTickets = allTickets.concat(json.tickets);
   }
-  return allTickets.map(({ subject, status, url, created_at, updated_at }) => ({
-    subject,
-    status,
-    url,
-    created_at,
-    updated_at,
-  }));
+  return allTickets.map(
+    ({
+      subject,
+      status,
+      url,
+      created_at,
+      updated_at,
+    }: {
+      subject: string;
+      status: string;
+      url: string;
+      created_at: string;
+      updated_at: string;
+    }) => ({
+      subject,
+      status,
+      url,
+      created_at,
+      updated_at,
+    })
+  );
 };
 
 export default handler;

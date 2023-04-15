@@ -17,6 +17,7 @@ interface RefreshWrapperProps<T> {
   onRefresh: () => Promise<T[]>;
   refreshInterval?: number;
   render: (data: T[]) => JSX.Element;
+  [key: string]: any;
 }
 
 const RefreshWrapper = <T,>({
@@ -27,7 +28,7 @@ const RefreshWrapper = <T,>({
   ...props
 }: RefreshWrapperProps<T>) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [data, setData] = useState<T[]>(null);
+  const [data, setData] = useState<T[]>([]);
   const [lastUpdatedAt, setLastUpdatedAt] = useState<string>();
 
   const triggerRefresh = async () => {
@@ -92,7 +93,7 @@ const RefreshWrapper = <T,>({
             />
           </Box>
         </Center>
-        {data ? render(data) : <Skeleton h="100%" w="100%" />}
+        {data.length > 0 ? render(data) : <Skeleton h="100%" w="100%" />}
       </VStack>
     </>
   );
