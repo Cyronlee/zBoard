@@ -2,13 +2,14 @@ import '@/styles/globals.css';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { ChakraProvider } from '@chakra-ui/react';
-import customTheme from '@/theme';
+import theme from '@/theme/theme';
+import { siteConfig } from '@/../config/site.config';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <ChakraProvider theme={customTheme}>
+    <ChakraProvider theme={theme}>
       <Head>
-        <title>zBoard</title>
+        <title>{siteConfig.siteName}</title>
         <meta name="description" content="An awesome team board" />
         <meta
           name="viewport"
