@@ -1,10 +1,9 @@
-import { useState } from 'react';
-import { Flex } from '@chakra-ui/react';
+import { Flex, BoxProps, SystemProps } from '@chakra-ui/react';
 import BuildStatusCard, { BuildStatus } from '@/components/BuildStatusCard';
 import RefreshWrapper from '@/components/RefreshWrapper';
 import { useErrorToast } from '@/lib/customToast';
 
-const BuildStatusOverview = () => {
+const BuildStatusOverview = (props: SystemProps) => {
   const toastError = useErrorToast();
 
   const fetchData = async () => {
@@ -19,6 +18,7 @@ const BuildStatusOverview = () => {
 
   return (
     <RefreshWrapper
+      {...props}
       title="Build Status:"
       onRefresh={fetchData}
       refreshInterval={60000}
@@ -29,6 +29,8 @@ const BuildStatusOverview = () => {
             justifyContent="space-between"
             alignItems="center"
             gap={4}
+            overflowY="scroll"
+            height="100%"
           >
             {data.map((item, index) => (
               <BuildStatusCard key={index} buildStatus={item} />

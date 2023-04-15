@@ -7,6 +7,7 @@ import {
   Text,
   VStack,
   Skeleton,
+  SystemProps,
 } from '@chakra-ui/react';
 import { RepeatIcon } from '@chakra-ui/icons';
 import moment from 'moment';
@@ -23,6 +24,7 @@ const RefreshWrapper = <T,>({
   onRefresh,
   refreshInterval = 0,
   render,
+  ...props
 }: RefreshWrapperProps<T>) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [data, setData] = useState<T[]>(null);
@@ -59,9 +61,10 @@ const RefreshWrapper = <T,>({
         borderColor="gray.200"
         borderRadius="16px"
         spacing="8px"
-        minW="400px"
+        w="100%"
+        {...props}
       >
-        <Center w="full" justifyContent="space-between">
+        <Center w="100%" justifyContent="space-between">
           <Heading size="md" color="gray.600">
             {title}
           </Heading>
@@ -89,7 +92,7 @@ const RefreshWrapper = <T,>({
             />
           </Box>
         </Center>
-        {data ? render(data) : <Skeleton minH="80px" w="100%" />}
+        {data ? render(data) : <Skeleton h="100%" w="100%" />}
       </VStack>
     </>
   );
