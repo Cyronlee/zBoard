@@ -4,11 +4,11 @@
 An awesome board for displaying your team's daily information, fits perfectly on a large screen 🖥️
 
 <p>
+  <a aria-label="GitHub package.json version" href="https://github.com/Cyronlee/zBoard/releases" title="GitHub package.json version">
+    <img src="https://img.shields.io/github/package-json/v/cyronlee/zboard?style=for-the-badge">
+  </a>
   <a aria-label="GitHub commit activity" href="https://github.com/Cyronlee/zBoard/commits/main" title="GitHub commit activity">
     <img src="https://img.shields.io/github/commit-activity/m/Cyronlee/zBoard?style=for-the-badge">
-  </a>
-  <a aria-label="GitHub contributors" href="https://github.com/Cyronlee/zBoard/graphs/contributors" title="GitHub contributors">
-    <img src="https://img.shields.io/github/contributors/Cyronlee/zBoard?color=orange&style=for-the-badge">
   </a>
   <a aria-label="Build status" href="#" title="Build status">
     <img src="https://img.shields.io/github/deployments/Cyronlee/zBoard/Production?logo=Vercel&style=for-the-badge">
