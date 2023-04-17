@@ -35,7 +35,7 @@ interface CardInfo {
   coOwners: any[];
 }
 
-const config = {
+const renderConfig = {
   monthBeforeToday: 1,
   monthAfterToday: 2,
   monthIndicatorRowNum: 1,
@@ -46,24 +46,24 @@ const config = {
 };
 
 const displayDates: string[] = [];
-const startDate = moment().subtract(config.monthBeforeToday, 'month');
-const endDate = moment().add(config.monthAfterToday, 'month');
-while (startDate.isBefore(endDate)) {
-  displayDates.push(startDate.format('YYYY-MM-DD'));
-  startDate.add(1, 'day');
+const startDateMoment = moment().subtract(renderConfig.monthBeforeToday, 'month');
+const startDate = startDateMoment.format('YYYY-MM-DD');
+const endDateMoment = moment().add(renderConfig.monthAfterToday, 'month');
+const endDate = endDateMoment.format('YYYY-MM-DD');
+while (startDateMoment.isBefore(endDateMoment)) {
+  displayDates.push(startDateMoment.format('YYYY-MM-DD'));
+  startDateMoment.add(1, 'day');
 }
 
 const Timeline = (props: SystemProps) => {
   const toastError = useErrorToast();
-  const todayRef = useRef<HTMLDivElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const todayRef = useRef<HTMLDivElement | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 
   const [cards, setCards] = useState([]);
 
   const loadCards = async () => {
-    const res = await fetch(
-      `/api/project_timeline?startDate=${displayDates[0]}`
-    );
+    const res = await fetch(`/api/project_timeline?start_date=${startDate}&end_date=${endDate}`);
     if (res.status == 200) {
       const json = await res.json();
       const cards = json
@@ -83,20 +83,16 @@ const Timeline = (props: SystemProps) => {
   useEffect(() => {
     if (scrollContainerRef.current && todayRef.current) {
       scrollContainerRef.current.scrollLeft =
-        todayRef.current.offsetLeft - config.scrollOffset;
+        todayRef.current.offsetLeft - renderConfig.scrollOffset;
     }
   }, []);
 
   const renderCardGrid = (cardInfo: CardInfo, index: number) => {
-    const colStart = displayDates.findIndex((d) =>
-      moment(cardInfo.startDate).isSame(d)
-    );
-    const colEnd = displayDates.findIndex((d) =>
-      moment(cardInfo.endDate).isSame(d)
-    );
+    const colStart = displayDates.findIndex((d) => moment(cardInfo.startDate).isSame(d));
+    const colEnd = displayDates.findIndex((d) => moment(cardInfo.endDate).isSame(d));
     return (
       <GridItem
-        rowStart={config.cardFirstRowNum + index}
+        rowStart={renderConfig.cardFirstRowNum + index}
         colStart={colStart + 1}
         colEnd={colEnd + 2}
       >
@@ -125,13 +121,13 @@ const Timeline = (props: SystemProps) => {
         {/*<Avatar w="24px" h="24px" name={cardInfo.owner} />*/}
         {card.owner && (
           <AvatarGroup>
+            <Avatar w="36px" h="36px" name={card.owner.name} src={card.owner.avatar} />
             <Avatar
               w="36px"
               h="36px"
-              name={card.owner.name}
-              src={card.owner.avatar}
+              name={card.coOwners[0]?.name}
+              src={card.coOwners[0]?.avatar}
             />
-            <Avatar w="36px" h="36px" name={card.coOwners[0]?.name} />
           </AvatarGroup>
         )}
       </Flex>
@@ -199,7 +195,7 @@ const Timeline = (props: SystemProps) => {
             position="sticky"
             backgroundColor="#FFF"
             key={monthYearStr}
-            rowStart={config.monthIndicatorRowNum}
+            rowStart={renderConfig.monthIndicatorRowNum}
             colStart={index + 1}
             colSpan={3}
             h="40px"
@@ -233,8 +229,7 @@ const Timeline = (props: SystemProps) => {
 
   const renderDateIndicatorGrids = (displayDates: string[]) => {
     return displayDates?.map((date, index) => {
-      const isWeekend =
-        moment(date).isoWeekday() === 6 || moment(date).isoWeekday() === 7;
+      const isWeekend = moment(date).isoWeekday() === 6 || moment(date).isoWeekday() === 7;
       return (
         <GridItem
           key={date}
@@ -242,7 +237,7 @@ const Timeline = (props: SystemProps) => {
           display="flex"
           justifyContent="center"
           alignItems="center"
-          rowStart={config.dateIndicatorRowNum}
+          rowStart={renderConfig.dateIndicatorRowNum}
           colStart={index + 1}
           borderY="1px solid"
           borderColor="gray.300"
@@ -284,9 +279,9 @@ const Timeline = (props: SystemProps) => {
         >
           Delivery Timeline:
         </Heading>
-        <Box w={displayDates.length * config.gridWidth}>
+        <Box w={displayDates.length * renderConfig.gridWidth}>
           <Grid
-            w={displayDates.length * config.gridWidth}
+            w={displayDates.length * renderConfig.gridWidth}
             templateColumns={`repeat(${displayDates.length}, 1fr)`}
           >
             {renderMonthIndicatorGrids(displayDates)}
@@ -294,15 +289,11 @@ const Timeline = (props: SystemProps) => {
             {renderDateIndicatorGrids(displayDates)}
           </Grid>
         </Box>
-        <Box
-          flex="1"
-          w={displayDates.length * config.gridWidth}
-          overflowY="scroll"
-        >
+        <Box flex="1" w={displayDates.length * renderConfig.gridWidth} overflowY="scroll">
           {cards.length > 0 ? (
             <Grid
-              h={cards.length * config.gridWidth}
-              w={displayDates.length * config.gridWidth}
+              h={cards.length * renderConfig.gridWidth}
+              w={displayDates.length * renderConfig.gridWidth}
               templateColumns={`repeat(${displayDates.length}, 1fr)`}
             >
               {renderWeekendGrids(displayDates)}

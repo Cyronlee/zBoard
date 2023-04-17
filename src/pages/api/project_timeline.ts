@@ -1,14 +1,13 @@
 import { NextApiHandler } from 'next';
-import _ from 'lodash';
 import moment from 'moment';
-import { zendeskConfig } from '@/../config/zendesk.config';
 import { getProjectTimelineFakeData } from '../../../fake/project_timeline.fake';
 import { delay1s } from '@/lib/delay';
-import { btoa } from 'buffer';
-import { kanbanConfig, kanbanSearchParam } from '@/../config/kanban.config';
+import { kanbanConfig } from '@/../config/kanban.config';
 
 const handler: NextApiHandler = async (req, res) => {
-  getProjectTimeline()
+  const startDate = req.query.start_date as string;
+  const endDate = req.query.end_date as string;
+  getProjectTimeline(startDate, endDate)
     .then((response) => res.status(200).json(response))
     .catch((err) => {
       console.error(err);
@@ -16,19 +15,19 @@ const handler: NextApiHandler = async (req, res) => {
     });
 };
 
-const getProjectTimeline = async () => {
+const getProjectTimeline = async (startDate: string, endDate: string) => {
   if (!kanbanConfig.apikey) {
     return delay1s(getProjectTimelineFakeData);
   }
-  return await fetchCards();
+  return await fetchCards(startDate, endDate);
 };
 
-const fetchCards = async () => {
-  const columnIds = kanbanSearchParam.columns.map((item) => item.id).join(',');
-  const typeIds = kanbanSearchParam.types.map((item) => item.id).join(',');
-  const fields = kanbanSearchParam.fields.join(',');
-  const expand = kanbanSearchParam.expand.join(',');
-  const cardsAPI = `${kanbanConfig.baseUrl}/api/v2/cards?board_ids=${kanbanConfig.boardId}&column_ids=${columnIds}&type_ids=${typeIds}&fields=${fields}&expand=${expand}&in_current_position_since_from_date=2023-03-10`;
+const fetchCards = async (startDate: string, endDate: string) => {
+  const columnIds = kanbanConfig.monitorColumns.map((item) => item.id).join(',');
+  const typeIds = kanbanConfig.monitorCardTypes.map((item) => item.id).join(',');
+  const fields = searchParams.fields.join(',');
+  const expand = searchParams.expand.join(',');
+  const cardsAPI = `${kanbanConfig.baseUrl}/api/v2/cards?board_ids=${kanbanConfig.boardId}&column_ids=${columnIds}&type_ids=${typeIds}&fields=${fields}&expand=${expand}&in_current_position_since_from_date=${startDate}`;
   const response = await fetch(cardsAPI, {
     headers: {
       apikey: kanbanConfig.apikey || '',
@@ -38,20 +37,27 @@ const fetchCards = async () => {
     throw new Error(await response.text());
   }
   const json = await response.json();
-  const buildUserInfo = await fetchUserInfo(json);
-  return json.data.data.map((card: any) => buildCardInfo(card, buildUserInfo));
+
+  const userIds: number[] = json.data.data.flatMap(({ owner_user_id, co_owner_ids }: any) => [
+    owner_user_id,
+    ...co_owner_ids,
+  ]);
+  const buildUserInfo = await fetchUserInfo(userIds);
+
+  let cards = json.data.data.map((card: any) => buildCardInfo(card, buildUserInfo));
+  return cards.filter((card: any) => card.startDate >= startDate && card.endDate < endDate);
 };
 
-const buildCardInfo = (card: any, buildUserInfo: any) => {
-  const startTime = calculateStartTime(card);
+const buildCardInfo = (card: any, buildUserInfo: (userId: number) => any) => {
+  const [startDate, endDate] = calculateStartEndDate(card);
   const getColumnName = (columnId: number) => {
-    return kanbanSearchParam.columns.find((c) => c.id === columnId)?.name;
+    return kanbanConfig.monitorColumns.find((c) => c.id === columnId)?.name;
   };
   return {
     cardNo: card.card_id,
     cardName: card.title,
-    startDate: moment(startTime).format('YYYY-MM-DD'),
-    endDate: moment(calculateEndTime(card, startTime)).format('YYYY-MM-DD'),
+    startDate: startDate,
+    endDate: endDate,
     color: card.color,
     status: getColumnName(card.column_id),
     owner: buildUserInfo(card.owner_user_id),
@@ -59,13 +65,9 @@ const buildCardInfo = (card: any, buildUserInfo: any) => {
   };
 };
 
-const fetchUserInfo = async (rawJson: any) => {
-  const duplicateUserIds: number[] = rawJson.data.data.flatMap(
-    ({ owner_user_id, co_owner_ids }: any) => [owner_user_id, ...co_owner_ids]
-  );
-  // eslint-disable-next-line
-  const userIds = [...new Set(duplicateUserIds)].filter((id) => id).join(',');
-  const userAPI = `${kanbanConfig.baseUrl}/api/v2/users?user_ids=${userIds}&fields=user_id,username,realname,avatar`;
+const fetchUserInfo = async (userIds: number[]) => {
+  const uniqueUserIds = [...new Set(userIds)].filter((id) => id).join(',');
+  const userAPI = `${kanbanConfig.baseUrl}/api/v2/users?user_ids=${uniqueUserIds}&fields=user_id,username,realname,avatar`;
   const response = await fetch(userAPI, {
     headers: {
       apikey: kanbanConfig.apikey || '',
@@ -84,23 +86,33 @@ const fetchUserInfo = async (rawJson: any) => {
   };
 };
 
-const getColumnIds = (...columnNames: string[]) => {
-  return kanbanSearchParam.columns
-    .filter((c) => columnNames.includes(c.name))
-    .map((c) => c.id);
+const calculateStartEndDate = (card: any): [startDate: string, endDate: string] => {
+  // Find the first time a card was moved to configured columns
+  const startTime = card.transitions?.find((transition: any) =>
+    kanbanConfig.startColumns.map(({ id }) => id).includes(transition.column_id)
+  )?.start;
+  let endTime = card.transitions?.find((transition: any) =>
+    kanbanConfig.endColumns.map(({ id }) => id).includes(transition.column_id)
+  )?.start;
+  endTime =
+    endTime || card.deadline || moment(startTime).add(kanbanConfig.defaultIterationWeeks, 'weeks');
+
+  return [moment(startTime).format('YYYY-MM-DD'), moment(endTime).format('YYYY-MM-DD')];
 };
 
-const calculateStartTime = (card: any) => {
-  return card.transitions.find((transition: any) =>
-    getColumnIds('To Do', 'In Progress').includes(transition.column_id)
-  )?.start;
-};
-
-const calculateEndTime = (card: any, startTime: any) => {
-  let endTime = card.transitions.find((transition: any) =>
-    getColumnIds('Done(Iteration)').includes(transition.column_id)
-  )?.start;
-  return endTime || card.deadline || moment(startTime).add(2, 'weeks');
+const searchParams = {
+  fields: [
+    'card_id',
+    'title',
+    'owner_user_id',
+    'type_id',
+    'size',
+    'priority',
+    'color',
+    'deadline',
+    'is_blocked',
+  ],
+  expand: ['co_owner_ids', 'transitions'],
 };
 
 export default handler;

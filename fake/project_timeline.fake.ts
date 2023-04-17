@@ -2,10 +2,7 @@ import { faker } from '@faker-js/faker';
 
 export const getProjectTimelineFakeData = () => {
   return Array.from({ length: 10 }).map(() => {
-    const startDate = faker.date.between(
-      faker.date.recent(30),
-      faker.date.soon(30)
-    );
+    const startDate = faker.date.between(faker.date.recent(30), faker.date.soon(30));
     const endDate = faker.date.soon(30, startDate);
     return {
       cardNo: faker.random.numeric(6),
