@@ -59,7 +59,7 @@ const RefreshWrapper = <T,>({
       <VStack
         padding="12px"
         border="1px"
-        borderColor="gray.200"
+        borderColor="gray.300"
         borderRadius="16px"
         spacing="8px"
         w="100%"
