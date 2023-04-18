@@ -1,6 +1,7 @@
 import { Flex, BoxProps, SystemProps } from '@chakra-ui/react';
 import BuildStatusCard, { BuildStatus } from '@/components/BuildStatusCard';
 import RefreshWrapper from '@/components/RefreshWrapper';
+import { circleCIConfig } from '@/../config/circle_ci.config';
 import { useErrorToast } from '@/lib/customToast';
 
 const BuildStatusOverview = (props: SystemProps) => {
@@ -21,7 +22,7 @@ const BuildStatusOverview = (props: SystemProps) => {
       {...props}
       title="Build Status:"
       onRefresh={fetchData}
-      refreshInterval={60000}
+      refreshInterval={circleCIConfig.refreshIntervalSeconds * 1000}
       render={(data: BuildStatus[]) => (
         <>
           <Flex

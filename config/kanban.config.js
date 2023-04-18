@@ -1,7 +1,11 @@
 export const kanbanConfig = {
   baseUrl: process.env.KANBANIZE_BASE_URL,
   apikey: process.env.KANBANIZE_API_KEY,
+  // boardId could be found in URL like: xxx.kanbanize.com/ctrl_board/<boardId>
   boardId: 193,
+  // columnId & columnName could be found in the response when you click a card
+  // response like: {..."columnid":"requested_<columnId>","columnname":"<columnName>"...}
+  // columns you want to monitor
   monitorColumns: [
     { id: 3942, name: 'To Do' },
     { id: 3943, name: 'In Progress' },
@@ -9,20 +13,22 @@ export const kanbanConfig = {
     { id: 3951, name: 'Ready for QA' },
     { id: 3952, name: 'In QA' },
     { id: 3952, name: 'QA Done' },
-    { id: 12630, name: 'Approver Confirmed' },
-    { id: 3944, name: 'Done(Iteration)' },
-    { id: 4170, name: 'Done(Year to Date)' },
+    { id: 3944, name: 'Done' },
   ],
-  startColumns: [
-    { id: 3942, name: 'To Do' },
-    { id: 3942, name: 'To Do' },
-  ],
-  endColumns: [{ id: 3944, name: 'Done(Iteration)' }],
+  // card types you want to monitor
   monitorCardTypes: [
     { id: 3955, name: 'Business' },
     { id: 3956, name: 'Technical' },
     { id: 3957, name: 'Defect' },
     { id: 10133, name: 'Spike' },
   ],
+  // a card's startDate will be the first date it was moved to startColumns
+  startColumns: [
+    { id: 3942, name: 'To Do' },
+    { id: 3943, name: 'In Progress' },
+  ],
+  // a card's endDate will be the first date it was moved to endColumns, otherwise will be the deadline
+  endColumns: [{ id: 3944, name: 'Done(Iteration)' }],
+  // if no endDate & deadline, endDate will be startDate + n*weeks, define n here
   defaultIterationWeeks: 2,
 };

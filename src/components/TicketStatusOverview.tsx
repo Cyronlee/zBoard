@@ -16,6 +16,7 @@ import {
 import TicketList, { Ticket } from './TicketList';
 import { useErrorToast } from '@/lib/customToast';
 import RefreshWrapper from '@/components/RefreshWrapper';
+import { zendeskConfig } from '../../config/zendesk.config';
 
 const TicketOverview = (props: SystemProps) => {
   const toastError = useErrorToast();
@@ -36,7 +37,7 @@ const TicketOverview = (props: SystemProps) => {
       maxWidth="384px"
       title="Ticket Status:"
       onRefresh={fetchData}
-      refreshInterval={60000}
+      refreshInterval={zendeskConfig.refreshIntervalSeconds * 1000}
       render={(tickets: Ticket[]) => (
         <>
           <Box w="100%">
