@@ -1,7 +1,7 @@
 
 # ![](https://raw.githubusercontent.com/Cyronlee/zBoard/main/public/favicon.ico) zBoard
 
-An awesome board for displaying your team's daily information, fits perfectly on a large screen 🖥️
+Visualize and monitor the information your team needs in a timely manner, fits perfectly on a large screen 🖥️
 
 <p>
   <a aria-label="GitHub package.json version" href="https://github.com/Cyronlee/zBoard/releases" title="GitHub package.json version">
@@ -62,6 +62,14 @@ Demo: [https://z-board.vercel.app/](https://z-board.vercel.app/)
   - `KANBANIZE_API_KEY`: Kanbanize API Key to build project timeline, [follow this guide](https://kanbanize.com/api)
 5. Visit your site🎉
 
+### Deploy on Mac mini
+
+1. On the Mac mini, hold `command` and click WIFI icon to get the IP address
+2. On your Mac (under same network), use `command`+`p` to search & open `Sreen Sharing` app
+3. Enter the IP of Mac mini, then login to control the Mac mini
+4. Follow the steps of `Local development`
+
+
 ### Local development
 
 1. Star & Clone this repo 😉
@@ -75,10 +83,14 @@ Demo: [https://z-board.vercel.app/](https://z-board.vercel.app/)
 5. Run with development mode
    ```bash
    npm install
-   
    npm run dev
    ```
-6. Visit http://localhost:2000/
+6. Or run with production mode
+   ```bash
+   npm run build
+   npm run start
+   ```
+7. Visit http://localhost:2000/
 
 
 ## Roadmap
