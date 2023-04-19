@@ -3,6 +3,13 @@
 
 Visualize and monitor the information your team needs in a timely manner, fits perfectly on a large screen 🖥️
 
+Build with: 
+![](https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=nextdotjs&logoColor=white)
+![](https://img.shields.io/badge/React-377DA0?style=flat-square&logo=react&logoColor=white)
+![](https://img.shields.io/badge/Chakra_UI-319795?style=flat-square&logo=chakraui&logoColor=white)
+![](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white)
+
 <p>
   <a aria-label="GitHub package.json version" href="https://github.com/Cyronlee/zBoard/releases" title="GitHub package.json version">
     <img src="https://img.shields.io/github/package-json/v/cyronlee/zboard?style=for-the-badge">
@@ -55,6 +62,7 @@ Demo: [https://z-board.vercel.app/](https://z-board.vercel.app/) Password: 12345
    - `zendesk.config.js`
    - `kanban.config.js`
 4. Deploy on [Vercel](https://vercel.com), set following environment variables (will display fake data if no token is configured)：
+  - `SITE_PASSWORD`: If filled, the site requires a login
   - `CIRCLE_CI_API_TOKEN`: CircleCI API Token to get build status, [get it here](https://app.circleci.com/settings/user/tokens)
   - `ZENDESK_API_TOKEN`: Zendesk API Token to get ticket status, [follow this guide](https://support.zendesk.com/hc/en-us/articles/4408889192858-Generating-a-new-API-token)
   - `ZENDESK_USER_EMAIL`: The user email who generate the API token
