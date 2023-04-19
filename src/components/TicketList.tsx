@@ -17,7 +17,7 @@ export interface Ticket {
 }
 
 const TicketList = ({ tickets }: TicketListProps) => {
-  const renderTicketInfo = (ticket: Ticket) => {
+  const renderTicketInfo = (ticket: Ticket, index: number) => {
     let colorScheme;
     if (ticket.status === 'new') colorScheme = 'yellow';
     else if (ticket.status === 'open') colorScheme = 'red';
@@ -25,7 +25,7 @@ const TicketList = ({ tickets }: TicketListProps) => {
     else colorScheme = 'blue';
 
     return (
-      <Box width="100%">
+      <Box width="100%" key={index}>
         <Flex justifyContent="space-between">
           <Flex>
             <Badge fontSize="sm" mr="4px" colorScheme={colorScheme}>
@@ -48,7 +48,7 @@ const TicketList = ({ tickets }: TicketListProps) => {
   return (
     <>
       <VStack mt="8px" maxH="256px" overflowY="scroll">
-        {tickets.map((ticket) => renderTicketInfo(ticket))}
+        {tickets.map((ticket, index) => renderTicketInfo(ticket, index))}
       </VStack>
     </>
   );

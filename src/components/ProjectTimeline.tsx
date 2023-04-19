@@ -78,6 +78,7 @@ const Timeline = (props: SystemProps) => {
 
   useEffect(() => {
     loadCards();
+    console.log('width: ', displayDates.length * renderConfig.gridWidth);
   }, []);
 
   useEffect(() => {
@@ -92,6 +93,7 @@ const Timeline = (props: SystemProps) => {
     const colEnd = displayDates.findIndex((d) => moment(cardInfo.endDate).isSame(d));
     return (
       <GridItem
+        key={cardInfo.cardNo}
         rowStart={renderConfig.cardFirstRowNum + index}
         colStart={colStart + 1}
         colEnd={colEnd + 2}
@@ -172,6 +174,7 @@ const Timeline = (props: SystemProps) => {
       if (moment(date).isoWeekday() === 6 || moment(date).isoWeekday() === 7)
         weekendBgItems.push(
           <GridItem
+            key={date}
             colStart={index + 1}
             colEnd={index + 2}
             rowStart={1}
@@ -214,7 +217,7 @@ const Timeline = (props: SystemProps) => {
                 width: '20px',
                 height: '100%',
                 backgroundColor: 'rgb(255, 255, 255)',
-                '-webkit-mask-image':
+                WebkitMaskImage:
                   'linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgb(255, 255, 255) 100%)',
               }}
             >
@@ -285,7 +288,7 @@ const Timeline = (props: SystemProps) => {
             templateColumns={`repeat(${displayDates.length}, 1fr)`}
           >
             {renderMonthIndicatorGrids(displayDates)}
-            {/*{renderWeekendGrids(displayDates)}*/}
+          {/*  /!*{renderWeekendGrids(displayDates)}*!/*/}
             {renderDateIndicatorGrids(displayDates)}
           </Grid>
         </Box>
