@@ -12,6 +12,7 @@ import {
   Avatar,
   Heading,
   SystemProps,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { useErrorToast } from '@/lib/customToast';
 
@@ -58,6 +59,9 @@ const Timeline = (props: SystemProps) => {
 
   const [cards, setCards] = useState([]);
   const [displayDates, setDisplayDates] = useState<string[]>([]);
+
+  const gridBgColor = useColorModeValue('#FFF', 'gray.800');
+  const weekendGridBgColor = useColorModeValue('gray.100', 'gray.700');
 
   const loadCards = async () => {
     const res = await fetch(`/api/project_timeline?start_date=${startDate}&end_date=${endDate}`);
@@ -174,7 +178,7 @@ const Timeline = (props: SystemProps) => {
             colEnd={index + 2}
             rowStart={1}
             rowEnd={cards.length + 1}
-            backgroundColor="gray.100"
+            backgroundColor={weekendGridBgColor}
             zIndex="-3"
           />
         );
@@ -191,7 +195,7 @@ const Timeline = (props: SystemProps) => {
           <GridItem
             left={0}
             position="sticky"
-            backgroundColor="#FFF"
+            bgColor={gridBgColor}
             key={monthYearStr}
             rowStart={renderConfig.monthIndicatorRowNum}
             colStart={index + 1}
@@ -211,7 +215,7 @@ const Timeline = (props: SystemProps) => {
                 left: '-20px',
                 width: '20px',
                 height: '100%',
-                backgroundColor: 'rgb(255, 255, 255)',
+                backgroundColor: gridBgColor,
                 WebkitMaskImage:
                   'linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgb(255, 255, 255) 100%)',
               }}
@@ -241,7 +245,7 @@ const Timeline = (props: SystemProps) => {
           borderColor="gray.300"
           zIndex="-2"
           h="40px"
-          backgroundColor={isWeekend ? 'gray.100' : 'white'}
+          backgroundColor={isWeekend ? weekendGridBgColor : gridBgColor}
         >
           {renderDayNumber(date)}
         </GridItem>
@@ -273,7 +277,7 @@ const Timeline = (props: SystemProps) => {
           marginX="12px"
           marginY="8px"
           size="md"
-          color="gray.600"
+          color="gray.700"
         >
           Delivery Timeline:
         </Heading>

@@ -70,26 +70,16 @@ const RefreshWrapper = <T,>({
             {title}
           </Heading>
           <Box>
-            <Text
-              fontSize="sm"
-              color="gray.500"
-              display="inline-block"
-              mr="4px"
-            >
+            <Text fontSize="sm" color="gray.500" display="inline-block" mr="4px">
               Updated at {lastUpdatedAt}
             </Text>
             <IconButton
               size="sm"
               isDisabled={isRefreshing}
+              cursor={isRefreshing ? 'wait !important' : 'pointer'}
               onClick={() => triggerRefresh()}
               aria-label="Refresh"
-              icon={
-                <RepeatIcon
-                  animation={
-                    isRefreshing ? 'rotate 2s infinite linear;' : 'none'
-                  }
-                />
-              }
+              icon={<RepeatIcon animation={isRefreshing ? 'rotate 2s infinite linear;' : 'none'} />}
             />
           </Box>
         </Center>
