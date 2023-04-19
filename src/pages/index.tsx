@@ -1,8 +1,8 @@
-import { siteConfig } from '@/../config/site.config';
-import { Center, Heading, VStack, HStack, Box } from '@chakra-ui/react';
+import { VStack, HStack, Box } from '@chakra-ui/react';
 import BuildStatusOverview from '@/components/BuildStatusOverview';
 import TicketStatusOverview from '@/components/TicketStatusOverview';
 import ProjectTimeline from '@/components/ProjectTimeline';
+import NoSSR from "@/components/NoSSR";
 
 export default function Home() {
   return (
@@ -21,7 +21,9 @@ export default function Home() {
           <TicketStatusOverview flex="25%" h="100%" />
         </HStack>
 
-        <ProjectTimeline flex="1" />
+        <NoSSR>
+          <ProjectTimeline flex="1" />
+        </NoSSR>
       </VStack>
     </Box>
   );

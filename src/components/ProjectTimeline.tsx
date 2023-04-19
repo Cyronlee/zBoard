@@ -50,6 +50,7 @@ while (startDateMoment.isBefore(endDateMoment)) {
   displayDates.push(startDateMoment.format('YYYY-MM-DD'));
   startDateMoment.add(1, 'day');
 }
+const width = displayDates.length * renderConfig.gridWidth;
 
 const Timeline = (props: SystemProps) => {
   const toastError = useErrorToast();
@@ -74,7 +75,6 @@ const Timeline = (props: SystemProps) => {
 
   useEffect(() => {
     loadCards();
-    console.log('width: ', displayDates.length * renderConfig.gridWidth);
   }, []);
 
   useEffect(() => {
@@ -278,21 +278,21 @@ const Timeline = (props: SystemProps) => {
         >
           Delivery Timeline:
         </Heading>
-        <Box w={displayDates.length * renderConfig.gridWidth}>
+        <Box w={width}>
           <Grid
-            w={displayDates.length * renderConfig.gridWidth}
+            w={width}
             templateColumns={`repeat(${displayDates.length}, 1fr)`}
           >
             {renderMonthIndicatorGrids(displayDates)}
-          {/*  /!*{renderWeekendGrids(displayDates)}*!/*/}
+            {/*  /!*{renderWeekendGrids(displayDates)}*!/*/}
             {renderDateIndicatorGrids(displayDates)}
           </Grid>
         </Box>
-        <Box flex="1" w={displayDates.length * renderConfig.gridWidth} overflowY="scroll">
+        <Box flex="1" w={width} overflowY="scroll">
           {cards.length > 0 ? (
             <Grid
               h={cards.length * renderConfig.gridWidth}
-              w={displayDates.length * renderConfig.gridWidth}
+              w={width}
               templateColumns={`repeat(${displayDates.length}, 1fr)`}
             >
               {renderWeekendGrids(displayDates)}
