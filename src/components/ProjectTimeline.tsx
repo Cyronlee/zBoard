@@ -38,19 +38,18 @@ const renderConfig = {
   dateIndicatorRowNum: 2,
   gridWidth: 48,
   cardFirstRowNum: 1,
-  scrollOffset: 256,
+  scrollOffset: 512,
 };
 
-const displayDates: string[] = [];
+const preparedDisplayDates: string[] = [];
 const startDateMoment = moment().subtract(renderConfig.monthBeforeToday, 'month');
 const startDate = startDateMoment.format('YYYY-MM-DD');
 const endDateMoment = moment().add(renderConfig.monthAfterToday, 'month');
 const endDate = endDateMoment.format('YYYY-MM-DD');
 while (startDateMoment.isBefore(endDateMoment)) {
-  displayDates.push(startDateMoment.format('YYYY-MM-DD'));
+  preparedDisplayDates.push(startDateMoment.format('YYYY-MM-DD'));
   startDateMoment.add(1, 'day');
 }
-const width = displayDates.length * renderConfig.gridWidth;
 
 const Timeline = (props: SystemProps) => {
   const toastError = useErrorToast();
@@ -58,13 +57,14 @@ const Timeline = (props: SystemProps) => {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 
   const [cards, setCards] = useState([]);
+  const [displayDates, setDisplayDates] = useState<string[]>([]);
 
   const loadCards = async () => {
     const res = await fetch(`/api/project_timeline?start_date=${startDate}&end_date=${endDate}`);
     if (res.status == 200) {
       const json = await res.json();
       const cards = json
-        .filter((card: any) => card.startDate > displayDates[0])
+        .filter((card: any) => card.startDate > startDate)
         .filter((card: any) => card.startDate !== card.endDate);
       console.log(cards);
       setCards(cards);
@@ -74,14 +74,13 @@ const Timeline = (props: SystemProps) => {
   };
 
   useEffect(() => {
-    loadCards();
-  }, []);
-
-  useEffect(() => {
-    if (scrollContainerRef.current && todayRef.current) {
-      scrollContainerRef.current.scrollLeft =
-        todayRef.current.offsetLeft - renderConfig.scrollOffset;
-    }
+    setDisplayDates(preparedDisplayDates);
+    loadCards().then(() => {
+      if (scrollContainerRef.current && todayRef.current) {
+        scrollContainerRef.current.scrollLeft =
+          todayRef.current.offsetLeft - renderConfig.scrollOffset;
+      }
+    });
   }, []);
 
   const renderCardGrid = (cardInfo: CardInfo, index: number) => {
@@ -278,9 +277,9 @@ const Timeline = (props: SystemProps) => {
         >
           Delivery Timeline:
         </Heading>
-        <Box w={width}>
+        <Box w={displayDates.length * renderConfig.gridWidth}>
           <Grid
-            w={width}
+            w={displayDates.length * renderConfig.gridWidth}
             templateColumns={`repeat(${displayDates.length}, 1fr)`}
           >
             {renderMonthIndicatorGrids(displayDates)}
@@ -288,11 +287,11 @@ const Timeline = (props: SystemProps) => {
             {renderDateIndicatorGrids(displayDates)}
           </Grid>
         </Box>
-        <Box flex="1" w={width} overflowY="scroll">
+        <Box flex="1" w={displayDates.length * renderConfig.gridWidth} overflowY="scroll">
           {cards.length > 0 ? (
             <Grid
               h={cards.length * renderConfig.gridWidth}
-              w={width}
+              w={displayDates.length * renderConfig.gridWidth}
               templateColumns={`repeat(${displayDates.length}, 1fr)`}
             >
               {renderWeekendGrids(displayDates)}
