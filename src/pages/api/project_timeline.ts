@@ -38,10 +38,11 @@ const fetchCards = async (startDate: string, endDate: string) => {
   }
   const json = await response.json();
 
-  const userIds: number[] = json.data.data.flatMap(({ owner_user_id, co_owner_ids }: any) => [
-    owner_user_id,
-    ...co_owner_ids,
-  ]);
+    const userIds: number[] = json.data.data.flatMap(({ owner_user_id, co_owner_ids }:
+                                                          { owner_user_id: number; co_owner_ids: number[] }) => [
+        owner_user_id,
+        ...co_owner_ids,
+    ]);
   const buildUserInfo = await fetchUserInfo(userIds);
 
   let cards = json.data.data.map((card: any) => buildCardInfo(card, buildUserInfo));

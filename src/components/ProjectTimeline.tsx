@@ -4,14 +4,8 @@ import {
   Box,
   Flex,
   Text,
-  HStack,
-  VStack,
-  Divider,
-  Spacer,
   Skeleton,
   Center,
-  IconButton,
-  Icon,
   Grid,
   AvatarGroup,
   GridItem,
@@ -21,6 +15,11 @@ import {
 } from '@chakra-ui/react';
 import { useErrorToast } from '@/lib/customToast';
 
+interface OwnerItem {
+  name: string;
+  avatar: string;
+}
+
 interface CardInfo {
   cardNo: string;
   cardName: string;
@@ -28,11 +27,8 @@ interface CardInfo {
   endDate: string;
   status: string;
   color: string;
-  owner: {
-    name: string;
-    avatar: string;
-  };
-  coOwners: any[];
+  owner: OwnerItem;
+  coOwners: OwnerItem[];
 }
 
 const renderConfig = {
