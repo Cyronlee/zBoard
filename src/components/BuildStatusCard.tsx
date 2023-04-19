@@ -27,7 +27,16 @@ export interface BuildStatus {
   commitSubject: string;
 }
 
-const statusColorScheme: any = {
+interface StatusColorScheme {
+  [key: string]: string;
+  success: string;
+  on_hold: string;
+  running: string;
+  canceled: string;
+  unauthorized: string;
+}
+
+const statusColorScheme: StatusColorScheme = {
   success: 'green',
   on_hold: 'purple',
   running: 'blue',

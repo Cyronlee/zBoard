@@ -1,5 +1,4 @@
-import { siteConfig } from '@/../config/site.config';
-import { Center, Heading, VStack, HStack, Box } from '@chakra-ui/react';
+import { VStack, HStack, Box } from '@chakra-ui/react';
 import BuildStatusOverview from '@/components/BuildStatusOverview';
 import TicketStatusOverview from '@/components/TicketStatusOverview';
 import ProjectTimeline from '@/components/ProjectTimeline';

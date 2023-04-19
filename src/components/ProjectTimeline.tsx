@@ -4,14 +4,8 @@ import {
   Box,
   Flex,
   Text,
-  HStack,
-  VStack,
-  Divider,
-  Spacer,
   Skeleton,
   Center,
-  IconButton,
-  Icon,
   Grid,
   AvatarGroup,
   GridItem,
@@ -21,6 +15,11 @@ import {
 } from '@chakra-ui/react';
 import { useErrorToast } from '@/lib/customToast';
 
+interface OwnerItem {
+  name: string;
+  avatar: string;
+}
+
 interface CardInfo {
   cardNo: string;
   cardName: string;
@@ -28,11 +27,8 @@ interface CardInfo {
   endDate: string;
   status: string;
   color: string;
-  owner: {
-    name: string;
-    avatar: string;
-  };
-  coOwners: any[];
+  owner: OwnerItem;
+  coOwners: OwnerItem[];
 }
 
 const renderConfig = {
@@ -42,16 +38,16 @@ const renderConfig = {
   dateIndicatorRowNum: 2,
   gridWidth: 48,
   cardFirstRowNum: 1,
-  scrollOffset: 256,
+  scrollOffset: 512,
 };
 
-const displayDates: string[] = [];
+const preparedDisplayDates: string[] = [];
 const startDateMoment = moment().subtract(renderConfig.monthBeforeToday, 'month');
 const startDate = startDateMoment.format('YYYY-MM-DD');
 const endDateMoment = moment().add(renderConfig.monthAfterToday, 'month');
 const endDate = endDateMoment.format('YYYY-MM-DD');
 while (startDateMoment.isBefore(endDateMoment)) {
-  displayDates.push(startDateMoment.format('YYYY-MM-DD'));
+  preparedDisplayDates.push(startDateMoment.format('YYYY-MM-DD'));
   startDateMoment.add(1, 'day');
 }
 
@@ -61,13 +57,14 @@ const Timeline = (props: SystemProps) => {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 
   const [cards, setCards] = useState([]);
+  const [displayDates, setDisplayDates] = useState<string[]>([]);
 
   const loadCards = async () => {
     const res = await fetch(`/api/project_timeline?start_date=${startDate}&end_date=${endDate}`);
     if (res.status == 200) {
       const json = await res.json();
       const cards = json
-        .filter((card: any) => card.startDate > displayDates[0])
+        .filter((card: any) => card.startDate > startDate)
         .filter((card: any) => card.startDate !== card.endDate);
       console.log(cards);
       setCards(cards);
@@ -77,14 +74,13 @@ const Timeline = (props: SystemProps) => {
   };
 
   useEffect(() => {
-    loadCards();
-  }, []);
-
-  useEffect(() => {
-    if (scrollContainerRef.current && todayRef.current) {
-      scrollContainerRef.current.scrollLeft =
-        todayRef.current.offsetLeft - renderConfig.scrollOffset;
-    }
+    setDisplayDates(preparedDisplayDates);
+    loadCards().then(() => {
+      if (scrollContainerRef.current && todayRef.current) {
+        scrollContainerRef.current.scrollLeft =
+          todayRef.current.offsetLeft - renderConfig.scrollOffset;
+      }
+    });
   }, []);
 
   const renderCardGrid = (cardInfo: CardInfo, index: number) => {
@@ -92,6 +88,7 @@ const Timeline = (props: SystemProps) => {
     const colEnd = displayDates.findIndex((d) => moment(cardInfo.endDate).isSame(d));
     return (
       <GridItem
+        key={cardInfo.cardNo}
         rowStart={renderConfig.cardFirstRowNum + index}
         colStart={colStart + 1}
         colEnd={colEnd + 2}
@@ -172,6 +169,7 @@ const Timeline = (props: SystemProps) => {
       if (moment(date).isoWeekday() === 6 || moment(date).isoWeekday() === 7)
         weekendBgItems.push(
           <GridItem
+            key={date}
             colStart={index + 1}
             colEnd={index + 2}
             rowStart={1}
@@ -214,7 +212,7 @@ const Timeline = (props: SystemProps) => {
                 width: '20px',
                 height: '100%',
                 backgroundColor: 'rgb(255, 255, 255)',
-                '-webkit-mask-image':
+                WebkitMaskImage:
                   'linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgb(255, 255, 255) 100%)',
               }}
             >
@@ -285,7 +283,7 @@ const Timeline = (props: SystemProps) => {
             templateColumns={`repeat(${displayDates.length}, 1fr)`}
           >
             {renderMonthIndicatorGrids(displayDates)}
-            {/*{renderWeekendGrids(displayDates)}*/}
+            {/*  /!*{renderWeekendGrids(displayDates)}*!/*/}
             {renderDateIndicatorGrids(displayDates)}
           </Grid>
         </Box>
