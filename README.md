@@ -15,7 +15,7 @@ Visualize and monitor the information your team needs in a timely manner, fits p
   </a>
 </p>
 
-Demo: [https://z-board.vercel.app/](https://z-board.vercel.app/)
+Demo: [https://z-board.vercel.app/](https://z-board.vercel.app/) Password: 123456
 ![](https://github.com/Cyronlee/zBoard/blob/main/docs/screenshots/home.png?raw=true")
 
 ## Features ✨
@@ -38,6 +38,7 @@ Demo: [https://z-board.vercel.app/](https://z-board.vercel.app/)
 
 **🔒 &nbsp;Security**
 
+- Site password
 - All tokens secured in the backend
 - No sensitive information in API transmission
 
@@ -99,7 +100,7 @@ Demo: [https://z-board.vercel.app/](https://z-board.vercel.app/)
 - [x] Zendesk Ticket Status
 - [x] Kanbanize project timeline
 - [ ] Integrate more products...
-- [ ] Site password
+- [x] Site password
 - [ ] Check for new versions
 - [ ] Resizeable & draggable
 - [ ] Dark mode
