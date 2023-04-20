@@ -13,6 +13,7 @@ import {
   Icon,
 } from '@chakra-ui/react';
 import { BiTime } from 'react-icons/bi';
+import { TimeIcon } from '@chakra-ui/icons';
 
 interface BuildStatusCardProps {
   buildStatus: BuildStatus;
@@ -20,6 +21,7 @@ interface BuildStatusCardProps {
 
 export interface BuildStatus {
   projectName: string;
+  branch: string;
   status: string;
   stopTime: string;
   username: string;
@@ -66,21 +68,18 @@ const BuildStatusCard = ({ buildStatus }: BuildStatusCardProps) => {
           {buildStatus.status}
         </Badge>
         <Flex align="center">
-          <Icon as={BiTime} w="12px" h="12px" />
+          <TimeIcon w="12px" h="12px" />
           <Text ml="4px">{startTime}</Text>
         </Flex>
       </HStack>
       <Divider mt="2px" mb="2px" />
       <Flex align="center">
-        <Avatar
-          w="32px"
-          h="32px"
-          name={buildStatus.username}
-          src={buildStatus.avatarUrl}
-        />
+        <Avatar w="32px" h="32px" name={buildStatus.username} src={buildStatus.avatarUrl} />
         <VStack align="stretch">
           <Box ml="4px">
-            <Text fontSize="sm">{buildStatus.username}</Text>
+            <Text fontSize="sm">
+              {buildStatus.username} on <b>{buildStatus.branch}</b>
+            </Text>
             <Text fontSize="sm" noOfLines={1}>
               {buildStatus.commitSubject}
             </Text>
