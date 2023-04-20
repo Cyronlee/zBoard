@@ -107,13 +107,14 @@ Demo: [https://z-board.vercel.app/](https://z-board.vercel.app/) Password: 12345
 - [x] CircleCI Build Status
 - [x] Zendesk Ticket Status
 - [x] Kanbanize project timeline
-- [ ] Integrate more products...
 - [x] Site password
+- [x] Dark mode
+- [x] Examples page
+- [ ] Owner shift indicator
+- [ ] Integrate more products...
 - [ ] Check for new versions
 - [ ] Resizeable & draggable
-- [ ] Dark mode
 - [ ] Settings page
-- [ ] Examples page
 - [ ] ...
 
 
