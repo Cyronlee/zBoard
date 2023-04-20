@@ -62,6 +62,8 @@ const Timeline = (props: SystemProps) => {
 
   const gridBgColor = useColorModeValue('#FFF', 'gray.800');
   const weekendGridBgColor = useColorModeValue('gray.100', 'gray.700');
+  const borderColor = useColorModeValue('gray.300', 'gray.400');
+  const headColor = useColorModeValue('gray.600', 'gray.300');
 
   const loadCards = async () => {
     const res = await fetch(`/api/project_timeline?start_date=${startDate}&end_date=${endDate}`);
@@ -70,7 +72,6 @@ const Timeline = (props: SystemProps) => {
       const cards = json
         .filter((card: any) => card.startDate > startDate)
         .filter((card: any) => card.startDate !== card.endDate);
-      console.log(cards);
       setCards(cards);
     } else {
       toastError(await res.text());
@@ -242,7 +243,7 @@ const Timeline = (props: SystemProps) => {
           rowStart={renderConfig.dateIndicatorRowNum}
           colStart={index + 1}
           borderY="1px solid"
-          borderColor="gray.300"
+          borderColor={borderColor}
           zIndex="-2"
           h="40px"
           backgroundColor={isWeekend ? weekendGridBgColor : gridBgColor}
@@ -259,7 +260,7 @@ const Timeline = (props: SystemProps) => {
       w="100%"
       border="1px solid"
       borderRadius="8px"
-      borderColor="gray.300"
+      borderColor={borderColor}
       {...props}
     >
       <Flex
@@ -267,7 +268,7 @@ const Timeline = (props: SystemProps) => {
         direction="column"
         overflowY="hidden"
         overflowX="scroll"
-        borderColor="gray.300"
+        borderColor={borderColor}
         scrollBehavior="smooth"
         ref={scrollContainerRef}
       >
@@ -277,7 +278,7 @@ const Timeline = (props: SystemProps) => {
           marginX="12px"
           marginY="8px"
           size="md"
-          color="gray.700"
+          color={headColor}
         >
           Delivery Timeline:
         </Heading>
@@ -287,7 +288,6 @@ const Timeline = (props: SystemProps) => {
             templateColumns={`repeat(${displayDates.length}, 1fr)`}
           >
             {renderMonthIndicatorGrids(displayDates)}
-            {/*  /!*{renderWeekendGrids(displayDates)}*!/*/}
             {renderDateIndicatorGrids(displayDates)}
           </Grid>
         </Box>

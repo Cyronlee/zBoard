@@ -23,6 +23,7 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { siteConfig } from '@/../../config/site.config';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -31,6 +32,8 @@ import Link from 'next/link';
 
 const CollapseNavbar = () => {
   const [isOpen, setIsOpen] = useState(true);
+
+  const borderColor = useColorModeValue('gray.300', 'gray.400');
 
   return (
     <Box
@@ -41,7 +44,7 @@ const CollapseNavbar = () => {
       onClick={() => !isOpen && setIsOpen(true)}
       cursor={isOpen ? 'default' : 'pointer'}
       borderBottom={isOpen ? '1px solid' : ''}
-      borderColor="gray.200"
+      borderColor={borderColor}
     >
       <Collapse in={isOpen} animateOpacity>
         <Flex justify="space-between" align="center" p="3">
@@ -57,11 +60,7 @@ const CollapseNavbar = () => {
           </Link>
           <HStack>
             <Menu>
-              <MenuButton
-                onClick={(event) => event.stopPropagation()}
-                as={Button}
-                rightIcon={<ChevronDownIcon />}
-              >
+              <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
                 Pages
               </MenuButton>
               <MenuList>

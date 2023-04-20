@@ -8,6 +8,7 @@ import {
   VStack,
   Skeleton,
   SystemProps,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { RepeatIcon } from '@chakra-ui/icons';
 import moment from 'moment';
@@ -30,6 +31,9 @@ const RefreshWrapper = <T,>({
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [data, setData] = useState<T[]>([]);
   const [lastUpdatedAt, setLastUpdatedAt] = useState<string>();
+
+  const borderColor = useColorModeValue('gray.300', 'gray.400');
+  const fontColor = useColorModeValue('gray.600', 'gray.300');
 
   const triggerRefresh = async () => {
     setIsRefreshing(true);
@@ -59,18 +63,18 @@ const RefreshWrapper = <T,>({
       <VStack
         padding="12px"
         border="1px"
-        borderColor="gray.300"
+        borderColor={borderColor}
         borderRadius="16px"
         spacing="8px"
         w="100%"
         {...props}
       >
         <Center w="100%" justifyContent="space-between">
-          <Heading size="md" color="gray.600">
+          <Heading size="md" color={fontColor}>
             {title}
           </Heading>
           <Box>
-            <Text fontSize="sm" color="gray.500" display="inline-block" mr="4px">
+            <Text fontSize="sm" color={fontColor} display="inline-block" mr="4px">
               Updated at {lastUpdatedAt}
             </Text>
             <IconButton
