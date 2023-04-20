@@ -2,5 +2,8 @@
   "extends": [
     "next",
     "prettier"
-  ]
+  ],
+  "rules": {
+    "react-hooks/exhaustive-deps" : "off"
+  }
 }

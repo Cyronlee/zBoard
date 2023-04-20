@@ -3,11 +3,12 @@ import BuildStatusOverview from '@/components/BuildStatusOverview';
 import TicketStatusOverview from '@/components/TicketStatusOverview';
 import ProjectTimeline from '@/components/ProjectTimeline';
 import CollapseNavbar from '@/components/CollapseNavbar';
-import ThemeToggle from '@/components/ThemeToggle';
+import UpdateChecker from '@/components/UpdateChecker';
 
 export default function Home() {
   return (
     <Box w="100vw" h="100vh" p="8px" pt="0">
+      <UpdateChecker />
       <VStack h="100%">
         <CollapseNavbar />
         <HStack h="448px" w="100%">
