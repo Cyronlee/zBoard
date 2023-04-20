@@ -27,9 +27,10 @@ import {
 import { siteConfig } from '@/../../config/site.config';
 import ThemeToggle from '@/components/ThemeToggle';
 import { ChevronDownIcon, MinusIcon } from '@chakra-ui/icons';
+import Link from 'next/link';
 
-const CollapseNav = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const CollapseNavbar = () => {
+  const [isOpen, setIsOpen] = useState(true);
 
   return (
     <Box
@@ -44,14 +45,16 @@ const CollapseNav = () => {
     >
       <Collapse in={isOpen} animateOpacity>
         <Flex justify="space-between" align="center" p="3">
-          <Heading
-            bgGradient="linear(to-l, #7928CA, #FF0080)"
-            bgClip="text"
-            fontSize="3xl"
-            fontWeight="extrabold"
-          >
-            {siteConfig.siteName}
-          </Heading>
+          <Link href="/">
+            <Heading
+              bgGradient="linear(to-l, #7928CA, #FF0080)"
+              bgClip="text"
+              fontSize="3xl"
+              fontWeight="extrabold"
+            >
+              {siteConfig.siteName}
+            </Heading>
+          </Link>
           <HStack>
             <Menu>
               <MenuButton
@@ -62,9 +65,18 @@ const CollapseNav = () => {
                 Pages
               </MenuButton>
               <MenuList>
-                <MenuItem>Ticket Status</MenuItem>
-                <MenuItem>Project Timeline</MenuItem>
-                <MenuItem>Build Status</MenuItem>
+                <MenuItem>
+                  <Link href="/">Dashboard</Link>
+                </MenuItem>
+                <MenuItem>
+                  <Link href="/example/build-status-overview">Build Status</Link>
+                </MenuItem>
+                <MenuItem>
+                  <Link href="/example/ticket-status-overview">Ticket Status</Link>
+                </MenuItem>
+                <MenuItem>
+                  <Link href="/example/project-timeline">Project Timeline</Link>
+                </MenuItem>
               </MenuList>
             </Menu>
             <ThemeToggle />
@@ -80,4 +92,4 @@ const CollapseNav = () => {
   );
 };
 
-export default CollapseNav;
+export default CollapseNavbar;

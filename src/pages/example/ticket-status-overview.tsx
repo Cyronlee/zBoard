@@ -1,15 +1,15 @@
 import { VStack, Heading } from '@chakra-ui/react';
 import React from 'react';
-import BuildStatusOverview from '@/components/BuildStatusOverview';
+import TicketStatusOverview from '@/components/TicketStatusOverview';
 import CollapseNavbar from '@/components/CollapseNavbar';
 
-const BuildStatusOverviewPage = () => {
+const TicketStatusOverviewPage = () => {
   return (
     <VStack>
       <CollapseNavbar />
-      <BuildStatusOverview />
+      <TicketStatusOverview />
     </VStack>
   );
 };
 
-export default BuildStatusOverviewPage;
+export default TicketStatusOverviewPage;
