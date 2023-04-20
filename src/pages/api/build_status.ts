@@ -36,6 +36,7 @@ const getBuildStatus = async ({
   const latestWorkflow: any = await getLatestWorkflow(latestPipeline.id);
   return {
     projectName: projectName,
+    branch,
     username: login,
     avatarUrl: avatar_url,
     commitSubject: latestPipeline.vcs.commit?.subject || 'git tag',
