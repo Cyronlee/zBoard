@@ -34,7 +34,7 @@ const TicketOverview = (props: SystemProps) => {
   return (
     <RefreshWrapper
       {...props}
-      maxWidth="384px"
+      maxWidth="448px"
       title="Ticket Status:"
       onRefresh={fetchData}
       refreshInterval={zendeskConfig.refreshIntervalSeconds * 1000}

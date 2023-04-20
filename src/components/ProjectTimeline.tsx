@@ -12,6 +12,7 @@ import {
   Avatar,
   Heading,
   SystemProps,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { useErrorToast } from '@/lib/customToast';
 
@@ -59,6 +60,11 @@ const Timeline = (props: SystemProps) => {
   const [cards, setCards] = useState([]);
   const [displayDates, setDisplayDates] = useState<string[]>([]);
 
+  const gridBgColor = useColorModeValue('#FFF', 'gray.800');
+  const weekendGridBgColor = useColorModeValue('gray.100', 'gray.700');
+  const borderColor = useColorModeValue('gray.300', 'gray.400');
+  const headColor = useColorModeValue('gray.600', 'gray.300');
+
   const loadCards = async () => {
     const res = await fetch(`/api/project_timeline?start_date=${startDate}&end_date=${endDate}`);
     if (res.status == 200) {
@@ -66,7 +72,6 @@ const Timeline = (props: SystemProps) => {
       const cards = json
         .filter((card: any) => card.startDate > startDate)
         .filter((card: any) => card.startDate !== card.endDate);
-      console.log(cards);
       setCards(cards);
     } else {
       toastError(await res.text());
@@ -174,7 +179,7 @@ const Timeline = (props: SystemProps) => {
             colEnd={index + 2}
             rowStart={1}
             rowEnd={cards.length + 1}
-            backgroundColor="gray.100"
+            backgroundColor={weekendGridBgColor}
             zIndex="-3"
           />
         );
@@ -191,7 +196,7 @@ const Timeline = (props: SystemProps) => {
           <GridItem
             left={0}
             position="sticky"
-            backgroundColor="#FFF"
+            bgColor={gridBgColor}
             key={monthYearStr}
             rowStart={renderConfig.monthIndicatorRowNum}
             colStart={index + 1}
@@ -211,7 +216,7 @@ const Timeline = (props: SystemProps) => {
                 left: '-20px',
                 width: '20px',
                 height: '100%',
-                backgroundColor: 'rgb(255, 255, 255)',
+                backgroundColor: gridBgColor,
                 WebkitMaskImage:
                   'linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgb(255, 255, 255) 100%)',
               }}
@@ -238,10 +243,10 @@ const Timeline = (props: SystemProps) => {
           rowStart={renderConfig.dateIndicatorRowNum}
           colStart={index + 1}
           borderY="1px solid"
-          borderColor="gray.300"
+          borderColor={borderColor}
           zIndex="-2"
           h="40px"
-          backgroundColor={isWeekend ? 'gray.100' : 'white'}
+          backgroundColor={isWeekend ? weekendGridBgColor : gridBgColor}
         >
           {renderDayNumber(date)}
         </GridItem>
@@ -255,7 +260,7 @@ const Timeline = (props: SystemProps) => {
       w="100%"
       border="1px solid"
       borderRadius="8px"
-      borderColor="gray.300"
+      borderColor={borderColor}
       {...props}
     >
       <Flex
@@ -263,7 +268,7 @@ const Timeline = (props: SystemProps) => {
         direction="column"
         overflowY="hidden"
         overflowX="scroll"
-        borderColor="gray.300"
+        borderColor={borderColor}
         scrollBehavior="smooth"
         ref={scrollContainerRef}
       >
@@ -273,7 +278,7 @@ const Timeline = (props: SystemProps) => {
           marginX="12px"
           marginY="8px"
           size="md"
-          color="gray.600"
+          color={headColor}
         >
           Delivery Timeline:
         </Heading>
@@ -283,7 +288,6 @@ const Timeline = (props: SystemProps) => {
             templateColumns={`repeat(${displayDates.length}, 1fr)`}
           >
             {renderMonthIndicatorGrids(displayDates)}
-            {/*  /!*{renderWeekendGrids(displayDates)}*!/*/}
             {renderDateIndicatorGrids(displayDates)}
           </Grid>
         </Box>

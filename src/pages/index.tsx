@@ -2,24 +2,18 @@ import { VStack, HStack, Box } from '@chakra-ui/react';
 import BuildStatusOverview from '@/components/BuildStatusOverview';
 import TicketStatusOverview from '@/components/TicketStatusOverview';
 import ProjectTimeline from '@/components/ProjectTimeline';
+import CollapseNavbar from '@/components/CollapseNavbar';
+import ThemeToggle from '@/components/ThemeToggle';
 
 export default function Home() {
   return (
-    <Box w="100vw" h="100vh" p="8px">
+    <Box w="100vw" h="100vh" p="8px" pt="0">
       <VStack h="100%">
-        {/*<Heading*/}
-        {/*  bgGradient="linear(to-l, #7928CA, #FF0080)"*/}
-        {/*  bgClip="text"*/}
-        {/*  fontSize="3xl"*/}
-        {/*  fontWeight="extrabold"*/}
-        {/*>*/}
-        {/*  {siteConfig.siteName}*/}
-        {/*</Heading>*/}
+        <CollapseNavbar />
         <HStack h="448px" w="100%">
           <BuildStatusOverview flex="75%" h="100%" />
           <TicketStatusOverview flex="25%" h="100%" />
         </HStack>
-
         <ProjectTimeline flex="1" />
       </VStack>
     </Box>

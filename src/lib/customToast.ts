@@ -10,7 +10,7 @@ export const useErrorToast = () => {
       description: message,
       status: 'error',
       isClosable: true,
-      position: 'top-right',
+      position: 'bottom-right',
     });
   };
 };
