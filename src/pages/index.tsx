@@ -12,7 +12,7 @@ export default function Home() {
       <UpdateChecker />
       <VStack h="100%">
         <CollapseNavbar />
-        <HStack h="90%" w="100%">
+        <HStack w="100%" overflowY="hidden">
           <OwnerRotationList w="15%" />
           <VStack h="100%" w="85%">
             <HStack h="448px" w="100%">
