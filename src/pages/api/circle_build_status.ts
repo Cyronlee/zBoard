@@ -52,7 +52,8 @@ const handler: NextApiHandler = async (req, res) => {
 export const getAllCircleBuildStatus = async () => {
   if (circleCIConfig.enabled) {
     return await Promise.all(
-      circleCIConfig.projects.map((project) => {
+      // @ts-ignore
+      JSON.parse(circleCIConfig.projects).map((project) => {
         return getBuildStatus(project);
       })
     );

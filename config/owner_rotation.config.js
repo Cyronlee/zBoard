@@ -36,36 +36,60 @@ export const ownerRotationConfig = {
       rotations: [
         {
           subject: 'Stand Up',
-          color: 'green',
+          color: 'blue',
           icon: 'calendar',
-          datasheetId: 'datasheet-id1',
+          datasheetId: 'dstrMjKsApEaKHKnE2',
+        },
+        {
+          subject: 'BAU',
+          color: 'purple',
+          icon: 'calendar',
+          datasheetId: 'dstrTnan1lJftJAvwH',
+        },
+        {
+          subject: 'Retro',
+          color: 'pink',
+          icon: 'repeat',
+          datasheetId: 'dstVZBx1XWJxcA5jKM',
         },
         {
           subject: 'Showcase',
-          color: 'blue',
-          icon: 'repeat',
-          datasheetId: 'datasheet-id2',
+          color: 'green',
+          icon: 'calendar',
+          datasheetId: 'dstkQEESC5j0eFSBSR',
         },
       ],
     },
     // use Google Sheet, example sheet https://docs.google.com/spreadsheets/d/15txMkkkWBgxS7PCpInC3NBg9kaEi-ZhHjdALNRV-5G8/edit?usp=sharing
     googleSheet: {
-      enabled: false,
+      enabled: true,
       baseUrl: 'https://docs.google.com/spreadsheets/d/',
       // for GoogleSheet you can find the docId following the baseUrl of GoogleSheet link.
-      docId: '15txMkkkWBgxS7PCpInC3NBg9kaEi-ZhHjdALNRV-5G8',
+      docId: process.env.GOOGLE_SHEET_ID,
       rotations: [
         {
           subject: 'Stand Up',
-          color: 'green',
+          color: 'blue',
           icon: 'calendar',
-          sheetName: 'sheet-name1',
+          sheetName: 'standup',
+        },
+        {
+          subject: 'BAU',
+          color: 'purple',
+          icon: 'calendar',
+          sheetName: 'bau',
+        },
+        {
+          subject: 'Retro',
+          color: 'pink',
+          icon: 'repeat',
+          sheetName: 'retro',
         },
         {
           subject: 'Showcase',
-          color: 'blue',
-          icon: 'repeat',
-          sheetName: 'sheet-name2',
+          color: 'green',
+          icon: 'calendar',
+          sheetName: 'showcase',
         },
       ],
     },

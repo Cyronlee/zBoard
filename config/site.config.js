@@ -1,5 +1,5 @@
 export const siteConfig = {
-  siteName: 'zBoard',
+  siteName: 'SST Board',
   enableSitePassword: true,
   sitePassword: process.env.SITE_PASSWORD,
 };

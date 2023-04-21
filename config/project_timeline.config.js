@@ -2,7 +2,7 @@ export const projectTimelineConfig = {
   title: 'Project timeline',
   datasource: {
     kanbanize: {
-      enabled: false,
+      enabled: true,
       baseUrl: process.env.KANBANIZE_BASE_URL,
       apikey: process.env.KANBANIZE_API_KEY,
       // boardId could be found in URL like: xxx.kanbanize.com/ctrl_board/<boardId>
@@ -17,7 +17,9 @@ export const projectTimelineConfig = {
         { id: 3951, name: 'Ready for QA' },
         { id: 3952, name: 'In QA' },
         { id: 3952, name: 'QA Done' },
-        { id: 3944, name: 'Done' },
+        { id: 12630, name: 'Approver Confirmed' },
+        { id: 3944, name: 'Done(Iteration)' },
+        { id: 4170, name: 'Done(Year to Date)' },
       ],
       // card types you want to monitor
       monitorCardTypes: [
