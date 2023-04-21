@@ -1,7 +1,6 @@
 import React from 'react';
 import OwnerRotation from '@/components/OwnerRotation';
 import { Flex, SystemProps } from '@chakra-ui/react';
-import { vikaConfig } from '../../config/vika.config';
 import RefreshWrapper from '@/components/RefreshWrapper';
 import { useErrorToast } from '@/lib/customToast';
 import { CalendarIcon, EmailIcon, RepeatClockIcon } from '@chakra-ui/icons';
@@ -9,7 +8,8 @@ import { CalendarIcon, EmailIcon, RepeatClockIcon } from '@chakra-ui/icons';
 export interface RotationOwner {
   cname: string;
   ename: string;
-  current: number;
+  is_owner: number;
+  [key: string]: any;
 }
 
 export interface RotationOwners {
@@ -48,7 +48,7 @@ const OwnerRotationList = (props: SystemProps) => {
   };
 
   const findCurrentOwner = (data: RotationOwner[]) => {
-    return data?.findIndex((it) => it.current === 1) ?? 0;
+    return data?.findIndex((it) => it.is_owner === 1) ?? 0;
   };
 
   return (
@@ -59,7 +59,7 @@ const OwnerRotationList = (props: SystemProps) => {
       title="Owner Rotation:"
       isRefresh={false}
       onRefresh={() => fetchData()}
-      refreshInterval={vikaConfig.refreshIntervalSeconds * 1000}
+      refreshInterval={0}
       render={(data: RotationOwners[]) => (
         <Flex
           flexWrap="wrap"

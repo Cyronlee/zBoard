@@ -35,7 +35,16 @@ const OwnerRotation = ({ ownerType, owners, current, colorScheme, icon }: OwnerR
               <Text whiteSpace="nowrap">{ownerType}</Text>
             </HStack>
           </Heading>
-          <Text mt="8" pl="4" fontSize="20px" color="gray" whiteSpace="nowrap">
+          <Text
+            mt="8"
+            pl="4"
+            fontSize="20px"
+            color="gray"
+            whiteSpace="nowrap"
+            overflow="hidden"
+            // textOverflow="ellipsis"
+            maxW="150px"
+          >
             {findOwner(current - 1)?.ename}
           </Text>
           <Card
@@ -47,12 +56,28 @@ const OwnerRotation = ({ ownerType, owners, current, colorScheme, icon }: OwnerR
           >
             <Box w="8px" bg="gray"></Box>
             <Center bg={'gray.300'} ml="1">
-              <Text px="1" fontWeight="bold" fontSize="20px" whiteSpace="nowrap">
+              <Text
+                px="1"
+                fontWeight="bold"
+                fontSize="20px"
+                whiteSpace="nowrap"
+                overflow="hidden"
+                // textOverflow="ellipsis"
+                maxW="150px"
+              >
                 {findOwner(current)?.ename}
               </Text>
             </Center>
           </Card>
-          <Text pl="4" fontSize="20px" color="gray" whiteSpace="nowrap">
+          <Text
+            pl="4"
+            fontSize="20px"
+            color="gray"
+            whiteSpace="nowrap"
+            overflow="hidden"
+            // textOverflow="ellipsis"
+            maxW="150px"
+          >
             {findOwner(current + 1)?.ename}
           </Text>
         </CardBody>
