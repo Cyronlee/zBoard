@@ -25,7 +25,6 @@ const fetchOwners = async () => {
   const datasheets = vikaConfig.datasheets;
   for (const sheet of datasheets) {
     let dataSheetUrl = `${vikaConfig.baseUrl}/fusion/v1/datasheets/${sheet.sheetId}/records`;
-    console.log('dataSheetUrl', dataSheetUrl);
     const response = await fetch(dataSheetUrl, {
       headers: {
         Authorization: `Bearer ${vikaConfig.apiToken}`,

@@ -17,7 +17,7 @@ export interface RotationOwners {
   owners: RotationOwner[];
 }
 
-const colorSchemas = ['tomato', 'blue.500', 'purple'];
+const colorSchemas = ['teal.500', 'blue.500', 'purple.500'];
 
 const icons = [
   {
@@ -57,6 +57,7 @@ const OwnerRotationList = (props: SystemProps) => {
       h="100%"
       minW="230px"
       title="Owner Rotation:"
+      isRefresh={false}
       onRefresh={() => fetchData()}
       refreshInterval={vikaConfig.refreshIntervalSeconds * 1000}
       render={(data: RotationOwners[]) => (
