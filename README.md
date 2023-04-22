@@ -1,7 +1,6 @@
+<h1><img src="https://raw.githubusercontent.com/Cyronlee/zBoard/main/public/favicon.ico" width="48" height="48"> zBoard</h1>
 
-# ![](https://raw.githubusercontent.com/Cyronlee/zBoard/main/public/favicon.ico) zBoard
-
-Visualize and monitor the information your team needs in a timely manner, fits perfectly on a large screen 🖥️
+Designed for DevOps teams, visualize daily information, fits perfectly on a large screen 🖥️
 
 Build with: 
 ![](https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=nextdotjs&logoColor=white)
@@ -110,9 +109,9 @@ Demo: [https://z-board.vercel.app/](https://z-board.vercel.app/) Password: 12345
 - [x] Site password
 - [x] Dark mode
 - [x] Examples page
+- [x] Check for new versions
 - [ ] Owner shift indicator
 - [ ] Integrate more products...
-- [ ] Check for new versions
 - [ ] Resizeable & draggable
 - [ ] Settings page
 - [ ] ...
