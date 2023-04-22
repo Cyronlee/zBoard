@@ -1,5 +1,5 @@
 import React from 'react';
-import OwnerRotation from '@/components/OwnerRotation';
+import OwnerRotationCard from '@/components/OwnerRotationCard';
 import { Flex, SystemProps } from '@chakra-ui/react';
 import RefreshWrapper from '@/components/RefreshWrapper';
 import { useErrorToast } from '@/lib/customToast';
@@ -34,7 +34,7 @@ const icons = [
   },
 ];
 
-const OwnerRotationList = (props: SystemProps) => {
+const OwnerRotationOverview = (props: SystemProps) => {
   const toastError = useErrorToast();
 
   const fetchData = async () => {
@@ -71,7 +71,7 @@ const OwnerRotationList = (props: SystemProps) => {
         >
           <>
             {data.map((item, index) => (
-              <OwnerRotation
+              <OwnerRotationCard
                 key={item.ownerType}
                 ownerType={item.ownerType}
                 owners={item.owners ?? []}
@@ -87,4 +87,4 @@ const OwnerRotationList = (props: SystemProps) => {
   );
 };
 
-export default OwnerRotationList;
+export default OwnerRotationOverview;

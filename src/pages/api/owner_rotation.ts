@@ -1,7 +1,7 @@
 import { NextApiHandler } from 'next';
 import { delay1s } from '@/lib/delay';
 import { googleSheetConfig } from '../../../config/google_sheet.config';
-import { RotationOwner, RotationOwners } from '@/components/OwnerRotationList';
+import { RotationOwner, RotationOwners } from '@/components/OwnerRotationOverview';
 import { getOwnerRotationFakeData } from '../../../fake/owner_rotation.fake';
 
 interface SheetCol {
@@ -26,10 +26,18 @@ const handler: NextApiHandler = async (req, res) => {
 };
 
 const getAllOwners = async () => {
-  if (!googleSheetConfig.baseUrl) {
+  if (googleSheetConfig.documents[0]?.docId?.length < 20) {
     return delay1s(getOwnerRotationFakeData);
   }
   return await fetchOwners();
+};
+
+const formatSheetRow = (list: SheetRowItem[]) => {
+  for (let i = list.length - 1; i >= 0; i--) {
+    if (list[i] === null || list[i].v === null) {
+      list.splice(i, 1);
+    }
+  }
 };
 
 const fetchOwners = async () => {
@@ -45,9 +53,10 @@ const fetchOwners = async () => {
     }
     const json = await response.text();
     const res = JSON.parse(json.substring(47).slice(0, -2));
-    const fields = res.table.cols.flatMap((it: SheetCol) => it.label);
-    const values = res.table.rows.map((it: SheetRow) => it.c);
-
+    let fields = res.table.cols.flatMap((it: SheetCol) => it.label);
+    fields = fields.filter((it: string) => it !== '');
+    let values = res.table.rows.map((it: SheetRow) => it.c);
+    values.forEach((it: SheetRowItem[]) => formatSheetRow(it));
     let owners: RotationOwner[] = [];
     values.forEach((row: SheetRowItem[]) => {
       let dataRow: RotationOwner = { cname: '', ename: '', is_owner: 0 };

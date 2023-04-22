@@ -4,7 +4,7 @@ import TicketStatusOverview from '@/components/TicketStatusOverview';
 import ProjectTimeline from '@/components/ProjectTimeline';
 import CollapseNavbar from '@/components/CollapseNavbar';
 import UpdateChecker from '@/components/UpdateChecker';
-import OwnerRotationList from '@/components/OwnerRotationList';
+import OwnerRotationOverview from '@/components/OwnerRotationOverview';
 
 export default function Home() {
   return (
@@ -12,8 +12,8 @@ export default function Home() {
       <UpdateChecker />
       <VStack h="100%">
         <CollapseNavbar />
-        <HStack w="100%" overflowY="hidden">
-          <OwnerRotationList w="15%" />
+        <HStack minH="92%" w="100%" overflowY="hidden">
+          <OwnerRotationOverview w="15%" />
           <VStack h="100%" w="85%">
             <HStack h="448px" w="100%">
               <BuildStatusOverview flex="75%" h="100%" />

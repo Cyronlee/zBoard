@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { Box, Heading, Text, Card, CardBody, HStack, Center } from '@chakra-ui/react';
-import { RotationOwner } from '@/components/OwnerRotationList';
+import { RotationOwner } from '@/components/OwnerRotationOverview';
 
 interface OwnerRotationProps {
   ownerType: string;
@@ -10,7 +10,13 @@ interface OwnerRotationProps {
   icon: ReactNode;
 }
 
-const OwnerRotation = ({ ownerType, owners, current, colorScheme, icon }: OwnerRotationProps) => {
+const OwnerRotationCard = ({
+  ownerType,
+  owners,
+  current,
+  colorScheme,
+  icon,
+}: OwnerRotationProps) => {
   const findOwner = (index: number) => {
     return owners[(index + owners.length) % owners.length];
   };
@@ -86,4 +92,4 @@ const OwnerRotation = ({ ownerType, owners, current, colorScheme, icon }: OwnerR
   );
 };
 
-export default OwnerRotation;
+export default OwnerRotationCard;
