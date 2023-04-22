@@ -6,7 +6,7 @@ const nextConfig = {
   webpack: (config, { webpack }) => {
     config.plugins.push(
       new webpack.DefinePlugin({
-        'process.env.CONFIG_CURRENT_VERSION': JSON.stringify(version),
+        'process.env.CURRENT_APP_VERSION': JSON.stringify(version),
       })
     );
     return config;
