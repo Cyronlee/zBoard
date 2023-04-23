@@ -51,7 +51,7 @@ const OwnerRotationCard = ({
             // textOverflow="ellipsis"
             maxW="150px"
           >
-            {findOwner(current - 1)?.ename}
+            {findOwner(current - 1)?.name}
           </Text>
           <Card
             direction={{ base: 'column', sm: 'row' }}
@@ -71,7 +71,7 @@ const OwnerRotationCard = ({
                 // textOverflow="ellipsis"
                 maxW="150px"
               >
-                {findOwner(current)?.ename}
+                {findOwner(current)?.name}
               </Text>
             </Center>
           </Card>
@@ -84,7 +84,7 @@ const OwnerRotationCard = ({
             // textOverflow="ellipsis"
             maxW="150px"
           >
-            {findOwner(current + 1)?.ename}
+            {findOwner(current + 1)?.name}
           </Text>
         </CardBody>
       </HStack>

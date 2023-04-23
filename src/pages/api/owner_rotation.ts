@@ -3,6 +3,7 @@ import { delay1s } from '@/lib/delay';
 import { googleSheetConfig } from '../../../config/google_sheet.config';
 import { RotationOwner, RotationOwners } from '@/components/OwnerRotationOverview';
 import { getOwnerRotationFakeData } from '../../../fake/owner_rotation.fake';
+import moment from 'moment';
 
 interface SheetCol {
   id: string;
@@ -17,6 +18,13 @@ interface SheetRowItem {
 
 interface SheetRow {
   c: SheetRowItem[];
+}
+
+interface RowOwner {
+  name: string;
+  start_time: string;
+  end_time: string;
+  [key: string]: any;
 }
 
 const handler: NextApiHandler = async (req, res) => {
@@ -40,6 +48,79 @@ const formatSheetRow = (list: SheetRowItem[]) => {
   }
 };
 
+const datePattern = /^Date\(\d{4},\d{1,2},\d{1,2}\)$/;
+
+const dateConverter = (dateStr: string) => {
+  if (datePattern.test(dateStr)) {
+    const dates = dateStr.substring(5).slice(0, -1).split(',');
+    return new Date(Number(dates[0]), Number(dates[1]), Number(dates[2]));
+  }
+  return null;
+};
+
+const dateStrConverter = (date: Date | null) => {
+  return `Date(${date?.getFullYear()},${date?.getMonth()},${date?.getDate()})`;
+};
+
+const isAfter = (dateStr1: string, dateStr2: string) => {
+  let moment1 = moment(dateConverter(dateStr1));
+  let moment2 = moment(dateConverter(dateStr2));
+  return moment1.isAfter(moment2);
+};
+
+const isTodayBetween = (startDate: string, endDate: string) => {
+  let moment1 = moment(dateConverter(startDate));
+  let current = moment();
+  if (!endDate) {
+    return moment1.isBefore(current);
+  }
+  let moment2 = moment(dateConverter(endDate));
+  return current.isBetween(moment1, moment2);
+};
+
+const modifyDateByDay = (originDate: Date | null, offset: number) => {
+  originDate?.setDate(originDate?.getDate() + offset);
+  return dateStrConverter(originDate);
+};
+
+const fillEmptyOwner = (rows: RowOwner[]) => {
+  if (rows.length > 0) {
+    let current = moment();
+    let date1 = dateConverter(rows[0].start_time);
+    let moment1 = moment(date1);
+    if (current.isBefore(moment1)) {
+      rows.unshift({ name: 'Nobody', start_time: '', end_time: modifyDateByDay(date1, -1) });
+      return;
+    }
+    let date2 = dateConverter(rows[rows.length - 1].end_time);
+    let moment2 = moment(date2);
+    if (current.isAfter(moment2)) {
+      rows.push({ name: 'Nobody', start_time: modifyDateByDay(date2, 1), end_time: '' });
+    }
+  }
+};
+
+const convertRowOwners = (rows: RowOwner[]) => {
+  let owners: RotationOwner[] = [];
+  if (rows?.every((it) => datePattern.test(it.start_time))) {
+    rows.sort((a, b) => (isAfter(a.start_time, b.start_time) ? 1 : -1));
+    rows.sort((a, b) => {
+      if (!datePattern.test(b.end_time)) {
+        b.end_time = modifyDateByDay(dateConverter(a.start_time), -1);
+      }
+      return 1;
+    });
+  }
+  fillEmptyOwner(rows);
+  rows.forEach((row) => {
+    owners.push({
+      name: row.name,
+      isOwner: isTodayBetween(row.start_time, row.end_time),
+    });
+  });
+  return owners;
+};
+
 const fetchOwners = async () => {
   let allOwners: RotationOwners[] = [];
   const datasheets = googleSheetConfig.documents[0].sheets;
@@ -57,17 +138,21 @@ const fetchOwners = async () => {
     fields = fields.filter((it: string) => it !== '');
     let values = res.table.rows.map((it: SheetRow) => it.c);
     values.forEach((it: SheetRowItem[]) => formatSheetRow(it));
-    let owners: RotationOwner[] = [];
+    let ownerRows: RowOwner[] = [];
     values.forEach((row: SheetRowItem[]) => {
-      let dataRow: RotationOwner = { cname: '', ename: '', is_owner: 0 };
+      let dataRow: RowOwner = {
+        name: '',
+        start_time: '',
+        end_time: '',
+      };
       fields.forEach((col: string, index: number) => {
-        dataRow[col] = row[index].v;
+        dataRow[col] = row[index]?.v ?? '';
       });
-      owners.push(dataRow);
+      ownerRows.push(dataRow);
     });
     let allOwner = {
       ownerType: sheet.sheetAlias,
-      owners: owners,
+      owners: convertRowOwners(ownerRows),
     };
     allOwners.push(allOwner);
   }

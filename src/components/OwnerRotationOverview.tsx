@@ -6,10 +6,8 @@ import { useErrorToast } from '@/lib/customToast';
 import { CalendarIcon, EmailIcon, RepeatClockIcon } from '@chakra-ui/icons';
 
 export interface RotationOwner {
-  cname: string;
-  ename: string;
-  is_owner: number;
-  [key: string]: any;
+  name: string;
+  isOwner: boolean;
 }
 
 export interface RotationOwners {
@@ -48,7 +46,9 @@ const OwnerRotationOverview = (props: SystemProps) => {
   };
 
   const findCurrentOwner = (data: RotationOwner[]) => {
-    return data?.findIndex((it) => it.is_owner === 1) ?? 0;
+    let number = data?.findIndex((it) => it.isOwner) ?? 0;
+    console.log('findCurrentOwner:', number);
+    return number;
   };
 
   return (
