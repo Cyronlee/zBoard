@@ -1,25 +1,23 @@
-import React, { ReactNode } from 'react';
-import { Box, Heading, Text, Card, CardBody, HStack, Center } from '@chakra-ui/react';
+import React, { ReactNode, useEffect, useState } from 'react';
+import { Box, Card, CardBody, Center, Heading, HStack, Text } from '@chakra-ui/react';
 import { RotationOwner } from '@/components/OwnerRotationOverview';
 
 interface OwnerRotationProps {
   ownerType: string;
   owners: RotationOwner[];
-  current: number;
   colorScheme: string;
   icon: ReactNode;
 }
 
-const OwnerRotationCard = ({
-  ownerType,
-  owners,
-  current,
-  colorScheme,
-  icon,
-}: OwnerRotationProps) => {
+const OwnerRotationCard = ({ ownerType, owners, colorScheme, icon }: OwnerRotationProps) => {
+  const [currentIndex, setCurrentIndex] = useState(-1);
   const findOwner = (index: number) => {
     return owners[(index + owners.length) % owners.length];
   };
+
+  useEffect(() => {
+    setCurrentIndex(owners.findIndex((it) => it.isOwner) ?? 0);
+  }, [owners]);
 
   return (
     <Card
@@ -51,7 +49,7 @@ const OwnerRotationCard = ({
             // textOverflow="ellipsis"
             maxW="150px"
           >
-            {findOwner(current - 1)?.name}
+            {findOwner(currentIndex - 1)?.name}
           </Text>
           <Card
             direction={{ base: 'column', sm: 'row' }}
@@ -71,7 +69,7 @@ const OwnerRotationCard = ({
                 // textOverflow="ellipsis"
                 maxW="150px"
               >
-                {findOwner(current)?.name}
+                {findOwner(currentIndex)?.name}
               </Text>
             </Center>
           </Card>
@@ -84,7 +82,7 @@ const OwnerRotationCard = ({
             // textOverflow="ellipsis"
             maxW="150px"
           >
-            {findOwner(current + 1)?.name}
+            {findOwner(currentIndex + 1)?.name}
           </Text>
         </CardBody>
       </HStack>

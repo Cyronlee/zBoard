@@ -45,12 +45,6 @@ const OwnerRotationOverview = (props: SystemProps) => {
     }
   };
 
-  const findCurrentOwner = (data: RotationOwner[]) => {
-    let number = data?.findIndex((it) => it.isOwner) ?? 0;
-    console.log('findCurrentOwner:', number);
-    return number;
-  };
-
   return (
     <RefreshWrapper
       {...props}
@@ -75,7 +69,6 @@ const OwnerRotationOverview = (props: SystemProps) => {
                 key={item.ownerType}
                 ownerType={item.ownerType}
                 owners={item.owners ?? []}
-                current={findCurrentOwner(item.owners)}
                 colorScheme={icons[index % icons.length].color}
                 icon={icons[index % icons.length].icon}
               />
