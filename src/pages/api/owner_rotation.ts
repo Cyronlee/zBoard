@@ -50,7 +50,7 @@ const formatSheetRow = (list: SheetRowItem[]) => {
 
 const datePattern = /^Date\(\d{4},\d{1,2},\d{1,2}\)$/;
 
-const dateConverter = (dateStr: string) => {
+const dateStrConverter = (dateStr: string) => {
   if (datePattern.test(dateStr)) {
     const dates = dateStr.substring(5).slice(0, -1).split(',');
     return new Date(Number(dates[0]), Number(dates[1]), Number(dates[2]));
@@ -58,41 +58,44 @@ const dateConverter = (dateStr: string) => {
   return null;
 };
 
-const dateStrConverter = (date: Date | null) => {
+const dateConverter = (date: Date | null) => {
   return `Date(${date?.getFullYear()},${date?.getMonth()},${date?.getDate()})`;
 };
 
 const isAfter = (dateStr1: string, dateStr2: string) => {
-  let moment1 = moment(dateConverter(dateStr1));
-  let moment2 = moment(dateConverter(dateStr2));
+  let moment1 = moment(dateStrConverter(dateStr1));
+  let moment2 = moment(dateStrConverter(dateStr2));
   return moment1.isAfter(moment2);
 };
 
 const isTodayBetween = (startDate: string, endDate: string) => {
-  let moment1 = moment(dateConverter(startDate));
   let current = moment();
-  if (!endDate) {
-    return moment1.isBefore(current);
+  let moment1 = moment(dateStrConverter(startDate));
+  if (startDate && !endDate) {
+    return moment1.isAfter(current);
   }
-  let moment2 = moment(dateConverter(endDate));
+  let moment2 = moment(dateStrConverter(endDate));
+  if (!startDate && endDate) {
+    return moment2.isBefore(current);
+  }
   return current.isBetween(moment1, moment2);
 };
 
 const modifyDateByDay = (originDate: Date | null, offset: number) => {
   originDate?.setDate(originDate?.getDate() + offset);
-  return dateStrConverter(originDate);
+  return dateConverter(originDate);
 };
 
 const fillEmptyOwner = (rows: RowOwner[]) => {
   if (rows.length > 0) {
     let current = moment();
-    let date1 = dateConverter(rows[0].start_time);
+    let date1 = dateStrConverter(rows[0].start_time);
     let moment1 = moment(date1);
     if (current.isBefore(moment1)) {
       rows.unshift({ name: 'Nobody', start_time: '', end_time: modifyDateByDay(date1, -1) });
       return;
     }
-    let date2 = dateConverter(rows[rows.length - 1].end_time);
+    let date2 = dateStrConverter(rows[rows.length - 1].end_time);
     let moment2 = moment(date2);
     if (current.isAfter(moment2)) {
       rows.push({ name: 'Nobody', start_time: modifyDateByDay(date2, 1), end_time: '' });
@@ -106,7 +109,7 @@ const convertRowOwners = (rows: RowOwner[]) => {
     rows.sort((a, b) => (isAfter(a.start_time, b.start_time) ? 1 : -1));
     rows.sort((a, b) => {
       if (!datePattern.test(b.end_time)) {
-        b.end_time = modifyDateByDay(dateConverter(a.start_time), -1);
+        b.end_time = modifyDateByDay(dateStrConverter(a.start_time), -1);
       }
       return 1;
     });
