@@ -43,7 +43,6 @@ interface Pipelines {
   items: Pipeline[];
 }
 
-
 const handler: NextApiHandler = async (req, res) => {
   getAllBuildStatus()
     .then((response) => res.status(200).json(response))

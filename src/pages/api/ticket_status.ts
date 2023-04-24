@@ -5,13 +5,12 @@ import { getTicketStatusFakeData } from '../../../fake/ticket_status.fake';
 import { delay1s } from '@/lib/delay';
 import { btoa } from 'buffer';
 
-
 interface Ticket {
-  subject: string,
-  status: string,
-  url: string,
-  created_at: string,
-  updated_at: string
+  subject: string;
+  status: string;
+  url: string;
+  created_at: string;
+  updated_at: string;
 }
 
 const handler: NextApiHandler = async (req, res) => {

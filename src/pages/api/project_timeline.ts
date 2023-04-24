@@ -23,17 +23,17 @@ interface TimelineCard {
 }
 
 interface User {
-  name: string,
-  avatar: string
+  name: string;
+  avatar: string;
 }
 
 interface KanbanUser {
-  user_id: number,
-  username: string,
-  avatar: string,
-  realname: string,
-  is_confirmed: number,
-  is_enabled: number
+  user_id: number;
+  username: string;
+  avatar: string;
+  realname: string;
+  is_confirmed: number;
+  is_enabled: number;
 }
 
 const handler: NextApiHandler = async (req, res) => {
@@ -70,15 +70,18 @@ const fetchCards = async (startDate: string, endDate: string) => {
   }
   const json = await response.json();
 
-    const userIds: number[] = json.data.data.flatMap(({ owner_user_id, co_owner_ids }:
-                                                          { owner_user_id: number; co_owner_ids: number[] }) => [
-        owner_user_id,
-        ...co_owner_ids,
-    ]);
+  const userIds: number[] = json.data.data.flatMap(
+    ({ owner_user_id, co_owner_ids }: { owner_user_id: number; co_owner_ids: number[] }) => [
+      owner_user_id,
+      ...co_owner_ids,
+    ]
+  );
   const buildUserInfo = await fetchUserInfo(userIds);
 
   let cards = json.data.data.map((card: TimelineCard) => buildCardInfo(card, buildUserInfo));
-  return cards.filter((card: TimelineCard) => card.startDate >= startDate && card.endDate < endDate);
+  return cards.filter(
+    (card: TimelineCard) => card.startDate >= startDate && card.endDate < endDate
+  );
 };
 
 const buildCardInfo = (card: TimelineCard, buildUserInfo: (userId: number) => User | null) => {
