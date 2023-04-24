@@ -62,6 +62,7 @@ const OwnerRotationOverview = (props: SystemProps) => {
           gap={4}
           overflowY="scroll"
           h="100%"
+          maxW="320px"
         >
           <>
             {data.map((item, index) => (

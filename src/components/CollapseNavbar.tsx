@@ -64,6 +64,9 @@ const CollapseNavbar = () => {
                 <Link href="/example/project-timeline">
                   <MenuItem>Project Timeline</MenuItem>
                 </Link>
+                <Link href="/example/owner-rotation-overview">
+                  <MenuItem>Owner Rotation</MenuItem>
+                </Link>
               </MenuList>
             </Menu>
             <ThemeToggle />
