@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, ReactNode } from 'react';
 import moment from 'moment';
 import {
   Box,
@@ -70,8 +70,8 @@ const Timeline = (props: SystemProps) => {
     if (res.status == 200) {
       const json = await res.json();
       const cards = json
-        .filter((card: any) => card.startDate > startDate)
-        .filter((card: any) => card.startDate !== card.endDate);
+        .filter((card: CardInfo) => card.startDate > startDate)
+        .filter((card: CardInfo) => card.startDate !== card.endDate);
       setCards(cards);
     } else {
       toastError(await res.text());
@@ -169,7 +169,7 @@ const Timeline = (props: SystemProps) => {
   };
 
   const renderWeekendGrids = (displayDates: string[]) => {
-    const weekendBgItems: any[] = [];
+    const weekendBgItems: ReactNode[] = [];
     displayDates.forEach((date, index) => {
       if (moment(date).isoWeekday() === 6 || moment(date).isoWeekday() === 7)
         weekendBgItems.push(
@@ -188,7 +188,7 @@ const Timeline = (props: SystemProps) => {
   };
 
   const renderMonthIndicatorGrids = (displayDates: string[]) => {
-    const gridYearMonth: React.ReactNode[] = [];
+    const gridYearMonth: ReactNode[] = [];
     displayDates?.forEach((date, index) => {
       if (index == 0 || moment(date).date() == 1) {
         const monthYearStr = moment(date).format('MMMM YYYY');
