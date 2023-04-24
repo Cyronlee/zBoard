@@ -1,8 +1,40 @@
 import { NextApiHandler } from 'next';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import { getProjectTimelineFakeData } from '../../../fake/project_timeline.fake';
 import { delay1s } from '@/lib/delay';
 import { kanbanConfig } from '@/../config/kanban.config';
+
+interface CardTransition {
+  column_id: number;
+  start: string | Moment;
+}
+
+interface TimelineCard {
+  startDate: string;
+  endDate: string;
+  card_id: string;
+  title: string;
+  color: string;
+  column_id: number;
+  owner_user_id: number;
+  co_owner_ids: number[];
+  deadline: string;
+  transitions: CardTransition[];
+}
+
+interface User {
+  name: string;
+  avatar: string;
+}
+
+interface KanbanUser {
+  user_id: number;
+  username: string;
+  avatar: string;
+  realname: string;
+  is_confirmed: number;
+  is_enabled: number;
+}
 
 const handler: NextApiHandler = async (req, res) => {
   const startDate = req.query.start_date as string;
@@ -38,18 +70,21 @@ const fetchCards = async (startDate: string, endDate: string) => {
   }
   const json = await response.json();
 
-    const userIds: number[] = json.data.data.flatMap(({ owner_user_id, co_owner_ids }:
-                                                          { owner_user_id: number; co_owner_ids: number[] }) => [
-        owner_user_id,
-        ...co_owner_ids,
-    ]);
+  const userIds: number[] = json.data.data.flatMap(
+    ({ owner_user_id, co_owner_ids }: { owner_user_id: number; co_owner_ids: number[] }) => [
+      owner_user_id,
+      ...co_owner_ids,
+    ]
+  );
   const buildUserInfo = await fetchUserInfo(userIds);
 
-  let cards = json.data.data.map((card: any) => buildCardInfo(card, buildUserInfo));
-  return cards.filter((card: any) => card.startDate >= startDate && card.endDate < endDate);
+  let cards = json.data.data.map((card: TimelineCard) => buildCardInfo(card, buildUserInfo));
+  return cards.filter(
+    (card: TimelineCard) => card.startDate >= startDate && card.endDate < endDate
+  );
 };
 
-const buildCardInfo = (card: any, buildUserInfo: (userId: number) => any) => {
+const buildCardInfo = (card: TimelineCard, buildUserInfo: (userId: number) => User | null) => {
   const [startDate, endDate] = calculateStartEndDate(card);
   const getColumnName = (columnId: number) => {
     return kanbanConfig.monitorColumns.find((c) => c.id === columnId)?.name;
@@ -77,7 +112,7 @@ const fetchUserInfo = async (userIds: number[]) => {
   const json = await response.json();
 
   return (userId: number) => {
-    const user = json.data.find((user: any) => user.user_id === userId);
+    const user = json.data.find((user: KanbanUser) => user.user_id === userId);
     return user
       ? {
           name: user.realname,
@@ -87,12 +122,12 @@ const fetchUserInfo = async (userIds: number[]) => {
   };
 };
 
-const calculateStartEndDate = (card: any): [startDate: string, endDate: string] => {
+const calculateStartEndDate = (card: TimelineCard): [startDate: string, endDate: string] => {
   // Find the first time a card was moved to configured columns
-  const startTime = card.transitions?.find((transition: any) =>
+  const startTime = card.transitions?.find((transition: CardTransition) =>
     kanbanConfig.startColumns.map(({ id }) => id).includes(transition.column_id)
   )?.start;
-  let endTime = card.transitions?.find((transition: any) =>
+  let endTime = card.transitions?.find((transition: CardTransition) =>
     kanbanConfig.endColumns.map(({ id }) => id).includes(transition.column_id)
   )?.start;
   endTime =

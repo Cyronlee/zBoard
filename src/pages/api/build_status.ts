@@ -3,7 +3,45 @@ import _ from 'lodash';
 import { circleCIConfig } from '@/../config/circle_ci.config';
 import { getBuildStatusFakeData } from '@/../../fake/build_status.fake';
 import { delay1s } from '@/lib/delay';
-import { any } from 'prop-types';
+
+interface PipelineTriggerActor {
+  login: string;
+  avatar_url: string;
+}
+
+interface PipelineTrigger {
+  actor: PipelineTriggerActor;
+}
+
+interface PipelineVcsCommit {
+  body: string;
+  subject: string;
+}
+
+interface PipelineVcs {
+  commit: PipelineVcsCommit;
+}
+
+interface Workflow {
+  id: string;
+  created_at: string;
+  status: string;
+}
+
+interface Workflows {
+  items: Workflow[];
+}
+
+interface Pipeline {
+  id: string;
+  updated_at: string;
+  trigger: PipelineTrigger;
+  vcs: PipelineVcs;
+}
+
+interface Pipelines {
+  items: Pipeline[];
+}
 
 const handler: NextApiHandler = async (req, res) => {
   getAllBuildStatus()
@@ -31,9 +69,9 @@ const getBuildStatus = async ({
   projectSlug: string;
   branch: string;
 }) => {
-  const latestPipeline: any = await getLatestPipeline(projectSlug, branch);
+  const latestPipeline: Pipeline = await getLatestPipeline(projectSlug, branch);
   const { login, avatar_url } = latestPipeline.trigger.actor;
-  const latestWorkflow: any = await getLatestWorkflow(latestPipeline.id);
+  const latestWorkflow: Workflow = await getLatestWorkflow(latestPipeline.id);
   return {
     projectName: projectName,
     branch,
@@ -45,30 +83,30 @@ const getBuildStatus = async ({
   };
 };
 
-const getLatestPipeline = async (projectSlug: string, branch: string) => {
-  let pipelines = await fetchPipelines(projectSlug, branch);
-  return _.orderBy(<any>pipelines.items, 'updated_at', 'desc')[0];
+const getLatestPipeline = async (projectSlug: string, branch: string): Promise<Pipeline> => {
+  let pipelines: Pipelines = await fetchPipelines(projectSlug, branch);
+  return _.orderBy(pipelines.items, 'updated_at', 'desc')[0];
 };
 
-const getLatestWorkflow = async (pipelineId: string) => {
+const getLatestWorkflow = async (pipelineId: string): Promise<Workflow> => {
   const workflows = await fetchWorkflows(pipelineId);
-  return _.orderBy(<any>workflows.items, 'created_at', 'desc')[0];
+  return _.orderBy(workflows.items, 'created_at', 'desc')[0];
 };
 
-const fetchPipelines = async (projectSlug: string, branch: string) => {
+const fetchPipelines = async (projectSlug: string, branch: string): Promise<Pipelines> => {
   const url = `https://circleci.com/api/v2/project/${projectSlug}/pipeline?branch=${branch}&circle-token=${circleCIConfig.apiToken}`;
   const response = await fetch(url);
-  let json = await response.json();
+  let json: Pipelines = await response.json();
   if (!response.ok) {
     throw new Error(JSON.stringify(json));
   }
   return json;
 };
 
-const fetchWorkflows = async (pipelineId: string) => {
+const fetchWorkflows = async (pipelineId: string): Promise<Workflows> => {
   const url = `https://circleci.com/api/v2/pipeline/${pipelineId}/workflow?circle-token=${circleCIConfig.apiToken}`;
   const response = await fetch(url);
-  let json = await response.json();
+  let json: Workflows = await response.json();
   if (!response.ok) {
     throw new Error(JSON.stringify(json));
   }
