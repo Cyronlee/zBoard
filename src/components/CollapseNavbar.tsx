@@ -12,25 +12,16 @@ import {
   MenuList,
   MenuItem,
   useColorModeValue,
-  Text,
 } from '@chakra-ui/react';
 import { siteConfig } from '@/../../config/site.config';
 import ThemeToggle from '@/components/ThemeToggle';
 import { ChevronDownIcon, MinusIcon } from '@chakra-ui/icons';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 
 const CollapseNavbar = () => {
-  const router = useRouter();
-
   const [isOpen, setIsOpen] = useState(true);
 
   const borderColor = useColorModeValue('gray.300', 'gray.400');
-
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, url: string) => {
-    e.preventDefault();
-    router.push(url);
-  };
 
   return (
     <Box
@@ -61,18 +52,18 @@ const CollapseNavbar = () => {
                 Pages
               </MenuButton>
               <MenuList>
-                <MenuItem onClick={(e) => handleClick(e, '/')}>
-                  <Text>Dashboard</Text>
-                </MenuItem>
-                <MenuItem onClick={(e) => handleClick(e, '/example/build-status-overview')}>
-                  <Text>Build Status</Text>
-                </MenuItem>
-                <MenuItem onClick={(e) => handleClick(e, '/example/ticket-status-overview')}>
-                  <Text>Ticket Status</Text>
-                </MenuItem>
-                <MenuItem onClick={(e) => handleClick(e, '/example/project-timeline')}>
-                  <Text>Project Timeline</Text>
-                </MenuItem>
+                <Link href="/">
+                  <MenuItem>Dashboard</MenuItem>
+                </Link>
+                <Link href="/example/build-status-overview">
+                  <MenuItem>Build Status</MenuItem>
+                </Link>
+                <Link href="/example/ticket-status-overview">
+                  <MenuItem>Ticket Status</MenuItem>
+                </Link>
+                <Link href="/example/project-timeline">
+                  <MenuItem>Project Timeline</MenuItem>
+                </Link>
               </MenuList>
             </Menu>
             <ThemeToggle />
