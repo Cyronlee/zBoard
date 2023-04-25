@@ -10,7 +10,7 @@ export default function Home() {
     <VStack w="100vw" h="100vh" p="8px" pt="0">
       <UpdateChecker />
       <CollapseNavbar />
-      <VStack flex="1" width="100vw" overflow="hidden">
+      <VStack px="8px" flex="1" width="100vw" overflow="hidden">
         <HStack h="448px" w="100%">
           <BuildStatusOverview flex="75%" h="100%" />
           <TicketStatusOverview flex="25%" h="100%" />
