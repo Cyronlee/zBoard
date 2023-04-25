@@ -63,6 +63,7 @@ const OwnerRotationOverview = (props: SystemProps) => {
           gap={4}
           overflowY="scroll"
           h="100%"
+          w="100%"
           maxW="320px"
         >
           <>
