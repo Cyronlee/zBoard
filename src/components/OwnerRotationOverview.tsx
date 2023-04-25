@@ -4,6 +4,7 @@ import { Flex, SystemProps } from '@chakra-ui/react';
 import RefreshWrapper from '@/components/RefreshWrapper';
 import { useErrorToast } from '@/lib/customToast';
 import { CalendarIcon, EmailIcon, RepeatClockIcon } from '@chakra-ui/icons';
+import moment from 'moment';
 
 export interface RotationOwner {
   name: string;
@@ -36,7 +37,7 @@ const OwnerRotationOverview = (props: SystemProps) => {
   const toastError = useErrorToast();
 
   const fetchData = async () => {
-    const res = await fetch('/api/owner_rotation');
+    const res = await fetch(`/api/owner_rotation?date=${moment().format('YYYY-MM-DD')}`);
     if (res.ok) {
       return await res.json();
     } else {

@@ -28,16 +28,16 @@ interface RowOwner {
 }
 
 const handler: NextApiHandler = async (req, res) => {
-  getAllOwners()
+  getAllOwners(String(req.query.date))
     .then((response) => res.status(200).json(response))
     .catch((err) => res.status(500).send(err.message));
 };
 
-const getAllOwners = async () => {
+const getAllOwners = async (date: string) => {
   if (googleSheetConfig.documents[0]?.docId?.length < 20) {
     return delay1s(getOwnerRotationFakeData);
   }
-  return await fetchOwners();
+  return await fetchOwners(date);
 };
 
 const formatSheetRow = (list: SheetRowItem[]) => {
@@ -68,8 +68,8 @@ const isAfter = (dateStr1: string, dateStr2: string) => {
   return moment1.isAfter(moment2);
 };
 
-const isTodayBetween = (startDate: string, endDate: string) => {
-  let current = moment();
+const isTodayBetween = (startDate: string, endDate: string, curDate: string) => {
+  let current = moment(curDate, 'YYYY-MM-DD');
   let moment1 = moment(dateStrConverter(startDate));
   if (startDate && !endDate) {
     return moment1.isAfter(current);
@@ -86,9 +86,9 @@ const modifyDateByDay = (originDate: Date | null, offset: number) => {
   return dateConverter(originDate);
 };
 
-const fillEmptyOwner = (rows: RowOwner[]) => {
+const fillEmptyOwner = (rows: RowOwner[], curDate: string) => {
   if (rows.length > 0) {
-    let current = moment();
+    let current = moment(curDate, 'YYYY-MM-DD');
     let date1 = dateStrConverter(rows[0].start_time);
     let moment1 = moment(date1);
     if (current.isBefore(moment1)) {
@@ -103,7 +103,7 @@ const fillEmptyOwner = (rows: RowOwner[]) => {
   }
 };
 
-const convertRowOwners = (rows: RowOwner[]) => {
+const convertRowOwners = (rows: RowOwner[], curDate: string) => {
   let owners: RotationOwner[] = [];
   if (rows?.every((it) => datePattern.test(it.start_time))) {
     rows.sort((a, b) => (isAfter(a.start_time, b.start_time) ? 1 : -1));
@@ -114,17 +114,17 @@ const convertRowOwners = (rows: RowOwner[]) => {
       return 1;
     });
   }
-  fillEmptyOwner(rows);
+  fillEmptyOwner(rows, curDate);
   rows.forEach((row) => {
     owners.push({
       name: row.name,
-      isOwner: isTodayBetween(row.start_time, row.end_time),
+      isOwner: isTodayBetween(row.start_time, row.end_time, curDate),
     });
   });
   return owners;
 };
 
-const fetchOwners = async () => {
+const fetchOwners = async (date: string) => {
   let allOwners: RotationOwners[] = [];
   const datasheets = googleSheetConfig.documents[0].sheets;
   for (const sheet of datasheets) {
@@ -155,7 +155,7 @@ const fetchOwners = async () => {
     });
     let allOwner = {
       ownerType: sheet.sheetAlias,
-      owners: convertRowOwners(ownerRows),
+      owners: convertRowOwners(ownerRows, date),
     };
     allOwners.push(allOwner);
   }
