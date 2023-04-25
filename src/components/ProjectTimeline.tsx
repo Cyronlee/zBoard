@@ -97,6 +97,9 @@ const Timeline = (props: SystemProps) => {
         rowStart={renderConfig.cardFirstRowNum + index}
         colStart={colStart + 1}
         colEnd={colEnd + 2}
+        display={"flex"}
+        flexDirection={"column"}
+        justifyContent={"center"}
       >
         {renderCard(cardInfo)}
       </GridItem>
