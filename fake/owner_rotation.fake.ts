@@ -6,16 +6,16 @@ export const getOwnerRotationFakeData = () => {
       ownerType: type,
       owners: [
         {
-          ename: faker.name.fullName(),
-          is_owner: 1,
+          name: faker.name.fullName(),
+          isOwner: 1,
         },
         {
-          ename: faker.name.fullName(),
-          is_owner: 0,
+          name: faker.name.fullName(),
+          isOwner: 0,
         },
         {
-          ename: faker.name.fullName(),
-          is_owner: 0,
+          name: faker.name.fullName(),
+          isOwner: 0,
         },
       ],
     };
