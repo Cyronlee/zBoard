@@ -22,7 +22,7 @@ Build with:
 </p>
 
 Demo: [https://z-board.vercel.app/](https://z-board.vercel.app/) Password: 123456
-![](https://github.com/Cyronlee/zBoard/blob/main/docs/screenshots/home.png?raw=true")
+![](https://github.com/Cyronlee/zBoard/blob/main/docs/screenshots/dashboard.jpg?raw=true")
 
 ## Features ✨
 
