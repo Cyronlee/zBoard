@@ -2,23 +2,11 @@ import React, { useState } from 'react';
 import {
   Box,
   Flex,
-  Text,
   HStack,
-  VStack,
-  Divider,
-  Spacer,
-  Skeleton,
   Button,
   Collapse,
-  Center,
   IconButton,
-  Icon,
-  Grid,
-  AvatarGroup,
-  GridItem,
-  Avatar,
   Heading,
-  SystemProps,
   Menu,
   MenuButton,
   MenuList,
@@ -64,18 +52,18 @@ const CollapseNavbar = () => {
                 Pages
               </MenuButton>
               <MenuList>
-                <MenuItem>
-                  <Link href="/">Dashboard</Link>
-                </MenuItem>
-                <MenuItem>
-                  <Link href="/example/build-status-overview">Build Status</Link>
-                </MenuItem>
-                <MenuItem>
-                  <Link href="/example/ticket-status-overview">Ticket Status</Link>
-                </MenuItem>
-                <MenuItem>
-                  <Link href="/example/project-timeline">Project Timeline</Link>
-                </MenuItem>
+                <Link href="/">
+                  <MenuItem>Dashboard</MenuItem>
+                </Link>
+                <Link href="/example/build-status-overview">
+                  <MenuItem>Build Status</MenuItem>
+                </Link>
+                <Link href="/example/ticket-status-overview">
+                  <MenuItem>Ticket Status</MenuItem>
+                </Link>
+                <Link href="/example/project-timeline">
+                  <MenuItem>Project Timeline</MenuItem>
+                </Link>
               </MenuList>
             </Menu>
             <ThemeToggle />
