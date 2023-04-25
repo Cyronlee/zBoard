@@ -9,6 +9,8 @@ import moment from 'moment';
 export interface RotationOwner {
   name: string;
   isOwner: boolean;
+  startTime: string;
+  endTime: string;
 }
 
 export interface RotationOwners {

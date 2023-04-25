@@ -44,8 +44,7 @@ const OwnerRotationCard = ({ ownerType, owners, colorScheme, icon }: OwnerRotati
           color="gray"
           whiteSpace="nowrap"
           overflow="hidden"
-          // textOverflow="ellipsis"
-          maxW="90%"
+          maxW="95%"
         >
           {findOwner(currentIndex - 1)?.name}
         </Text>
@@ -66,21 +65,12 @@ const OwnerRotationCard = ({ ownerType, owners, colorScheme, icon }: OwnerRotati
             fontSize="20px"
             whiteSpace="nowrap"
             overflow="hidden"
-            // textOverflow="ellipsis"
-            maxW="90%"
+            maxW="95%"
           >
             {findOwner(currentIndex)?.name}
           </Text>
         </Card>
-        <Text
-          pl="4"
-          fontSize="20px"
-          color="gray"
-          whiteSpace="nowrap"
-          overflow="hidden"
-          // textOverflow="ellipsis"
-          maxW="90%"
-        >
+        <Text pl="4" fontSize="20px" color="gray" whiteSpace="nowrap" overflow="hidden" maxW="95%">
           {findOwner(currentIndex + 1)?.name}
         </Text>
       </CardBody>

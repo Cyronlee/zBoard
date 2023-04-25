@@ -62,6 +62,17 @@ const dateConverter = (date: Date | null) => {
   return `Date(${date?.getFullYear()},${date?.getMonth()},${date?.getDate()})`;
 };
 
+const dateFormatWithoutZone = (dateStr: string) => {
+  if (datePattern.test(dateStr)) {
+    const dates = dateStr.substring(5).slice(0, -1).split(',');
+    const year = dates[0];
+    const month = (Number(dates[1]) + 1).toString().padStart(2, '0');
+    const day = dates[2].padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+  return '';
+};
+
 const isAfter = (dateStr1: string, dateStr2: string) => {
   let moment1 = moment(dateStrConverter(dateStr1));
   let moment2 = moment(dateStrConverter(dateStr2));
@@ -119,6 +130,8 @@ const convertRowOwners = (rows: RowOwner[], curDate: string) => {
     owners.push({
       name: row.name,
       isOwner: isTodayBetween(row.start_time, row.end_time, curDate),
+      startTime: dateFormatWithoutZone(row.start_time),
+      endTime: dateFormatWithoutZone(row.end_time),
     });
   });
   return owners;
