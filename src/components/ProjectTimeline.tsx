@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, ReactNode } from 'react';
+import React, { useState, useRef, useEffect, ReactNode, useMemo } from 'react';
 import moment from 'moment';
 import {
   Box,
@@ -14,6 +14,7 @@ import {
   SystemProps,
   useColorModeValue,
 } from '@chakra-ui/react';
+import { orderBy } from 'lodash';
 import { useErrorToast } from '@/lib/customToast';
 
 interface OwnerItem {
@@ -52,12 +53,37 @@ while (startDateMoment.isBefore(endDateMoment)) {
   startDateMoment.add(1, 'day');
 }
 
+/** card1.startDate < card2.startDate */
+const canPlaceToOneLine = (card1: CardInfo, card2: CardInfo, gapDays: number) => {
+  return moment(card1.endDate).add(gapDays, 'days').isBefore(card2.startDate);
+};
+const getCompactTimelines = (cards: CardInfo[]) => {
+  const sortedCards = orderBy(cards, 'startDate');
+  const lines: CardInfo[][] = [];
+
+  for (const card of sortedCards) {
+    let placed = false;
+    for (const line of lines) {
+      if (canPlaceToOneLine(line.at(-1)!, card, 2)) {
+        line.push(card);
+        placed = true;
+        break;
+      }
+    }
+
+    if (placed) continue;
+    lines.push([card]);
+  }
+
+  return lines.reverse();
+};
+
 const Timeline = (props: SystemProps) => {
   const toastError = useErrorToast();
   const todayRef = useRef<HTMLDivElement | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const [cards, setCards] = useState([]);
+  const [cards, setCards] = useState<CardInfo[]>([]);
   const [displayDates, setDisplayDates] = useState<string[]>([]);
 
   const gridBgColor = useColorModeValue('#FFF', 'gray.800');
@@ -105,6 +131,10 @@ const Timeline = (props: SystemProps) => {
       </GridItem>
     );
   };
+
+  const renderTimeline = (cards: CardInfo[], index: number) => {
+    return cards.map((card) => renderCardGrid(card, index));
+  }
 
   const renderCard = (card: CardInfo) => {
     return (
@@ -257,6 +287,8 @@ const Timeline = (props: SystemProps) => {
     });
   };
 
+  const lines = useMemo(() => getCompactTimelines(cards), [cards]);
+
   return (
     <Box
       minH="200px"
@@ -302,7 +334,7 @@ const Timeline = (props: SystemProps) => {
               templateColumns={`repeat(${displayDates.length}, 1fr)`}
             >
               {renderWeekendGrids(displayDates)}
-              {cards.map((cardInfo, index) => renderCardGrid(cardInfo, index))}
+              {lines.map((cards, index) => renderTimeline(cards, index))}
             </Grid>
           ) : (
             <Skeleton w="100%" h="100%"></Skeleton>
