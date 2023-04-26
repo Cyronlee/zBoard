@@ -1,7 +1,7 @@
 import { NextApiHandler } from 'next';
 import { delay1s } from '@/lib/delay';
 import { googleSheetConfig } from '../../../config/google_sheet.config';
-import { RotationOwner, RotationOwners } from '@/components/OwnerRotationOverview';
+import { Member, Rotation } from '@/components/OwnerRotationOverview';
 import { getOwnerRotationFakeData } from '../../../fake/owner_rotation.fake';
 import moment from 'moment';
 
@@ -115,7 +115,7 @@ const fillEmptyOwner = (rows: RowOwner[], curDate: string) => {
 };
 
 const convertRowOwners = (rows: RowOwner[], curDate: string) => {
-  let owners: RotationOwner[] = [];
+  let owners: Member[] = [];
   if (rows?.every((it) => datePattern.test(it.start_time))) {
     rows.sort((a, b) => (isAfter(a.start_time, b.start_time) ? 1 : -1));
     rows.sort((a, b) => {
@@ -127,18 +127,18 @@ const convertRowOwners = (rows: RowOwner[], curDate: string) => {
   }
   fillEmptyOwner(rows, curDate);
   rows.forEach((row) => {
-    owners.push({
-      name: row.name,
-      isOwner: isTodayBetween(row.start_time, row.end_time, curDate),
-      startTime: dateFormatWithoutZone(row.start_time),
-      endTime: dateFormatWithoutZone(row.end_time),
-    });
+    // owners.push({
+    //   name: row.name,
+    //   isOwner: isTodayBetween(row.start_time, row.end_time, curDate),
+    //   startTime: dateFormatWithoutZone(row.start_time),
+    //   endTime: dateFormatWithoutZone(row.end_time),
+    // });
   });
   return owners;
 };
 
 const fetchOwners = async (date: string) => {
-  let allOwners: RotationOwners[] = [];
+  let allOwners: Rotation[] = [];
   const datasheets = googleSheetConfig.documents[0].sheets;
   for (const sheet of datasheets) {
     const docUrl = `${googleSheetConfig.baseUrl}${googleSheetConfig.documents[0].docId}/gviz/tq?`;
@@ -170,7 +170,7 @@ const fetchOwners = async (date: string) => {
       ownerType: sheet.sheetAlias,
       owners: convertRowOwners(ownerRows, date),
     };
-    allOwners.push(allOwner);
+    // allOwners.push(allOwner);
   }
   return allOwners;
 };

@@ -1,4 +1,4 @@
-import { VStack, HStack, Box } from '@chakra-ui/react';
+import { VStack, HStack } from '@chakra-ui/react';
 import BuildStatusOverview from '@/components/BuildStatusOverview';
 import TicketStatusOverview from '@/components/TicketStatusOverview';
 import ProjectTimeline from '@/components/ProjectTimeline';
@@ -8,13 +8,13 @@ import OwnerRotationOverview from '@/components/OwnerRotationOverview';
 
 export default function Home() {
   return (
-    <Box w="100vw" h="100vh" p="8px" pt="0">
+    <VStack w="100vw" h="100vh" p="8px" pt="0">
       <UpdateChecker />
-      <VStack h="100%">
-        <CollapseNavbar />
-        <HStack minH="92%" w="100%" overflowY="hidden">
-          <OwnerRotationOverview w="15%" />
-          <VStack h="100%" w="85%">
+      <CollapseNavbar />
+      <VStack px="8px" flex="1" width="100vw" overflow="hidden">
+        <HStack w="100%" h="100%">
+          <OwnerRotationOverview width="240px" />
+          <VStack flex="1" h="100%" overflow="hidden">
             <HStack h="448px" w="100%">
               <BuildStatusOverview flex="75%" h="100%" />
               <TicketStatusOverview flex="25%" h="100%" />
@@ -23,6 +23,6 @@ export default function Home() {
           </VStack>
         </HStack>
       </VStack>
-    </Box>
+    </VStack>
   );
 }

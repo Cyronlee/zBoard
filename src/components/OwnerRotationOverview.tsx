@@ -6,16 +6,15 @@ import { useErrorToast } from '@/lib/customToast';
 import { CalendarIcon, EmailIcon, RepeatClockIcon } from '@chakra-ui/icons';
 import moment from 'moment';
 
-export interface RotationOwner {
+export interface Member {
   name: string;
-  isOwner: boolean;
-  startTime: string;
-  endTime: string;
+  startDate: string;
+  endDate: string;
 }
 
-export interface RotationOwners {
-  ownerType: string;
-  owners: RotationOwner[];
+export interface Rotation {
+  subject: string;
+  members: Member[];
 }
 
 const colorSchemas = ['teal.500', 'blue.500', 'purple.500'];
@@ -57,7 +56,7 @@ const OwnerRotationOverview = (props: SystemProps) => {
       isRefresh={false}
       onRefresh={() => fetchData()}
       refreshInterval={0}
-      render={(data: RotationOwners[]) => (
+      render={(data: Rotation[]) => (
         <Flex
           flexWrap="wrap"
           justifyContent="space-between"
@@ -71,9 +70,9 @@ const OwnerRotationOverview = (props: SystemProps) => {
           <>
             {data.map((item, index) => (
               <OwnerRotationCard
-                key={item.ownerType}
-                ownerType={item.ownerType}
-                owners={item.owners ?? []}
+                key={item.subject}
+                subject={item.subject}
+                members={item.members ?? []}
                 colorScheme={icons[index % icons.length].color}
                 icon={icons[index % icons.length].icon}
               />
