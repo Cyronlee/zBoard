@@ -40,7 +40,7 @@ const OwnerRotationCard = ({ subject, members, colorScheme, icon }: OwnerRotatio
           </HStack>
         </Heading>
         <Text color={colorScheme} whiteSpace="nowrap">
-          {owner.startDate.slice(5)} - {owner.endDate.slice(5)}
+          {owner.startDate?.slice(5)} - {owner.endDate?.slice(5)}
         </Text>
         <Box mt="8px">
           <Text fontSize="16px" color="gray" whiteSpace="nowrap" overflow="hidden">

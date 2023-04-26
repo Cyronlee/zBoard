@@ -1,178 +1,82 @@
 import { NextApiHandler } from 'next';
-import { delay1s } from '@/lib/delay';
 import { googleSheetConfig } from '../../../config/google_sheet.config';
+import { apiTableConfig } from '../../../config/api_table.config';
 import { Member, Rotation } from '@/components/OwnerRotationOverview';
+import { delay1s } from '@/lib/delay';
+import { parseApiTable } from '@/lib/parseApiTable';
 import { getOwnerRotationFakeData } from '../../../fake/owner_rotation.fake';
+import { parseGoogleSheet } from '@/lib/parseGoogleSheet';
 import moment from 'moment';
 
-interface SheetCol {
-  id: string;
-  label: string;
-  type: string;
-}
-
-interface SheetRowItem {
-  v: string | number;
-  f?: string;
-}
-
-interface SheetRow {
-  c: SheetRowItem[];
-}
-
-interface RowOwner {
-  name: string;
-  start_time: string;
-  end_time: string;
-  [key: string]: any;
-}
-
 const handler: NextApiHandler = async (req, res) => {
-  getAllOwners(String(req.query.date))
+  getAllOwners()
     .then((response) => res.status(200).json(response))
     .catch((err) => res.status(500).send(err.message));
 };
 
-const getAllOwners = async (date: string) => {
-  if (googleSheetConfig.documents[0]?.docId?.length < 20) {
+const getAllOwners = async () => {
+  // if (googleSheetConfig.docId?.length < 20) {
+  if (apiTableConfig.apiToken?.length < 20) {
     return delay1s(getOwnerRotationFakeData);
   }
-  return await fetchOwners(date);
+  return await fetchOwnersFromApiTable();
+  // return await fetchOwnersFromGoogleSheet();
 };
 
-const formatSheetRow = (list: SheetRowItem[]) => {
-  for (let i = list.length - 1; i >= 0; i--) {
-    if (list[i] === null || list[i].v === null) {
-      list.splice(i, 1);
-    }
-  }
-};
-
-const datePattern = /^Date\(\d{4},\d{1,2},\d{1,2}\)$/;
-
-const dateStrConverter = (dateStr: string) => {
-  if (datePattern.test(dateStr)) {
-    const dates = dateStr.substring(5).slice(0, -1).split(',');
-    return new Date(Number(dates[0]), Number(dates[1]), Number(dates[2]));
-  }
-  return null;
-};
-
-const dateConverter = (date: Date | null) => {
-  return `Date(${date?.getFullYear()},${date?.getMonth()},${date?.getDate()})`;
-};
-
-const dateFormatWithoutZone = (dateStr: string) => {
-  if (datePattern.test(dateStr)) {
-    const dates = dateStr.substring(5).slice(0, -1).split(',');
-    const year = dates[0];
-    const month = (Number(dates[1]) + 1).toString().padStart(2, '0');
-    const day = dates[2].padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
-  return '';
-};
-
-const isAfter = (dateStr1: string, dateStr2: string) => {
-  let moment1 = moment(dateStrConverter(dateStr1));
-  let moment2 = moment(dateStrConverter(dateStr2));
-  return moment1.isAfter(moment2);
-};
-
-const isTodayBetween = (startDate: string, endDate: string, curDate: string) => {
-  let current = moment(curDate, 'YYYY-MM-DD');
-  let moment1 = moment(dateStrConverter(startDate));
-  if (startDate && !endDate) {
-    return moment1.isAfter(current);
-  }
-  let moment2 = moment(dateStrConverter(endDate));
-  if (!startDate && endDate) {
-    return moment2.isBefore(current);
-  }
-  return current.isBetween(moment1, moment2);
-};
-
-const modifyDateByDay = (originDate: Date | null, offset: number) => {
-  originDate?.setDate(originDate?.getDate() + offset);
-  return dateConverter(originDate);
-};
-
-const fillEmptyOwner = (rows: RowOwner[], curDate: string) => {
-  if (rows.length > 0) {
-    let current = moment(curDate, 'YYYY-MM-DD');
-    let date1 = dateStrConverter(rows[0].start_time);
-    let moment1 = moment(date1);
-    if (current.isBefore(moment1)) {
-      rows.unshift({ name: 'Nobody', start_time: '', end_time: modifyDateByDay(date1, -1) });
-      return;
-    }
-    let date2 = dateStrConverter(rows[rows.length - 1].end_time);
-    let moment2 = moment(date2);
-    if (current.isAfter(moment2)) {
-      rows.push({ name: 'Nobody', start_time: modifyDateByDay(date2, 1), end_time: '' });
-    }
-  }
-};
-
-const convertRowOwners = (rows: RowOwner[], curDate: string) => {
-  let owners: Member[] = [];
-  if (rows?.every((it) => datePattern.test(it.start_time))) {
-    rows.sort((a, b) => (isAfter(a.start_time, b.start_time) ? 1 : -1));
-    rows.sort((a, b) => {
-      if (!datePattern.test(b.end_time)) {
-        b.end_time = modifyDateByDay(dateStrConverter(a.start_time), -1);
-      }
-      return 1;
-    });
-  }
-  fillEmptyOwner(rows, curDate);
-  rows.forEach((row) => {
-    // owners.push({
-    //   name: row.name,
-    //   isOwner: isTodayBetween(row.start_time, row.end_time, curDate),
-    //   startTime: dateFormatWithoutZone(row.start_time),
-    //   endTime: dateFormatWithoutZone(row.end_time),
-    // });
-  });
-  return owners;
-};
-
-const fetchOwners = async (date: string) => {
+const fetchOwnersFromApiTable = async () => {
   let allOwners: Rotation[] = [];
-  const datasheets = googleSheetConfig.documents[0].sheets;
+  const datasheets = apiTableConfig.rotations;
   for (const sheet of datasheets) {
-    const docUrl = `${googleSheetConfig.baseUrl}${googleSheetConfig.documents[0].docId}/gviz/tq?`;
-    const query = encodeURIComponent('Select *');
-    const sheetUrl = `${docUrl}&sheet=${sheet.sheetName}&tq=${query}`;
-    const response = await fetch(sheetUrl);
-    if (!response.ok) {
-      throw new Error('failed to fetch rotation owners');
-    }
-    const json = await response.text();
-    const res = JSON.parse(json.substring(47).slice(0, -2));
-    let fields = res.table.cols.flatMap((it: SheetCol) => it.label);
-    fields = fields.filter((it: string) => it !== '');
-    let values = res.table.rows.map((it: SheetRow) => it.c);
-    values.forEach((it: SheetRowItem[]) => formatSheetRow(it));
-    let ownerRows: RowOwner[] = [];
-    values.forEach((row: SheetRowItem[]) => {
-      let dataRow: RowOwner = {
-        name: '',
-        start_time: '',
-        end_time: '',
-      };
-      fields.forEach((col: string, index: number) => {
-        dataRow[col] = row[index]?.v ?? '';
-      });
-      ownerRows.push(dataRow);
-    });
-    let allOwner = {
-      ownerType: sheet.sheetAlias,
-      owners: convertRowOwners(ownerRows, date),
+    let dataSheetUrl = `${apiTableConfig.baseUrl}${sheet.apiTableId}/records`;
+    let members = await parseApiTable(
+      dataSheetUrl,
+      apiTableConfig.apiToken,
+      'failed to fetch rotation owners'
+    );
+    let owner = {
+      subject: sheet.subject,
+      colorScheme: sheet.color,
+      members: sortMembers(members),
     };
-    // allOwners.push(allOwner);
+    allOwners.push(owner);
   }
   return allOwners;
+};
+
+const fetchOwnersFromGoogleSheet = async () => {
+  let allOwners: Rotation[] = [];
+  const datasheets = googleSheetConfig.rotations;
+  for (const sheet of datasheets) {
+    const docUrl = `${googleSheetConfig.baseUrl}${googleSheetConfig.docId}/gviz/tq?`;
+    let memberRows = await parseGoogleSheet(docUrl, sheet.sheetName, '');
+    let allOwner = {
+      subject: sheet.subject,
+      colorScheme: sheet.color,
+      members: sortMembers(memberRows),
+    };
+    allOwners.push(allOwner);
+  }
+  return allOwners;
+};
+
+const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+
+const dateFormat = 'YYYY-MM-DD';
+
+const isAfter = (date1: string, date2: string) =>
+  moment(date1, dateFormat).isAfter(moment(date2, dateFormat));
+
+const sortMembers = (rows: { [key: string]: any }[]) => {
+  let members: Member[] = [];
+  if (rows?.every((it) => datePattern.test(it.startDate))) {
+    rows.sort((a, b) => (isAfter(a.startDate, b.startDate) ? 1 : -1));
+    members = rows.map((row) => ({
+      name: row.name,
+      startDate: row.startDate,
+      endDate: row.endDate,
+    }));
+  }
+  return members;
 };
 
 export default handler;
