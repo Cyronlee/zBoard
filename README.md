@@ -90,7 +90,8 @@ Demo: [https://z-board.vercel.app/](https://z-board.vercel.app/) Password: 12345
    - `kanban.config.js`
    - `google_sheet.config.js`
 4. Copy `.env.example` to be `.env`, and set the values
-5. [Optional] If you'd like to prepare data for owner rotation, create a google sheet like this [link](https://docs.google.com/spreadsheets/d/15txMkkkWBgxS7PCpInC3NBg9kaEi-ZhHjdALNRV-5G8/edit?usp=sharing) 
+5. [Optional] If you'd like to prepare data for owner rotation, create an ApiTable like this [link](https://apitable.com/share/shrvpzFE4CmCF59ygUbaW) 
+   or a GoogleSheet like this [link](https://docs.google.com/spreadsheets/d/15txMkkkWBgxS7PCpInC3NBg9kaEi-ZhHjdALNRV-5G8/edit?usp=sharing)
 6. Run with development mode
    ```bash
    npm install
