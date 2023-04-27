@@ -1,6 +1,5 @@
 import { NextApiHandler } from 'next';
-import { googleSheetConfig } from '../../../config/google_sheet.config';
-import { apiTableConfig } from '../../../config/api_table.config';
+import { ownerRotationConfig } from '../../../config/owner_rotation.config';
 import { Member, Rotation } from '@/components/OwnerRotationOverview';
 import { delay1s } from '@/lib/delay';
 import { parseApiTable } from '@/lib/parseApiTable';
@@ -15,22 +14,23 @@ const handler: NextApiHandler = async (req, res) => {
 };
 
 const getAllOwners = async () => {
-  // if (googleSheetConfig.docId?.length < 20) {
-  if (apiTableConfig.apiToken?.length < 20) {
-    return delay1s(getOwnerRotationFakeData);
+  if (ownerRotationConfig.datasource == 'ApiTable' && ownerRotationConfig.key?.length > 20) {
+    return await fetchOwnersFromApiTable();
   }
-  return await fetchOwnersFromApiTable();
-  // return await fetchOwnersFromGoogleSheet();
+  if (ownerRotationConfig.datasource == 'GoogleSheet' && ownerRotationConfig.key?.length > 20) {
+    return await fetchOwnersFromGoogleSheet();
+  }
+  return delay1s(getOwnerRotationFakeData);
 };
 
 const fetchOwnersFromApiTable = async () => {
   let allOwners: Rotation[] = [];
-  const datasheets = apiTableConfig.rotations;
+  const datasheets = ownerRotationConfig.rotations;
   for (const sheet of datasheets) {
-    let dataSheetUrl = `${apiTableConfig.baseUrl}${sheet.apiTableId}/records`;
+    let dataSheetUrl = `${ownerRotationConfig.baseUrl}${sheet.sheetId}/records`;
     let members = await parseApiTable(
       dataSheetUrl,
-      apiTableConfig.apiToken,
+      ownerRotationConfig.key,
       'failed to fetch rotation owners'
     );
     let owner = {
@@ -45,10 +45,14 @@ const fetchOwnersFromApiTable = async () => {
 
 const fetchOwnersFromGoogleSheet = async () => {
   let allOwners: Rotation[] = [];
-  const datasheets = googleSheetConfig.rotations;
+  const datasheets = ownerRotationConfig.rotations;
   for (const sheet of datasheets) {
-    const docUrl = `${googleSheetConfig.baseUrl}${googleSheetConfig.docId}/gviz/tq?`;
-    let memberRows = await parseGoogleSheet(docUrl, sheet.sheetName, '');
+    const docUrl = `${ownerRotationConfig.baseUrl}${ownerRotationConfig.key}/gviz/tq?`;
+    let memberRows = await parseGoogleSheet(
+      docUrl,
+      sheet.sheetId,
+      'failed to fetch rotation owners'
+    );
     let allOwner = {
       subject: sheet.subject,
       colorScheme: sheet.color,

@@ -60,7 +60,7 @@ Demo: [https://z-board.vercel.app/](https://z-board.vercel.app/) Password: 12345
    - `circle_ci.config.js`
    - `zendesk.config.js`
    - `kanban.config.js`
-   - `google_sheet.config.js`
+   - `owner_rotation.config.js`
 4. Deploy on [Vercel](https://vercel.com), set following environment variables (will display fake data if no token is configured)：
   - `SITE_PASSWORD`: If filled, the site requires a login
   - `CIRCLE_CI_API_TOKEN`: CircleCI API Token to get build status, [get it here](https://app.circleci.com/settings/user/tokens)
@@ -88,7 +88,7 @@ Demo: [https://z-board.vercel.app/](https://z-board.vercel.app/) Password: 12345
    - `circle_ci.config.js`
    - `zendesk.config.js`
    - `kanban.config.js`
-   - `google_sheet.config.js`
+   - `owner_rotation.config.js`
 4. Copy `.env.example` to be `.env`, and set the values
 5. [Optional] If you'd like to prepare data for owner rotation, create an ApiTable like this [link](https://apitable.com/share/shrvpzFE4CmCF59ygUbaW) 
    or a GoogleSheet like this [link](https://docs.google.com/spreadsheets/d/15txMkkkWBgxS7PCpInC3NBg9kaEi-ZhHjdALNRV-5G8/edit?usp=sharing)
