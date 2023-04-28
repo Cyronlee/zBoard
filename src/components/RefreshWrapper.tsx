@@ -18,6 +18,7 @@ interface RefreshWrapperProps<T> {
   onRefresh: () => Promise<T[]>;
   refreshInterval?: number;
   render: (data: T[]) => JSX.Element;
+  showRefreshButton?: boolean;
   [key: string]: any;
 }
 
@@ -26,6 +27,7 @@ const RefreshWrapper = <T,>({
   onRefresh,
   refreshInterval = 0,
   render,
+  showRefreshButton = true,
   ...props
 }: RefreshWrapperProps<T>) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -70,10 +72,10 @@ const RefreshWrapper = <T,>({
         {...props}
       >
         <Center w="100%" justifyContent="space-between">
-          <Heading size="md" color={fontColor}>
+          <Heading size="md" color={fontColor} lineHeight="32px">
             {title}
           </Heading>
-          <Box>
+          <Box hidden={!showRefreshButton}>
             <Text fontSize="sm" color={fontColor} display="inline-block" mr="4px">
               Updated at {lastUpdatedAt}
             </Text>
