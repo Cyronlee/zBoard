@@ -1,7 +1,5 @@
 import { NextApiHandler } from 'next';
 import { buildStatusConfig } from '@/../config/build_status.config';
-import { getBuildStatusFakeData } from '@/../../fake/build_status.fake';
-import { delay1s } from '@/lib/delay';
 
 interface workflowRunResponse {
   total_count: number;
@@ -57,16 +55,16 @@ interface SimpleCommit {
 const githubActionsConfig = buildStatusConfig.datasource.github;
 
 const handler: NextApiHandler = async (req, res) => {
-  getAllStatus()
+  getAllGitHubStatus()
     .then((response) => res.status(200).json(response))
     .catch((err) => res.status(500).send(err.message));
 };
 
-const getAllStatus = async () => {
-  if (!githubActionsConfig.apiToken) {
-    return delay1s(getBuildStatusFakeData);
+export const getAllGitHubStatus = async () => {
+  if (githubActionsConfig.enabled) {
+    return await Promise.all(githubActionsConfig.projects.map((project) => getStatus(project)));
   }
-  return await Promise.all(githubActionsConfig.projects.map((project) => getStatus(project)));
+  return [];
 };
 
 const getStatus = async ({
