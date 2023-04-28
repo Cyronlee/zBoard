@@ -1,6 +1,5 @@
 import { NextApiHandler } from 'next';
-import _ from 'lodash';
-import { zendeskConfig } from '@/../config/zendesk.config';
+import { ticketStatusConfig } from '../../../config/ticket_status.config';
 import { getTicketStatusFakeData } from '../../../fake/ticket_status.fake';
 import { delay1s } from '@/lib/delay';
 import { btoa } from 'buffer';
@@ -13,6 +12,8 @@ interface Ticket {
   updated_at: string;
 }
 
+const zendeskConfig = ticketStatusConfig.datasource.zendesk;
+
 const handler: NextApiHandler = async (req, res) => {
   getAllBuildStatus()
     .then((response) => res.status(200).json(response))
@@ -20,10 +21,10 @@ const handler: NextApiHandler = async (req, res) => {
 };
 
 const getAllBuildStatus = async () => {
-  if (!zendeskConfig.apiToken) {
-    return delay1s(getTicketStatusFakeData);
+  if (zendeskConfig.enabled) {
+    return await fetchTickets();
   }
-  return await fetchTickets();
+  return delay1s(getTicketStatusFakeData);
 };
 
 const fetchTickets = async () => {
