@@ -6,11 +6,11 @@ import moment from 'moment';
 interface OwnerRotationProps {
   subject: string;
   members: Member[];
-  colorScheme: string;
+  color: string;
   icon: ReactNode;
 }
 
-const OwnerRotationCard = ({ subject, members, colorScheme, icon }: OwnerRotationProps) => {
+const OwnerRotationCard = ({ subject, members, color, icon }: OwnerRotationProps) => {
   const currentMoment = moment();
   members.sort((a, b) => moment(a.startDate).valueOf() - moment(b.startDate).valueOf());
   let ownerIndex = members.findIndex(
@@ -31,7 +31,7 @@ const OwnerRotationCard = ({ subject, members, colorScheme, icon }: OwnerRotatio
       overflow="hidden"
       variant="outline"
     >
-      <Box w="10px" bg={colorScheme}></Box>
+      <Box w="10px" bg={color}></Box>
       <CardBody display="flex" flexDirection="column" p="16px" pl="12px">
         <Heading size="md" fontWeight="light">
           <HStack>
@@ -39,7 +39,7 @@ const OwnerRotationCard = ({ subject, members, colorScheme, icon }: OwnerRotatio
             <Text whiteSpace="nowrap">{subject}</Text>
           </HStack>
         </Heading>
-        <Text color={colorScheme} whiteSpace="nowrap">
+        <Text color={color} whiteSpace="nowrap">
           {owner.startDate?.slice(5)} - {owner.endDate?.slice(5)}
         </Text>
         <Box mt="8px">
@@ -52,7 +52,7 @@ const OwnerRotationCard = ({ subject, members, colorScheme, icon }: OwnerRotatio
             px="4px"
             my="2px"
             color="white"
-            bg={colorScheme}
+            bg={color}
             noOfLines={1}
           >
             {owner.name}

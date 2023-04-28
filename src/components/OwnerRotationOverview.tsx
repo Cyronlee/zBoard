@@ -9,30 +9,36 @@ export interface Member {
   name: string;
   startDate: string;
   endDate: string;
-  [key: string]: any;
 }
 
 export interface Rotation {
   subject: string;
+  color: string;
+  icon: string;
   members: Member[];
 }
 
-const colorSchemas = ['teal.500', 'blue.500', 'purple.500'];
+const softenColor = (color: string) => {
+  const isHexOrSoftColor = /^#|^.*\..*$/;
+  if (!isHexOrSoftColor.test(color)) {
+    return `${color}.500`;
+  }
+  return 'blue.500';
+};
 
-const icons = [
-  {
-    color: colorSchemas[0],
-    icon: <CalendarIcon color={colorSchemas[0]} />,
-  },
-  {
-    color: colorSchemas[1],
-    icon: <EmailIcon color={colorSchemas[1]} />,
-  },
-  {
-    color: colorSchemas[2],
-    icon: <RepeatClockIcon color={colorSchemas[2]} />,
-  },
-];
+const getIcon = (iconName: string, color: string) => {
+  const softColor = softenColor(color);
+  if (iconName === 'calendar') {
+    return <CalendarIcon color={softColor} />;
+  }
+  if (iconName === 'email') {
+    return <EmailIcon color={softColor} />;
+  }
+  if (iconName === 'repeat') {
+    return <RepeatClockIcon color={softColor} />;
+  }
+  return <CalendarIcon color={softColor} />;
+};
 
 const OwnerRotationOverview = (props: SystemProps) => {
   const toastError = useErrorToast();
@@ -68,13 +74,13 @@ const OwnerRotationOverview = (props: SystemProps) => {
           maxW="320px"
         >
           <>
-            {data.map((item, index) => (
+            {data.map((rotation, index) => (
               <OwnerRotationCard
-                key={item.subject}
-                subject={item.subject}
-                members={item.members ?? []}
-                colorScheme={icons[index % icons.length].color}
-                icon={icons[index % icons.length].icon}
+                key={rotation.subject}
+                subject={rotation.subject}
+                members={rotation.members ?? []}
+                color={softenColor(rotation.color)}
+                icon={getIcon(rotation.icon, rotation.color)}
               />
             ))}
           </>

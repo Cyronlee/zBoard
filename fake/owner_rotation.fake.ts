@@ -5,7 +5,8 @@ export const getOwnerRotationFakeData = () => {
   return Array.from(['STAND UP', 'USER SUPPORT', 'RETRO', 'ALERTS']).map((type) => {
     return {
       subject: type,
-      colorScheme: faker.helpers.arrayElement(['green', 'cyan', 'blue', 'teal', 'purple', 'pink']),
+      color: faker.helpers.arrayElement(['green', 'cyan', 'blue', 'teal', 'purple', 'pink']),
+      icon: faker.helpers.arrayElement(['email', 'repeat', 'calendar']),
       members: [
         {
           name: faker.name.fullName(),

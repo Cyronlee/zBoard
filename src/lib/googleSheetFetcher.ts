@@ -25,12 +25,12 @@ const formatSheetRow = (list: SheetRowItem[]) => {
   }
 };
 
-export const parseGoogleSheet = async (docUrl: string, sheetName: string, msg = '') => {
+export const fetchFieldsFromGoogleSheet = async (docUrl: string, sheetName: string) => {
   const query = encodeURIComponent('Select *');
   const sheetUrl = `${docUrl}&sheet=${sheetName}&tq=${query}`;
   const response = await fetch(sheetUrl);
   if (!response.ok) {
-    throw new Error(msg);
+    throw new Error(await response.text());
   }
   const json = await response.text();
   const res = JSON.parse(json.substring(47).slice(0, -2));

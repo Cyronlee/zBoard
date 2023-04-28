@@ -6,11 +6,12 @@ export const ownerRotationConfig = {
   datasource: {
     // use local static data, could be masked in process.env.YOUR_KEY
     localData: {
-      enabled: false,
+      enabled: true,
       rotations: [
         {
           subject: 'Stand Up',
           color: 'green',
+          icon: 'email',
           members: [
             {
               name: 'Tom',
@@ -30,18 +31,20 @@ export const ownerRotationConfig = {
     apiTable: {
       enabled: false,
       // for ApiTable you can see the api token in user profile settings,
-      apiKey: process.env.APITABLE_API_KEY,
+      apiKey: process.env.API_TABLE_API_KEY,
       baseUrl: 'https://apitable.com/fusion/v1/datasheets/',
       rotations: [
         {
           subject: 'Stand Up',
           color: 'green',
-          viewId: 'view-id1',
+          icon: 'calendar',
+          datasheetId: 'datasheet-id1',
         },
         {
           subject: 'Showcase',
           color: 'blue',
-          viewId: 'view-id2',
+          icon: 'repeat',
+          datasheetId: 'datasheet-id2',
         },
       ],
     },
@@ -55,11 +58,13 @@ export const ownerRotationConfig = {
         {
           subject: 'Stand Up',
           color: 'green',
+          icon: 'calendar',
           sheetName: 'sheet-name1',
         },
         {
           subject: 'Showcase',
           color: 'blue',
+          icon: 'repeat',
           sheetName: 'sheet-name2',
         },
       ],

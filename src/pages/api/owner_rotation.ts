@@ -2,9 +2,9 @@ import { NextApiHandler } from 'next';
 import { ownerRotationConfig } from '../../../config/owner_rotation.config';
 import { Member, Rotation } from '@/components/OwnerRotationOverview';
 import { delay1s } from '@/lib/delay';
-import { parseApiTable } from '@/lib/parseApiTable';
+import { fetchFieldsFromApiTable } from '@/lib/apiTableFetcher';
+import { fetchFieldsFromGoogleSheet } from '@/lib/googleSheetFetcher';
 import { getOwnerRotationFakeData } from '../../../fake/owner_rotation.fake';
-import { parseGoogleSheet } from '@/lib/parseGoogleSheet';
 import moment from 'moment';
 
 const handler: NextApiHandler = async (req, res) => {
@@ -14,53 +14,48 @@ const handler: NextApiHandler = async (req, res) => {
 };
 
 const getAllOwners = async () => {
-  if (ownerRotationConfig.datasource == 'ApiTable' && ownerRotationConfig.key?.length > 20) {
-    return await fetchOwnersFromApiTable();
+  if (ownerRotationConfig.datasource.localData.enabled) {
+    return ownerRotationConfig.datasource.localData.rotations;
   }
-  if (ownerRotationConfig.datasource == 'GoogleSheet' && ownerRotationConfig.key?.length > 20) {
-    return await fetchOwnersFromGoogleSheet();
+  if (ownerRotationConfig.datasource.apiTable.enabled) {
+    return await loadDataFromApiTable();
+  }
+  if (ownerRotationConfig.datasource.googleSheet.enabled) {
+    return await loadDataFromGoogleSheet();
   }
   return delay1s(getOwnerRotationFakeData);
 };
 
-const fetchOwnersFromApiTable = async () => {
-  let allOwners: Rotation[] = [];
-  const datasheets = ownerRotationConfig.rotations;
-  for (const sheet of datasheets) {
-    let dataSheetUrl = `${ownerRotationConfig.baseUrl}${sheet.sheetId}/records`;
-    let members = await parseApiTable(
-      dataSheetUrl,
-      ownerRotationConfig.key,
-      'failed to fetch rotation owners'
-    );
-    let owner = {
-      subject: sheet.subject,
-      colorScheme: sheet.color,
-      members: sortMembers(members),
-    };
-    allOwners.push(owner);
-  }
-  return allOwners;
+const loadDataFromApiTable = async () => {
+  const apiTableConfig = ownerRotationConfig.datasource.apiTable;
+  return await Promise.all(
+    apiTableConfig.rotations.map(async (rotation) => {
+      const tableViewUrl = `${apiTableConfig.baseUrl}${rotation.datasheetId}/records`;
+      let members = await fetchFieldsFromApiTable(tableViewUrl, apiTableConfig.apiKey as string);
+      return {
+        subject: rotation.subject,
+        color: rotation.color,
+        icon: rotation.icon,
+        members: sortMembers(members),
+      };
+    })
+  );
 };
 
-const fetchOwnersFromGoogleSheet = async () => {
-  let allOwners: Rotation[] = [];
-  const datasheets = ownerRotationConfig.rotations;
-  for (const sheet of datasheets) {
-    const docUrl = `${ownerRotationConfig.baseUrl}${ownerRotationConfig.key}/gviz/tq?`;
-    let memberRows = await parseGoogleSheet(
-      docUrl,
-      sheet.sheetId,
-      'failed to fetch rotation owners'
-    );
-    let allOwner = {
-      subject: sheet.subject,
-      colorScheme: sheet.color,
-      members: sortMembers(memberRows),
-    };
-    allOwners.push(allOwner);
-  }
-  return allOwners;
+const loadDataFromGoogleSheet = async () => {
+  const googleSheetConfig = ownerRotationConfig.datasource.googleSheet;
+  return await Promise.all(
+    googleSheetConfig.rotations.map(async (rotation) => {
+      const docUrl = `${googleSheetConfig.baseUrl}${googleSheetConfig.docId}/gviz/tq?`;
+      let members = await fetchFieldsFromGoogleSheet(docUrl, rotation.sheetName);
+      return {
+        subject: rotation.subject,
+        color: rotation.color,
+        icon: rotation.icon,
+        members: sortMembers(members),
+      };
+    })
+  );
 };
 
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
