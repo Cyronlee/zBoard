@@ -2,7 +2,7 @@ import { NextApiHandler } from 'next';
 import moment, { Moment } from 'moment';
 import { getProjectTimelineFakeData } from '../../../fake/project_timeline.fake';
 import { delay1s } from '@/lib/delay';
-import { kanbanConfig } from '@/../config/kanban.config';
+import { projectTimelineConfig } from '../../../config/project_timeline.config';
 
 interface CardTransition {
   column_id: number;
@@ -47,11 +47,13 @@ const handler: NextApiHandler = async (req, res) => {
     });
 };
 
+const kanbanConfig = projectTimelineConfig.datasource.kanbanize;
+
 const getProjectTimeline = async (startDate: string, endDate: string) => {
-  if (!kanbanConfig.apikey) {
-    return delay1s(getProjectTimelineFakeData);
+  if (kanbanConfig.enabled) {
+    return await fetchCards(startDate, endDate);
   }
-  return await fetchCards(startDate, endDate);
+  return delay1s(getProjectTimelineFakeData);
 };
 
 const fetchCards = async (startDate: string, endDate: string) => {

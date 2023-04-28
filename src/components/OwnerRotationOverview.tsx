@@ -4,6 +4,7 @@ import { Flex, SystemProps } from '@chakra-ui/react';
 import RefreshWrapper from '@/components/RefreshWrapper';
 import { useErrorToast } from '@/lib/customToast';
 import { CalendarIcon, EmailIcon, RepeatClockIcon } from '@chakra-ui/icons';
+import { ownerRotationConfig } from '@/../config/owner_rotation.config';
 
 export interface Member {
   name: string;
@@ -58,10 +59,10 @@ const OwnerRotationOverview = (props: SystemProps) => {
       {...props}
       h="100%"
       minW="230px"
-      title="Owner Rotation"
+      title={ownerRotationConfig.title || 'Owner Rotation'}
       showRefreshButton={false}
       onRefresh={() => fetchData()}
-      refreshInterval={0}
+      refreshIntervalSeconds={ownerRotationConfig.refreshIntervalSeconds || 0}
       render={(data: Rotation[]) => (
         <Flex
           flexWrap="wrap"

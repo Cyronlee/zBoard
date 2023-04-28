@@ -1,7 +1,7 @@
 export const ownerRotationConfig = {
   title: 'Owner Rotation',
   // refresh interval for Owner Rotation, when it's zero it means close the auto refresh
-  refreshIntervalSeconds: 3600_000,
+  refreshIntervalSeconds: 60 * 60,
   // datasource could be localData or ApiTable or GoogleSheet
   datasource: {
     // use local static data, could be masked in process.env.YOUR_KEY
@@ -27,7 +27,7 @@ export const ownerRotationConfig = {
         },
       ],
     },
-    // use API Table, register here https://apitable.com/
+    // use APITable, example datasheet: https://apitable.com/share/shrvpzFE4CmCF59ygUbaW
     apiTable: {
       enabled: false,
       // for ApiTable you can see the api token in user profile settings,
@@ -48,7 +48,7 @@ export const ownerRotationConfig = {
         },
       ],
     },
-    // use Google Sheet, the doc must be public
+    // use Google Sheet, example sheet https://docs.google.com/spreadsheets/d/15txMkkkWBgxS7PCpInC3NBg9kaEi-ZhHjdALNRV-5G8/edit?usp=sharing
     googleSheet: {
       enabled: false,
       baseUrl: 'https://docs.google.com/spreadsheets/d/',
