@@ -1,24 +1,28 @@
-import React, { useState } from 'react';
-import {
-  Button,
-  Flex,
-  FormControl,
-  FormLabel,
-  Heading,
-  Input,
-  Stack,
-  useColorModeValue,
-} from '@chakra-ui/react';
+import React, { useEffect, useRef } from 'react';
+import { Button, Flex, Heading, Input, Stack, useColorModeValue } from '@chakra-ui/react';
 import Cookies from 'universal-cookie';
 import { useRouter } from 'next/router';
 
 const Login = () => {
   const router = useRouter();
-  const [password, setPassword] = useState('');
+  const passwordInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleLoginKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleLoginKeyDown);
+    };
+  }, []);
+
+  const handleLoginKeyDown = (e: any) => {
+    if (e.key == 'Enter') handleLogin();
+  };
 
   const handleLogin = () => {
+    if (passwordInputRef.current === undefined) return;
     const cookies = new Cookies();
-    cookies.set('site_password', password);
+    const passwordInput = passwordInputRef.current;
+    cookies.set('site_password', passwordInput?.value);
     router.reload();
   };
 
@@ -42,13 +46,9 @@ const Login = () => {
         <Heading lineHeight={1.1} fontSize={{ base: '2xl', md: '3xl' }}>
           Enter site password
         </Heading>
-        <Input
-          type="password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-        />
+        <Input ref={passwordInputRef} type="password" />
         <Stack spacing={6}>
-          <Button colorScheme="blue" onClick={(params) => handleLogin()}>
+          <Button colorScheme="blue" onClick={() => handleLogin()}>
             Login
           </Button>
         </Stack>
