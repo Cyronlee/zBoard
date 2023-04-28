@@ -1,12 +1,12 @@
 export const ownerRotationConfig = {
   title: 'Owner Rotation',
   // refresh interval for Owner Rotation, when it's zero it means close the auto refresh
-  refreshIntervalSeconds: 0,
-  // datasource can be localData or ApiTable or GoogleSheet, which means different source of datasheet
+  refreshIntervalSeconds: 3600_000,
+  // datasource could be localData or ApiTable or GoogleSheet
   datasource: {
     // use local static data, could be masked in process.env.YOUR_KEY
     localData: {
-      enabled: true,
+      enabled: false,
       rotations: [
         {
           subject: 'Stand Up',

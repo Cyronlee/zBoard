@@ -69,6 +69,7 @@ Demo: [https://z-board.vercel.app/](https://z-board.vercel.app/) Password: 12345
   - `ZENDESK_BASE_URL`: `https://<Your Org>.zendesk.com`
   - `KANBANIZE_BASE_URL`: `https://<Your Org>.kanbanize.com`
   - `KANBANIZE_API_KEY`: Kanbanize API Key to build project timeline, [follow this guide](https://kanbanize.com/api)
+  - `API_TABLE_API_KEY`: ApiTable API Key to load owner rotation data, [follow this guide](https://developers.apitable.com/api/quick-start#step-1-get-api-token)
 5. Visit your site🎉
 
 ### Deploy on Mac mini
@@ -89,20 +90,20 @@ Demo: [https://z-board.vercel.app/](https://z-board.vercel.app/) Password: 12345
    - `zendesk.config.js`
    - `kanban.config.js`
    - `owner_rotation.config.js`
+     - If you'd like to prepare data for owner rotation, create an ApiTable like this [link](https://apitable.com/share/shrvpzFE4CmCF59ygUbaW)
+       or a GoogleSheet like this [link](https://docs.google.com/spreadsheets/d/15txMkkkWBgxS7PCpInC3NBg9kaEi-ZhHjdALNRV-5G8/edit?usp=sharing)
 4. Copy `.env.example` to be `.env`, and set the values
-5. [Optional] If you'd like to prepare data for owner rotation, create an ApiTable like this [link](https://apitable.com/share/shrvpzFE4CmCF59ygUbaW) 
-   or a GoogleSheet like this [link](https://docs.google.com/spreadsheets/d/15txMkkkWBgxS7PCpInC3NBg9kaEi-ZhHjdALNRV-5G8/edit?usp=sharing)
-6. Run with development mode
+5. Run with development mode
    ```bash
    npm install
    npm run dev
    ```
-7. Or run with production mode
+6. Or run with production mode
    ```bash
    npm run build
    npm run start
    ```
-8. Visit http://localhost:2000/
+7. Visit http://localhost:2000/
 
 
 ## Roadmap
