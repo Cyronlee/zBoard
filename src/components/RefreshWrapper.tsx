@@ -71,23 +71,38 @@ const RefreshWrapper = <T,>({
         w="100%"
         {...props}
       >
-        <Center w="100%" justifyContent="space-between">
-          <Heading size="md" color={fontColor} lineHeight="32px">
+        <Center w="100%" display="flex" justifyContent="space-between" alignItems="center">
+          <Heading
+            size="md"
+            color={fontColor}
+            lineHeight="32px"
+            whiteSpace="nowrap"
+            textOverflow="ellipsis"
+          >
             {title}
           </Heading>
-          <Box hidden={!showRefreshButton}>
-            <Text fontSize="sm" color={fontColor} display="inline-block" mr="4px">
-              Updated at {lastUpdatedAt}
-            </Text>
-            <IconButton
-              size="sm"
-              isDisabled={isRefreshing}
-              cursor={isRefreshing ? 'wait !important' : 'pointer'}
-              onClick={() => triggerRefresh()}
-              aria-label="Refresh"
-              icon={<RepeatIcon animation={isRefreshing ? 'rotate 2s infinite linear;' : 'none'} />}
-            />
-          </Box>
+          <Text
+            as="div"
+            fontSize="sm"
+            color={fontColor}
+            overflow="hidden"
+            whiteSpace="nowrap"
+            flexBasis="100%"
+            textAlign="end"
+            mr="4px"
+            hidden={!showRefreshButton}
+          >
+            Updated at {lastUpdatedAt}
+          </Text>
+          <IconButton
+            size="sm"
+            isDisabled={isRefreshing}
+            cursor={isRefreshing ? 'wait !important' : 'pointer'}
+            onClick={() => triggerRefresh()}
+            aria-label="Refresh"
+            icon={<RepeatIcon animation={isRefreshing ? 'rotate 2s infinite linear;' : 'none'} />}
+            hidden={!showRefreshButton}
+          />
         </Center>
         {data.length > 0 ? render(data) : <Skeleton h="100%" w="100%" />}
       </VStack>
