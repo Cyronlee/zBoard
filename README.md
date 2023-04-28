@@ -83,7 +83,7 @@ Demo: [https://z-board.vercel.app/](https://z-board.vercel.app/) Password: 12345
 ### Local development
 
 1. Star & Clone this repo 😉
-2. Install node 18 via `nvm use 18`
+2. Install node 18 via `nvm install 18`, then `nvm use 18`
 3. Customize the config files:
    - `site.config.js`
    - `circle_ci.config.js`
