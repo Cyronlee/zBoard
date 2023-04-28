@@ -16,7 +16,7 @@ import moment from 'moment';
 interface RefreshWrapperProps<T> {
   title: string;
   onRefresh: () => Promise<T[]>;
-  refreshInterval?: number;
+  refreshIntervalSeconds?: number;
   render: (data: T[]) => JSX.Element;
   showRefreshButton?: boolean;
   [key: string]: any;
@@ -25,7 +25,7 @@ interface RefreshWrapperProps<T> {
 const RefreshWrapper = <T,>({
   title,
   onRefresh,
-  refreshInterval = 0,
+  refreshIntervalSeconds = 0,
   render,
   showRefreshButton = true,
   ...props
@@ -52,10 +52,10 @@ const RefreshWrapper = <T,>({
 
   useEffect(() => {
     triggerRefresh();
-    if (refreshInterval > 0) {
+    if (refreshIntervalSeconds > 0) {
       const interval = setInterval(() => {
         triggerRefresh();
-      }, refreshInterval);
+      }, refreshIntervalSeconds * 1000);
       return () => clearInterval(interval);
     }
   }, []);

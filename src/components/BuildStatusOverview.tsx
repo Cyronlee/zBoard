@@ -22,7 +22,7 @@ const BuildStatusOverview = (props: SystemProps) => {
       {...props}
       title="Build Status"
       onRefresh={fetchData}
-      refreshInterval={circleCIConfig.refreshIntervalSeconds * 1000}
+      refreshIntervalSeconds={circleCIConfig.refreshIntervalSeconds}
       render={(data: BuildStatus[]) => (
         <>
           <Flex
