@@ -1,18 +1,6 @@
 import React from 'react';
 import moment from 'moment';
-import {
-  Avatar,
-  Badge,
-  Box,
-  Divider,
-  Flex,
-  Heading,
-  HStack,
-  Text,
-  VStack,
-  Icon,
-} from '@chakra-ui/react';
-import { BiTime } from 'react-icons/bi';
+import { Avatar, Badge, Box, Divider, Flex, Heading, HStack, Text, VStack } from '@chakra-ui/react';
 import { TimeIcon } from '@chakra-ui/icons';
 
 interface BuildStatusCardProps {
@@ -46,6 +34,19 @@ const statusColorScheme: StatusColorScheme = {
   running: 'blue',
   canceled: 'gray',
   unauthorized: 'orange',
+  completed: 'green',
+  action_required: 'purple',
+  cancelled: 'gray',
+  failure: 'red',
+  neutral: 'pink',
+  skipped: 'gray',
+  stale: 'gray',
+  timed_out: 'red',
+  in_progress: 'blue',
+  queued: 'gray',
+  requested: 'gray',
+  waiting: 'gray',
+  pending: 'gray',
 };
 
 const BuildStatusCard = ({ buildStatus }: BuildStatusCardProps) => {
