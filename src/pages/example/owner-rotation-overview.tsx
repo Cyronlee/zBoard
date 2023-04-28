@@ -7,7 +7,7 @@ const OwnerRotationOverviewPage = () => {
   return (
     <VStack>
       <CollapseNavbar />
-      <OwnerRotationOverview />
+      <OwnerRotationOverview w="300px" />
     </VStack>
   );
 };
