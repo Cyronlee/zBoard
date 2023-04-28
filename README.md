@@ -55,11 +55,11 @@ Demo: [https://z-board.vercel.app/](https://z-board.vercel.app/) Password: 12345
 
 1. Star this repo 😉
 2. [Fork](https://github.com/Cyronlee/zBoard/fork) this project
-3. Customize the config files:
+3. Customize the config files and push the code, includes datasource and monitoring rules, please read the comments inside:
    - `site.config.js`
-   - `circle_ci.config.js`
-   - `zendesk.config.js`
-   - `kanban.config.js`
+   - `build_status.config.js`
+   - `ticket_status.config.js`
+   - `project_timeline.config.js`
    - `owner_rotation.config.js`
 4. Deploy on [Vercel](https://vercel.com), set following environment variables (will display fake data if no token is configured)：
   - `SITE_PASSWORD`: If filled, the site requires a login
@@ -84,14 +84,12 @@ Demo: [https://z-board.vercel.app/](https://z-board.vercel.app/) Password: 12345
 
 1. Star & Clone this repo 😉
 2. Install node 18 via `nvm install 18`, then `nvm use 18`
-3. Customize the config files:
+3. Customize the config files in local, includes datasource and monitoring rules, please read the comments inside:
    - `site.config.js`
-   - `circle_ci.config.js`
-   - `zendesk.config.js`
-   - `kanban.config.js`
+   - `build_status.config.js`
+   - `ticket_status.config.js`
+   - `project_timeline.config.js`
    - `owner_rotation.config.js`
-     - If you'd like to prepare data for owner rotation, create an ApiTable like this [link](https://apitable.com/share/shrvpzFE4CmCF59ygUbaW)
-       or a GoogleSheet like this [link](https://docs.google.com/spreadsheets/d/15txMkkkWBgxS7PCpInC3NBg9kaEi-ZhHjdALNRV-5G8/edit?usp=sharing)
 4. Copy `.env.example` to be `.env`, and set the values
 5. Run with development mode
    ```bash
@@ -105,6 +103,21 @@ Demo: [https://z-board.vercel.app/](https://z-board.vercel.app/) Password: 12345
    ```
 7. Visit http://localhost:2000/
 
+### Update to new version
+
+Please backup your config files before update, config structure may be modified in major version updates.
+
+```bash
+# backup config files
+git stash
+
+# update main version
+git checkout main
+git pull origin main
+
+# apply your backup config files
+git stash apply
+```
 
 ## Roadmap
 
