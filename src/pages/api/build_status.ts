@@ -1,6 +1,6 @@
 import { NextApiHandler } from 'next';
 import _ from 'lodash';
-import { circleCIConfig } from '@/../config/circle_ci.config';
+import { buildStatusConfig } from '../../../config/build_status.config';
 import { getBuildStatusFakeData } from '@/../../fake/build_status.fake';
 import { delay1s } from '@/lib/delay';
 
@@ -43,6 +43,8 @@ interface Pipelines {
   items: Pipeline[];
 }
 
+const circleCIConfig = buildStatusConfig.datasource.circleCI;
+
 const handler: NextApiHandler = async (req, res) => {
   getAllBuildStatus()
     .then((response) => res.status(200).json(response))
@@ -50,14 +52,14 @@ const handler: NextApiHandler = async (req, res) => {
 };
 
 const getAllBuildStatus = async () => {
-  if (!circleCIConfig.apiToken) {
-    return delay1s(getBuildStatusFakeData);
+  if (circleCIConfig.enabled) {
+    return await Promise.all(
+      circleCIConfig.projects.map((project) => {
+        return getBuildStatus(project);
+      })
+    );
   }
-  return await Promise.all(
-    circleCIConfig.projects.map((project) => {
-      return getBuildStatus(project);
-    })
-  );
+  return delay1s(getBuildStatusFakeData);
 };
 
 const getBuildStatus = async ({
