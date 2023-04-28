@@ -16,6 +16,7 @@ import {
 } from '@chakra-ui/react';
 import { orderBy } from 'lodash';
 import { useErrorToast } from '@/lib/customToast';
+import { projectTimelineConfig } from '@/../config/project_timeline.config';
 
 interface OwnerItem {
   name: string;
@@ -315,7 +316,7 @@ const Timeline = (props: SystemProps) => {
           size="md"
           color={headColor}
         >
-          Delivery Timeline
+          {projectTimelineConfig.title || 'Delivery Timeline'}
         </Heading>
         <Box w={displayDates.length * renderConfig.gridWidth}>
           <Grid
