@@ -123,9 +123,9 @@ const Timeline = (props: SystemProps) => {
         rowStart={renderConfig.cardFirstRowNum + index}
         colStart={colStart + 1}
         colEnd={colEnd + 2}
-        display={"flex"}
-        flexDirection={"column"}
-        justifyContent={"center"}
+        display={'flex'}
+        flexDirection={'column'}
+        justifyContent={'center'}
       >
         {renderCard(cardInfo)}
       </GridItem>
@@ -134,7 +134,7 @@ const Timeline = (props: SystemProps) => {
 
   const renderTimeline = (cards: CardInfo[], index: number) => {
     return cards.map((card) => renderCardGrid(card, index));
-  }
+  };
 
   const renderCard = (card: CardInfo) => {
     return (
@@ -315,7 +315,7 @@ const Timeline = (props: SystemProps) => {
           size="md"
           color={headColor}
         >
-          Delivery Timeline:
+          Delivery Timeline
         </Heading>
         <Box w={displayDates.length * renderConfig.gridWidth}>
           <Grid

@@ -20,7 +20,7 @@ const BuildStatusOverview = (props: SystemProps) => {
   return (
     <RefreshWrapper
       {...props}
-      title="Build Status:"
+      title="Build Status"
       onRefresh={fetchData}
       refreshInterval={circleCIConfig.refreshIntervalSeconds * 1000}
       render={(data: BuildStatus[]) => (
