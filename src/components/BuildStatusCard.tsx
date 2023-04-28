@@ -32,6 +32,7 @@ export interface BuildStatus {
 interface StatusColorScheme {
   [key: string]: string;
   success: string;
+  failed: string;
   on_hold: string;
   running: string;
   canceled: string;
@@ -40,6 +41,7 @@ interface StatusColorScheme {
 
 const statusColorScheme: StatusColorScheme = {
   success: 'green',
+  failed: 'red',
   on_hold: 'purple',
   running: 'blue',
   canceled: 'gray',
@@ -47,7 +49,7 @@ const statusColorScheme: StatusColorScheme = {
 };
 
 const BuildStatusCard = ({ buildStatus }: BuildStatusCardProps) => {
-  const colorScheme = statusColorScheme[buildStatus.status] || 'gray';
+  const colorScheme = statusColorScheme[buildStatus.status] || 'red';
   const startTime = moment(buildStatus.stopTime).format('YYYY-MM-DD HH:mm:ss');
   return (
     <Box

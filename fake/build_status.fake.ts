@@ -7,6 +7,7 @@ export const getBuildStatusFakeData = () => {
       branch: 'master',
       status: faker.helpers.arrayElement([
         'success',
+        'failed',
         'on_hold',
         'running',
         'canceled',
