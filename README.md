@@ -28,7 +28,7 @@ Demo: [https://z-board.vercel.app/](https://z-board.vercel.app/) Password: 12345
 
 **🚀 &nbsp;Handly informations**
 
-- Monitor CICD Build Status (CircleCI supported)
+- Monitor CICD Build Status (CircleCI & GitHub Actions supported)
 - Monitor Ticket Status (Zendesk supported)
 - Display Project Timeline (Kanbanize supported)
 
