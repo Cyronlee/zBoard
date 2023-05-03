@@ -36,7 +36,7 @@ const UpdateChecker = () => {
               </>
             ),
             status: 'info',
-            duration: 30_000,
+            duration: 10000,
             isClosable: true,
             position: 'top-right',
           });

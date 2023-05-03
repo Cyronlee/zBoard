@@ -41,7 +41,7 @@ const renderConfig = {
   dateIndicatorRowNum: 2,
   gridWidth: 48,
   cardFirstRowNum: 1,
-  scrollOffset: 512,
+  scrollOffset: 600,
 };
 
 const preparedDisplayDates: string[] = [];
