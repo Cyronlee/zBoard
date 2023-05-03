@@ -8,6 +8,7 @@ interface BuildStatusCardProps {
 }
 
 export interface BuildStatus {
+  // TODO render style & color by platform: CircleCI or Github
   projectName: string;
   branch: string;
   status: string;

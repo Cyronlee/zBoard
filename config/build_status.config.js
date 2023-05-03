@@ -22,10 +22,10 @@ export const buildStatusConfig = {
     },
     github: {
       enabled: false,
-      // generate GitHub token with Read access to actions, code, and metadata
+      // generate GitHub token with Read access to GitHub Actions, code, and metadata
       apiToken: process.env.GITHUB_API_TOKEN,
       // GitHub API url (for self-hosted GitHub, default URL is https://api.github.com)
-      baseUrl: process.env.GITHUB_BASE_URL || 'https://api.github.com',
+      baseUrl: 'https://api.github.com',
       // refresh interval for Build Status
       refreshIntervalSeconds: 60,
       // projects you want to monitor

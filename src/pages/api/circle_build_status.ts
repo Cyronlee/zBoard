@@ -73,6 +73,7 @@ const getBuildStatus = async ({
   const { login, avatar_url } = latestPipeline.trigger.actor;
   const latestWorkflow: Workflow = await getLatestWorkflow(latestPipeline.id);
   return {
+    platform: 'CircleCI',
     projectName: projectName,
     branch,
     username: login,

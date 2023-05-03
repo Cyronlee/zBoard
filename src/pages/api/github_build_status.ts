@@ -90,6 +90,7 @@ const getStatus = async ({
   }
   const workflowRun = json.workflow_runs[0];
   return {
+    platform: 'Github',
     projectName: repo,
     branch: branch,
     status: workflowRun.conclusion,
