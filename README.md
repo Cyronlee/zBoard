@@ -67,6 +67,7 @@ Demo: [https://z-board.vercel.app/](https://z-board.vercel.app/) Password: 12345
   - `ZENDESK_API_TOKEN`: Zendesk API Token to get ticket status, [follow this guide](https://support.zendesk.com/hc/en-us/articles/4408889192858-Generating-a-new-API-token)
   - `ZENDESK_USER_EMAIL`: The user email who generate the API token
   - `ZENDESK_BASE_URL`: `https://<Your Org>.zendesk.com`
+  - `GITHUB_API_TOKEN`: GitHub API Token to get build status from GitHub Actions
   - `KANBANIZE_BASE_URL`: `https://<Your Org>.kanbanize.com`
   - `KANBANIZE_API_KEY`: Kanbanize API Key to build project timeline, [follow this guide](https://kanbanize.com/api)
   - `API_TABLE_API_KEY`: ApiTable API Key to load owner rotation data, [follow this guide](https://developers.apitable.com/api/quick-start#step-1-get-api-token)

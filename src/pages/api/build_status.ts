@@ -1,118 +1,25 @@
 import { NextApiHandler } from 'next';
-import _ from 'lodash';
-import { buildStatusConfig } from '../../../config/build_status.config';
-import { getBuildStatusFakeData } from '@/../../fake/build_status.fake';
 import { delay1s } from '@/lib/delay';
-
-interface PipelineTriggerActor {
-  login: string;
-  avatar_url: string;
-}
-
-interface PipelineTrigger {
-  actor: PipelineTriggerActor;
-}
-
-interface PipelineVcsCommit {
-  body: string;
-  subject: string;
-}
-
-interface PipelineVcs {
-  commit: PipelineVcsCommit;
-}
-
-interface Workflow {
-  id: string;
-  created_at: string;
-  status: string;
-}
-
-interface Workflows {
-  items: Workflow[];
-}
-
-interface Pipeline {
-  id: string;
-  updated_at: string;
-  trigger: PipelineTrigger;
-  vcs: PipelineVcs;
-}
-
-interface Pipelines {
-  items: Pipeline[];
-}
-
-const circleCIConfig = buildStatusConfig.datasource.circleCI;
+import { getBuildStatusFakeData } from '../../../fake/build_status.fake';
+import { buildStatusConfig } from '../../../config/build_status.config';
+import { getAllCircleBuildStatus } from '@/pages/api/circle_build_status';
+import { getAllGitHubStatus } from '@/pages/api/github_build_status';
 
 const handler: NextApiHandler = async (req, res) => {
-  getAllBuildStatus()
+  getCIStatus()
     .then((response) => res.status(200).json(response))
     .catch((err) => res.status(500).send(err.message));
 };
 
-const getAllBuildStatus = async () => {
-  if (circleCIConfig.enabled) {
-    return await Promise.all(
-      circleCIConfig.projects.map((project) => {
-        return getBuildStatus(project);
-      })
-    );
+const getCIStatus = async () => {
+  if (
+    !buildStatusConfig.datasource.github.enabled &&
+    !buildStatusConfig.datasource.circleCI.enabled
+  ) {
+    return delay1s(getBuildStatusFakeData);
   }
-  return delay1s(getBuildStatusFakeData);
-};
-
-const getBuildStatus = async ({
-  projectName,
-  projectSlug,
-  branch,
-}: {
-  projectName: string;
-  projectSlug: string;
-  branch: string;
-}) => {
-  const latestPipeline: Pipeline = await getLatestPipeline(projectSlug, branch);
-  const { login, avatar_url } = latestPipeline.trigger.actor;
-  const latestWorkflow: Workflow = await getLatestWorkflow(latestPipeline.id);
-  return {
-    projectName: projectName,
-    branch,
-    username: login,
-    avatarUrl: avatar_url,
-    commitSubject: latestPipeline.vcs.commit?.subject || 'git tag',
-    status: latestWorkflow.status,
-    stopTime: latestWorkflow.created_at,
-  };
-};
-
-const getLatestPipeline = async (projectSlug: string, branch: string): Promise<Pipeline> => {
-  let pipelines: Pipelines = await fetchPipelines(projectSlug, branch);
-  return _.orderBy(pipelines.items, 'updated_at', 'desc')[0];
-};
-
-const getLatestWorkflow = async (pipelineId: string): Promise<Workflow> => {
-  const workflows = await fetchWorkflows(pipelineId);
-  return _.orderBy(workflows.items, 'created_at', 'desc')[0];
-};
-
-const fetchPipelines = async (projectSlug: string, branch: string): Promise<Pipelines> => {
-  const url = `https://circleci.com/api/v2/project/${projectSlug}/pipeline?branch=${branch}&circle-token=${circleCIConfig.apiToken}`;
-  const response = await fetch(url);
-  let json: Pipelines = await response.json();
-  if (!response.ok) {
-    throw new Error(JSON.stringify(json));
-  }
-  return json;
-};
-
-const fetchWorkflows = async (pipelineId: string): Promise<Workflows> => {
-  const url = `https://circleci.com/api/v2/pipeline/${pipelineId}/workflow?circle-token=${circleCIConfig.apiToken}`;
-  const response = await fetch(url);
-  let json: Workflows = await response.json();
-  if (!response.ok) {
-    throw new Error(JSON.stringify(json));
-  }
-  return json;
+  const responses = await Promise.all([getAllCircleBuildStatus(), getAllGitHubStatus()]);
+  return responses.flat();
 };
 
 export default handler;
