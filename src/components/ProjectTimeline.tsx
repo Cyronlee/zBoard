@@ -188,7 +188,7 @@ const Timeline = (props: SystemProps) => {
             position: 'absolute',
             left: '11px',
             top: 0,
-            height: '400px',
+            height: '32px',
             width: '2px',
             backgroundColor: 'red.500',
             zIndex: -1,
@@ -201,23 +201,37 @@ const Timeline = (props: SystemProps) => {
     return <Center>{dayNumber}</Center>;
   };
 
-  const renderWeekendGrids = (displayDates: string[]) => {
-    const weekendBgItems: ReactNode[] = [];
+  const renderDayGrids = (displayDates: string[]) => {
+    const dayGridBgItems: ReactNode[] = [];
     displayDates.forEach((date, index) => {
+      const isToday = moment(date).isSame(moment(), 'day');
       if (moment(date).isoWeekday() === 6 || moment(date).isoWeekday() === 7)
-        weekendBgItems.push(
+        dayGridBgItems.push(
           <GridItem
             key={date}
             colStart={index + 1}
-            colEnd={index + 2}
             rowStart={1}
             rowEnd={cards.length + 1}
             backgroundColor={weekendGridBgColor}
             zIndex="-3"
           />
         );
+      if (isToday)
+        dayGridBgItems.push(
+          <GridItem
+            key={date}
+            colStart={index + 1}
+            rowStart={1}
+            rowEnd={cards.length + 1}
+            zIndex="-3"
+            display="flex"
+            justifyContent="center"
+          >
+            <Box borderRight="2px solid" borderColor="red.500"></Box>
+          </GridItem>
+        );
     });
-    return weekendBgItems;
+    return dayGridBgItems;
   };
 
   const renderMonthIndicatorGrids = (displayDates: string[]) => {
@@ -329,7 +343,7 @@ const Timeline = (props: SystemProps) => {
               h={cards.length * renderConfig.gridWidth}
               templateColumns={`repeat(${displayDates.length}, 1fr)`}
             >
-              {renderWeekendGrids(displayDates)}
+              {renderDayGrids(displayDates)}
               {lines.map((cards, index) => renderTimeline(cards, index))}
             </Grid>
           ) : (
