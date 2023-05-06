@@ -4,6 +4,8 @@ import Head from 'next/head';
 import { ChakraProvider } from '@chakra-ui/react';
 import theme from '@/theme/theme';
 import { siteConfig } from '@/../config/site.config';
+// @ts-ignore
+import { Analytics } from '@vercel/analytics/react';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -18,6 +20,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Component {...pageProps} />
+      <Analytics />
     </ChakraProvider>
   );
 }
