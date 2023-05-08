@@ -1,10 +1,17 @@
 import { faker } from '@faker-js/faker';
 
+const repos = Array.from({ length: 9 }).map(() => {
+  return {
+    projectName: faker.word.noun(),
+    branch: faker.helpers.arrayElement(['master', 'release']),
+  };
+});
+
 export const getBuildStatusFakeData = () => {
-  return Array.from({ length: 9 }).map(() => {
+  return repos.map((repo) => {
     return {
-      projectName: faker.word.noun(),
-      branch: 'master',
+      projectName: repo.projectName,
+      branch: repo.branch,
       status: faker.helpers.arrayElement([
         'success',
         'failed',
