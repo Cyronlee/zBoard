@@ -68,11 +68,13 @@ export const getAllGitHubStatus = async () => {
 };
 
 const getStatus = async ({
+  projectName,
   owner,
   repo,
   branch,
   workflowId,
 }: {
+  projectName: string;
   owner: string;
   repo: string;
   branch: string;
@@ -91,7 +93,7 @@ const getStatus = async ({
   const workflowRun = json.workflow_runs[0];
   return {
     platform: 'Github',
-    projectName: repo,
+    projectName: projectName,
     branch: branch,
     status: workflowRun.status,
     stopTime: workflowRun.updated_at,
