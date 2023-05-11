@@ -93,7 +93,7 @@ const getStatus = async ({
     platform: 'Github',
     projectName: repo,
     branch: branch,
-    status: workflowRun.conclusion,
+    status: workflowRun.status,
     stopTime: workflowRun.updated_at,
     username: workflowRun.triggering_actor?.login,
     avatarUrl: workflowRun.triggering_actor?.avatar_url,

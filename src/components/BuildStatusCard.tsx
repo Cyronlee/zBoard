@@ -46,7 +46,7 @@ const statusColorScheme: StatusColorScheme = {
   in_progress: 'blue',
   queued: 'gray',
   requested: 'gray',
-  waiting: 'gray',
+  waiting: 'purple',
   pending: 'gray',
 };
 
