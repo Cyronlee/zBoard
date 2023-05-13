@@ -1,4 +1,6 @@
 import React, {
+  FC,
+  ReactElement,
   Dispatch,
   PropsWithChildren,
   SetStateAction,
@@ -11,7 +13,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import type { FC, ReactElement } from 'react';
+import { useMemoizedFn } from 'ahooks'
 
 function getMouseOffset(event: MouseEvent, target?: HTMLElement) {
   const bounds = (target || (event.target as HTMLElement)).getBoundingClientRect();
@@ -23,13 +25,119 @@ function getMouseOffset(event: MouseEvent, target?: HTMLElement) {
 
 const bound = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
+  const mutateLayout = ({
+    container,
+    rows,
+    cols,
+    columnGap = 0,
+    rowGap = 0,
+    layout,
+    offset,
+    type,
+  }: {
+    container: HTMLElement;
+    rows: number
+    cols: number
+    columnGap?: number;
+    rowGap?: number;
+    layout: {
+      x: number;
+      y: number;
+      w: number;
+      minW?: number
+      maxW?: number
+      h: number;
+      minH?: number
+      maxH?: number
+    };
+    offset: {
+      x: number;
+      y: number;
+    };
+    type: 'move' | 'resize';
+  }) => {
+    const containerBounds = container.getBoundingClientRect();
+    const clientSpanWidth = (containerBounds.width - columnGap * (cols - 1)) / cols;
+    const clientSpanHeight = (containerBounds.height - rowGap * (rows - 1)) / rows;
+
+    const getColSpan = (offsetX: number) =>
+      Math.round((offsetX + columnGap) / (clientSpanWidth + columnGap));
+    const getDistanceByColSpan = (colSpan: number) =>
+      colSpan * clientSpanWidth + (colSpan - 1) * columnGap;
+    const getRowSpan = (offsetY: number) =>
+      Math.round((offsetY + rowGap) / (clientSpanHeight + rowGap));
+    const getDistanceByRowSpan = (rowSpan: number) =>
+      rowSpan * clientSpanHeight + (rowSpan - 1) * rowGap;
+
+    if (type === 'move') {
+      const boundOffsetX = bound(
+        offset.x,
+        getDistanceByColSpan(-layout.x),
+        getDistanceByColSpan(cols - (layout.x + layout.w))
+      );
+      const offsetXSpan = getColSpan(boundOffsetX);
+      const nextLayoutX = layout.x + offsetXSpan;
+
+      const boundOffsetY = bound(
+        offset.y,
+        getDistanceByRowSpan(-layout.y),
+        getDistanceByRowSpan(rows - (layout.y + layout.h))
+      );
+      const offsetYSpan = getRowSpan(boundOffsetY);
+      const nextLayoutY = layout.y + offsetYSpan;
+
+      return {
+        x: nextLayoutX,
+        y: nextLayoutY,
+        w: layout.w,
+        h: layout.h,
+        boundingRect: {
+          left: getDistanceByColSpan(layout.x) + boundOffsetX,
+          top: getDistanceByRowSpan(layout.y) + boundOffsetY,
+          width: getDistanceByColSpan(layout.w),
+          height: getDistanceByRowSpan(layout.h),
+        },
+      };
+    }
+
+    const boundOffsetW = bound(
+      offset.x,
+      getDistanceByColSpan(Math.max(1, layout.minW || 1) - layout.w),
+      getDistanceByColSpan(Math.min(cols - (layout.x + layout.w), (layout.maxW || cols) - layout.w))
+    );
+    const offsetWSpan = getColSpan(boundOffsetW);
+    const nextLayoutW = layout.w + offsetWSpan;
+
+    const boundOffsetH = bound(
+      offset.y,
+      getDistanceByRowSpan(Math.max(1, layout.minH || 1) - layout.h),
+      getDistanceByRowSpan(Math.min(rows - (layout.y + layout.h), (layout.maxH || rows) - layout.h))
+    );
+    const offsetHSpan = getRowSpan(boundOffsetH);
+    const nextLayoutH = layout.h + offsetHSpan;
+
+    return {
+      x: layout.x,
+      y: layout.y,
+      w: nextLayoutW,
+      h: nextLayoutH,
+      boundingRect: {
+        left: getDistanceByColSpan(layout.x),
+        top: getDistanceByRowSpan(layout.y),
+        width: getDistanceByColSpan(layout.w) + boundOffsetW,
+        height: getDistanceByRowSpan(layout.h) + boundOffsetH,
+      },
+    };
+  };
+
 type TransferData = {
   layout: {
     w: number;
     h: number;
   };
-  templateId: string
-} & Record<string, any>;
+  templateId: string;
+  [key: string]: any
+}
 
 interface ItemContext {
   data: TransferData;
@@ -75,7 +183,7 @@ export const DragAndDropProvider: FC<PropsWithChildren> = ({ children }) => {
 interface DraggableProps<T = {}> {
   dropData?: {
     layout: { w: number; h: number; minW?: number; maxW?: number; minH?: number; maxH?: number };
-    templateId: string
+    templateId: string;
   } & T;
 }
 
@@ -149,181 +257,109 @@ const LayoutItemComponent: FC<LayoutItemComponentProps> = ({
   onLayoutChange,
   onLayoutChangeEnd,
 }) => {
-  const { getContainer, cols, rows } = useContext(GridLayoutContext);
+  const { getContainer, cols, rows, columnGap, rowGap } = useContext(GridLayoutContext);
   const elRef = useRef<HTMLDivElement>(null);
   const element = render(layout);
-  const dragMouseDownClientXYRef = useRef<null | { clientX: number; clientY: number }>(null);
-  const resizeMouseDownClientXYRef = useRef<null | { clientX: number; clientY: number }>(null);
+  const mouseDownMetaRef = useRef<null | {
+    clientX: number;
+    clientY: number;
+    type: 'move' | 'resize';
+  }>(null);
 
   const draggableProps = draggable
     ? {
         onMouseDown(e: React.MouseEvent) {
-          dragMouseDownClientXYRef.current = {
+          mouseDownMetaRef.current = {
             clientX: e.clientX,
             clientY: e.clientY,
+            type: 'move',
           };
         },
       }
     : {};
 
-  useEffect(() => {
-    if (!draggable) return;
-
-    const getOffsets = (e: MouseEvent) => {
-      const offset = {
-        x: e.clientX - dragMouseDownClientXYRef.current!.clientX,
-        y: e.clientY - dragMouseDownClientXYRef.current!.clientY,
-      };
-
-      const containerBounds = getContainer()!.getBoundingClientRect();
-      const spanW = containerBounds.width / 12;
-      const spanH = containerBounds.height / 12;
-      const boundOffsetX = bound(
-        offset.x,
-        -layout.x * spanW,
-        (cols - (layout.x + layout.w)) * spanW
+  const getNewLayoutByOffset = useMemoizedFn(
+    (
+      offset: {
+        x: number;
+        y: number;
+      },
+      type: 'move' | 'resize'
+    ) => {
+      return mutateLayout(
+        {
+          container: getContainer()!,
+          rows,
+          cols,
+          columnGap,
+          rowGap,
+          layout,
+          offset,
+          type
+        },
       );
-      const boundOffsetY = bound(
-        offset.y,
-        -layout.y * spanH,
-        (rows - (layout.y + layout.h)) * spanH
-      );
-      const offsetXCells = Math.round(boundOffsetX / spanW);
-      const offsetYCells = Math.round(boundOffsetY / spanH);
-
-      return {
-        offsetX: offset.x,
-        offsetY: offset.y,
-        boundOffsetX,
-        boundOffsetY,
-        offsetXCells,
-        offsetYCells,
-        spanW,
-        spanH,
-      };
-    };
-
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!dragMouseDownClientXYRef.current) return;
-
-      const { offsetXCells, offsetYCells, boundOffsetX, boundOffsetY } = getOffsets(e);
-      Object.assign(elRef.current!.style, {
-        transform: `translate(${boundOffsetX}px, ${boundOffsetY}px)`,
-      });
-      onLayoutChange?.({
-        ...layout,
-        x: layout.x + offsetXCells,
-        y: layout.y + offsetYCells,
-      });
-    };
-    const handleMouseUp = (e: MouseEvent) => {
-      if (!dragMouseDownClientXYRef.current) return;
-
-      const { offsetXCells, offsetYCells } = getOffsets(e);
-      Object.assign(elRef.current!.style, {
-        transform: `translate(0px, 0px)`,
-      });
-      onLayoutChangeEnd?.({
-        ...layout,
-        x: layout.x + offsetXCells,
-        y: layout.y + offsetYCells,
-      });
-      dragMouseDownClientXYRef.current = null;
-    };
-
-    document.body.addEventListener('mousemove', handleMouseMove);
-    document.body.addEventListener('mouseup', handleMouseUp);
-
-    return () => {
-      document.body.removeEventListener('mousemove', handleMouseMove);
-      document.body.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [layout, draggable, onLayoutChange, onLayoutChangeEnd, cols, rows, getContainer]);
+    }
+  );
 
   useEffect(() => {
-    if (!resizable) return;
-
-    const getOffsets = (e: MouseEvent) => {
-      const offset = {
-        x: e.clientX - resizeMouseDownClientXYRef.current!.clientX,
-        y: e.clientY - resizeMouseDownClientXYRef.current!.clientY,
-      };
-
-      const containerBounds = getContainer()!.getBoundingClientRect();
-      const spanW = containerBounds.width / 12;
-      const spanH = containerBounds.height / 12;
-
-      // TODO: to simplify the bound computation
-      const boundOffsetW = bound(
-        offset.x,
-        (-layout.w + 1) * spanW,
-        (cols - (layout.x + layout.w)) * spanW
-      );
-      const boundOffsetH = bound(
-        offset.y,
-        (-layout.h + 1) * spanH,
-        (rows - (layout.y + layout.h)) * spanH
-      );
-
-      const offsetWSpans = bound(
-        layout.w + Math.round(boundOffsetW / spanW),
-        layout.minW || 1,
-        layout.maxW || cols
-      ) - layout.w;
-      const offsetHSpans = bound(
-        layout.h + Math.round(boundOffsetH / spanH),
-        layout.minH || 1,
-        layout.maxH || rows
-      ) - layout.h;
-
-      return {
-        offsetX: offset.x,
-        offsetY: offset.y,
-        boundOffsetW: offsetWSpans * spanW,
-        boundOffsetH: offsetHSpans * spanH,
-        offsetWSpans,
-        offsetHSpans,
-        spanW,
-        spanH,
-      };
-    };
+    if (!draggable && !resizable) return;
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (!resizeMouseDownClientXYRef.current) return;
+      if (!mouseDownMetaRef.current) return;
 
-      const { offsetWSpans, offsetHSpans, spanW, spanH, boundOffsetW, boundOffsetH } =
-        getOffsets(e);
+      const { clientX, clientY, type } = mouseDownMetaRef.current;
+      const { x, y, w, h, boundingRect } = getNewLayoutByOffset(
+        {
+          x: e.clientX - clientX,
+          y: e.clientY - clientY,
+        },
+        type
+      );
+
       Object.assign(elRef.current!.style, {
         position: 'absolute',
-        gridColumnEnd: 'auto',
-        gridRowEnd: 'auto',
-        width: `${layout.w * spanW + boundOffsetW}px`,
-        height: `${layout.h * spanH + boundOffsetH}px`,
+        width: `${boundingRect.width}px`,
+        height: `${boundingRect.height}px`,
+        left: `${boundingRect.left}px`,
+        top: `${boundingRect.top}px`,
+        gridArea: 'auto',
       });
-
       onLayoutChange?.({
         ...layout,
-        w: layout.w + offsetWSpans,
-        h: layout.h + offsetHSpans,
+        x,
+        y,
+        w,
+        h,
       });
     };
     const handleMouseUp = (e: MouseEvent) => {
-      if (!resizeMouseDownClientXYRef.current) return;
+      if (!mouseDownMetaRef.current) return;
 
-      const { offsetWSpans, offsetHSpans } = getOffsets(e);
+      const { clientX, clientY, type } = mouseDownMetaRef.current;
+      const { x, y, w, h } = getNewLayoutByOffset(
+        {
+          x: e.clientX - clientX,
+          y: e.clientY - clientY,
+        },
+        type
+      );
+
       Object.assign(elRef.current!.style, {
         position: 'relative',
-        gridColumnEnd: layout.x + layout.w + offsetWSpans + 1,
-        gridRowEnd: layout.y + layout.h + offsetHSpans + 1,
         width: 'auto',
         height: 'auto',
+        left: 'auto',
+        top: 'auto',
+        gridArea: `${y + 1}/${x + 1}/${y + h + 1}/${x + w + 1}`,
       });
       onLayoutChangeEnd?.({
         ...layout,
-        w: layout.w + offsetWSpans,
-        h: layout.h + offsetHSpans,
+        x,
+        y,
+        w,
+        h,
       });
-      resizeMouseDownClientXYRef.current = null;
+      mouseDownMetaRef.current = null;
     };
 
     document.body.addEventListener('mousemove', handleMouseMove);
@@ -333,7 +369,14 @@ const LayoutItemComponent: FC<LayoutItemComponentProps> = ({
       document.body.removeEventListener('mousemove', handleMouseMove);
       document.body.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [layout, resizable, onLayoutChange, cols, rows, getContainer]);
+  }, [
+    layout,
+    draggable,
+    resizable,
+    onLayoutChange,
+    onLayoutChangeEnd,
+    getNewLayoutByOffset,
+  ]);
 
   return (
     <div
@@ -341,10 +384,9 @@ const LayoutItemComponent: FC<LayoutItemComponentProps> = ({
       ref={elRef}
       style={{
         position: 'relative',
-        gridColumnStart: layout.x + 1,
-        gridColumnEnd: layout.x + layout.w + 1,
-        gridRowStart: layout.y + 1,
-        gridRowEnd: layout.y + layout.h + 1,
+        gridArea: `${layout.y + 1}/${layout.x + 1}/${layout.y + layout.h + 1}/${
+          layout.x + layout.w + 1
+        }`,
         cursor: draggable ? 'move' : 'inherit',
       }}
       {...draggableProps}
@@ -369,9 +411,10 @@ const LayoutItemComponent: FC<LayoutItemComponentProps> = ({
           onMouseDown={(e) => {
             e.stopPropagation();
 
-            resizeMouseDownClientXYRef.current = {
+            mouseDownMetaRef.current = {
               clientX: e.clientX,
               clientY: e.clientY,
+              type: 'resize',
             };
           }}
         />
@@ -386,17 +429,19 @@ export interface Layout {
   x: number;
   y: number;
   w: number;
-  minW?: number
-  maxW?: number
+  minW?: number;
+  maxW?: number;
   h: number;
-  minH?: number
-  maxH?: number
+  minH?: number;
+  maxH?: number;
 }
 
 const GridLayoutContext = createContext({
   layouts: [] as Layout[],
   cols: 12,
   rows: 12,
+  columnGap: 0,
+  rowGap: 0,
   getContainer: (() => null) as () => HTMLElement | null,
 });
 
@@ -404,6 +449,8 @@ interface GridLayoutProps {
   fullPage?: boolean;
   cols: number;
   rows: number;
+  columnGap?: number;
+  rowGap?: number;
   itemRender: (layout: Layout) => ReactElement;
   droppable?: boolean;
   draggable?: boolean;
@@ -416,6 +463,8 @@ interface GridLayoutProps {
 export const GridLayout: FC<GridLayoutProps> = ({
   cols,
   rows,
+  columnGap = 0,
+  rowGap = 0,
   itemRender,
   fullPage = false,
   droppable = false,
@@ -434,6 +483,22 @@ export const GridLayout: FC<GridLayoutProps> = ({
     y: 0,
   });
 
+  const showShadow = ({ x, y, w, h }: { x: number; y: number; w: number; h: number }) => {
+    if (!shadowRef.current) return;
+
+    Object.assign(shadowRef.current.style, {
+      display: 'block',
+      gridArea: `${y + 1}/${x + 1}/${y + h + 1}/${x + w + 1}`,
+    });
+  }
+  const hideShadow = () => {
+    if (!shadowRef.current) return
+
+    Object.assign(shadowRef.current.style, {
+      display: 'none',
+    });
+  }
+
   const droppableProps = droppable
     ? {
         onDragEnter: (e: React.DragEvent<HTMLElement>) => {
@@ -447,33 +512,38 @@ export const GridLayout: FC<GridLayoutProps> = ({
           const { data, mouseOffset } = getContext(draggingItem!);
           const dropZoneMouseOffset = getMouseOffset(e as any, containerRef.current!);
 
-          const containerBounds = containerRef.current!.getBoundingClientRect();
-          const spanW = containerBounds.width / cols;
-          const spanH = containerBounds.height / rows;
-
-          const x = bound(Math.round((dropZoneMouseOffset.x - mouseOffset.x) / spanW), 0, cols - data.layout.w);
-          const y = bound(
-            Math.round((dropZoneMouseOffset.y - mouseOffset.y) / spanH),
-            0,
-            rows - data.layout.h
-          );
+          const { x, y, w, h } = mutateLayout({
+            container: containerRef.current!,
+            rows,
+            cols,
+            rowGap,
+            columnGap,
+            layout: {
+              ...data.layout,
+              x: 0,
+              y: 0,
+            },
+            offset: {
+              x: dropZoneMouseOffset.x - mouseOffset.x,
+              y: dropZoneMouseOffset.y - mouseOffset.y,
+            },
+            type: 'move',
+          });
 
           dropPositionRef.current.x = x;
           dropPositionRef.current.y = y;
 
-          Object.assign(shadowRef.current!.style, {
-            display: 'block',
-            gridColumnStart: x + 1,
-            gridRowStart: y + 1,
-            gridColumnEnd: x + data.layout.w + 1,
-            gridRowEnd: y + data.layout.h + 1,
+          showShadow({
+            x,
+            y,
+            w,
+            h,
           });
         },
         onDragLeave: (e: React.DragEvent<HTMLElement>) => {
-          if (e.relatedTarget === shadowRef.current) return
-          Object.assign(shadowRef.current!.style, {
-            display: 'none',
-          });
+          if (e.relatedTarget === shadowRef.current) return;
+          
+          hideShadow()
         },
         onDrop: (e: React.DragEvent<HTMLElement>) => {
           e.preventDefault();
@@ -489,9 +559,7 @@ export const GridLayout: FC<GridLayoutProps> = ({
               ...dropPositionRef.current,
             },
           ]);
-          Object.assign(shadowRef.current!.style, {
-            display: 'none',
-          });
+          hideShadow();
 
           dropPositionRef.current.x = 0;
           dropPositionRef.current.y = 0;
@@ -505,6 +573,8 @@ export const GridLayout: FC<GridLayoutProps> = ({
         layouts,
         cols,
         rows,
+        columnGap,
+        rowGap,
         getContainer: () => containerRef.current,
       }}
     >
@@ -514,9 +584,8 @@ export const GridLayout: FC<GridLayoutProps> = ({
           display: 'grid',
           gridTemplateColumns: `repeat(${cols}, 1fr)`,
           gridTemplateRows: `repeat(${rows}, 1fr)`,
+          gridGap: '12px',
           position: 'relative',
-          // TODO: replace with a design style
-          background: `repeating-linear-gradient(0deg, transparent 0%, transparent calc(100% / 12 - 2px), #efefef calc(100% / 12)), repeating-linear-gradient(90deg, transparent 0%, transparent calc(100% / 12 - 2px), #efefef calc(100% / 12));`,
           ...style,
         }}
         {...droppableProps}
@@ -529,21 +598,16 @@ export const GridLayout: FC<GridLayoutProps> = ({
             render={itemRender}
             draggable={draggable}
             resizable={resizable}
-            onLayoutChange={(newLayout) => {
-              if (shadowRef.current) {
-                Object.assign(shadowRef.current.style, {
-                  display: 'block',
-                  gridColumnStart: newLayout.x + 1,
-                  gridRowStart: newLayout.y + 1,
-                  gridColumnEnd: newLayout.x + newLayout.w + 1,
-                  gridRowEnd: newLayout.y + newLayout.h + 1,
-                });
-              }
+            onLayoutChange={({ x, y, w, h }) => {
+              showShadow({
+                x,
+                y,
+                w,
+                h
+              });
             }}
             onLayoutChangeEnd={(newLayout) => {
-              Object.assign(shadowRef.current!.style, {
-                display: 'none',
-              });
+              hideShadow()
               onLayoutsChange(
                 layouts.map((layout) => (layout.id === newLayout.id ? newLayout : layout))
               );
@@ -555,8 +619,7 @@ export const GridLayout: FC<GridLayoutProps> = ({
           id="dropping-shadow"
           style={{
             transition: '200ms',
-            gridColumnStart: 1,
-            gridRowStart: 1,
+            gridArea: '1/1/auto/auto',
             background: 'blue',
             opacity: 0.1,
             display: 'none',
