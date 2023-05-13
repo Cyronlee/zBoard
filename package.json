@@ -17,6 +17,7 @@
     "@types/react": "18.0.35",
     "@types/react-dom": "18.0.11",
     "@vercel/analytics": "^1.0.1",
+    "ahooks": "^3.7.10",
     "axios": "^1.6.5",
     "eslint": "8.38.0",
     "eslint-config-next": "13.3.0",
@@ -28,7 +29,8 @@
     "react-dom": "18.2.0",
     "react-icons": "^4.8.0",
     "typescript": "5.0.4",
-    "universal-cookie": "^4.0.4"
+    "universal-cookie": "^4.0.4",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
