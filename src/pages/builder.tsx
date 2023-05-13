@@ -35,10 +35,10 @@ const PageContainer: FC = () => {
                 templateId: 'ProjectTimeline',
                 layout: {
                   w: 8,
-                  minW: 6,
+                  minW: 2,
                   maxW: 10,
                   h: 7,
-                  minH: 7,
+                  minH: 2,
                   maxH: 9,
                 },
               }}
