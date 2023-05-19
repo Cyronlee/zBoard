@@ -48,6 +48,7 @@ const statusColorScheme: StatusColorScheme = {
   requested: 'gray',
   waiting: 'purple',
   pending: 'gray',
+  startup_failure: 'red',
 };
 
 const BuildStatusCard = ({ buildStatus }: BuildStatusCardProps) => {

@@ -95,7 +95,7 @@ const getStatus = async ({
     platform: 'Github',
     projectName: projectName,
     branch: branch,
-    status: workflowRun.status,
+    status: workflowRun.status === 'completed' ? workflowRun.conclusion : workflowRun.status,
     stopTime: workflowRun.updated_at,
     username: workflowRun.triggering_actor?.login,
     avatarUrl: workflowRun.triggering_actor?.avatar_url,
