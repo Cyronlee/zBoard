@@ -32,6 +32,7 @@ export const buildStatusConfig = {
       // workflow ID may check by https://api.github.com/repos/USER/REPO/actions/workflows
       projects: [
         {
+          projectName: 'vscode',
           owner: 'microsoft',
           repo: 'vscode',
           branch: 'master',

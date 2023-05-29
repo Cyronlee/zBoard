@@ -78,7 +78,7 @@ const getBuildStatus = async ({
     branch,
     username: login,
     avatarUrl: avatar_url,
-    commitSubject: latestPipeline.vcs.commit?.subject || 'git tag',
+    commitSubject: latestPipeline.vcs.commit?.subject || 'automatically triggered',
     status: latestWorkflow.status,
     stopTime: latestWorkflow.created_at,
   };
