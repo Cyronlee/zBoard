@@ -29,8 +29,9 @@ const BuildStatusOverview = (props: SystemProps) => {
             overflowY="scroll"
             height="100%"
             width="100%"
-            gridGap="25px"
-            gridTemplateColumns="repeat(auto-fit, minmax(324px, 1fr))"
+            rowGap="18px"
+            columnGap="24px"
+            gridTemplateColumns="repeat(auto-fit, minmax(320px, 1fr))"
           >
             {data.map((item, index) => (
               <BuildStatusCard key={index} buildStatus={item} />
