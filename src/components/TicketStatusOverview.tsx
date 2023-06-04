@@ -33,8 +33,8 @@ const TicketOverview = (props: SystemProps) => {
 
   return (
     <RefreshWrapper
-      {...props}
       maxWidth="448px"
+      {...props}
       title="Ticket Status"
       onRefresh={fetchData}
       refreshIntervalSeconds={ticketStatusConfig.refreshIntervalSeconds}
