@@ -23,9 +23,9 @@ export const projectTimelineConfig = {
       ],
       // card types you want to monitor
       monitorCardTypes: [
-        { id: 3955, name: 'Business' },
-        { id: 3956, name: 'Technical' },
-        { id: 3957, name: 'Defect' },
+        { id: 10176, name: 'Business' },
+        { id: 10181, name: 'Technical' },
+        { id: 10174, name: 'Defect' },
         { id: 10133, name: 'Spike' },
       ],
       // a card's startDate will be the first date it was moved to startColumns
