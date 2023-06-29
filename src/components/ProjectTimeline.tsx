@@ -148,6 +148,7 @@ const Timeline = (props: SystemProps) => {
         borderRadius="20px"
         justifyContent="space-between"
         alignItems="center"
+        zIndex={-1}
       >
         <Flex ml={2} flexDirection="column" alignItems="start">
           <Text fontSize="md" noOfLines={1}>
@@ -188,8 +189,7 @@ const Timeline = (props: SystemProps) => {
             position: 'absolute',
             left: '11px',
             top: 0,
-            // height: cards.length * 42 + 28,
-            height: '400px',
+            height: '32px',
             width: '2px',
             backgroundColor: 'red.500',
             zIndex: -1,
@@ -202,23 +202,37 @@ const Timeline = (props: SystemProps) => {
     return <Center>{dayNumber}</Center>;
   };
 
-  const renderWeekendGrids = (displayDates: string[]) => {
-    const weekendBgItems: ReactNode[] = [];
+  const renderDayGrids = (displayDates: string[]) => {
+    const dayGridBgItems: ReactNode[] = [];
     displayDates.forEach((date, index) => {
+      const isToday = moment(date).isSame(moment(), 'day');
       if (moment(date).isoWeekday() === 6 || moment(date).isoWeekday() === 7)
-        weekendBgItems.push(
+        dayGridBgItems.push(
           <GridItem
             key={date}
             colStart={index + 1}
-            colEnd={index + 2}
             rowStart={1}
             rowEnd={cards.length + 1}
             backgroundColor={weekendGridBgColor}
             zIndex="-3"
           />
         );
+      if (isToday)
+        dayGridBgItems.push(
+          <GridItem
+            key={date}
+            colStart={index + 1}
+            rowStart={1}
+            rowEnd={cards.length + 1}
+            zIndex="-3"
+            display="flex"
+            justifyContent="center"
+          >
+            <Box borderRight="2px solid" borderColor="red.500"></Box>
+          </GridItem>
+        );
     });
-    return weekendBgItems;
+    return dayGridBgItems;
   };
 
   const renderMonthIndicatorGrids = (displayDates: string[]) => {
@@ -234,7 +248,7 @@ const Timeline = (props: SystemProps) => {
             key={monthYearStr}
             rowStart={renderConfig.monthIndicatorRowNum}
             colStart={index + 1}
-            colSpan={3}
+            colSpan={31}
             h="40px"
           >
             <Flex
@@ -243,6 +257,8 @@ const Timeline = (props: SystemProps) => {
               justifyContent="flex-start"
               ml="12px"
               fontWeight="bold"
+              flex={1}
+              zIndex={3}
               _before={{
                 content: '""',
                 position: 'absolute',
@@ -318,23 +334,17 @@ const Timeline = (props: SystemProps) => {
         >
           {projectTimelineConfig.title || 'Delivery Timeline'}
         </Heading>
-        <Box w={displayDates.length * renderConfig.gridWidth}>
-          <Grid
-            w={displayDates.length * renderConfig.gridWidth}
-            templateColumns={`repeat(${displayDates.length}, 1fr)`}
-          >
+        <Box w={displayDates.length * renderConfig.gridWidth} overflowY="scroll">
+          <Grid templateColumns={`repeat(${displayDates.length}, 1fr)`} position="sticky" top={0}>
             {renderMonthIndicatorGrids(displayDates)}
             {renderDateIndicatorGrids(displayDates)}
           </Grid>
-        </Box>
-        <Box flex="1" w={displayDates.length * renderConfig.gridWidth} overflowY="scroll">
           {cards.length > 0 ? (
             <Grid
               h={cards.length * renderConfig.gridWidth}
-              w={displayDates.length * renderConfig.gridWidth}
               templateColumns={`repeat(${displayDates.length}, 1fr)`}
             >
-              {renderWeekendGrids(displayDates)}
+              {renderDayGrids(displayDates)}
               {lines.map((cards, index) => renderTimeline(cards, index))}
             </Grid>
           ) : (
