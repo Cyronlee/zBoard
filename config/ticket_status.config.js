@@ -1,6 +1,6 @@
 export const ticketStatusConfig = {
   title: 'Ticket Status',
-  refreshIntervalSeconds: 60,
+  refreshIntervalSeconds: 120,
   datasource: {
     zendesk: {
       enabled: true,
@@ -10,6 +10,13 @@ export const ticketStatusConfig = {
       apiToken: process.env.ZENDESK_API_TOKEN,
       // Zendesk viewId you want to monitor
       viewId: '36345004',
+    },
+  },
+  bot: {
+    wecome: {
+      enabled: true,
+      webhook: process.env.ZENDESK_BOT_WEBHOOK,
+      members: process.env.ZENDESK_BOT_MEMBERS,
     },
   },
 };

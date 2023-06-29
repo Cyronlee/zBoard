@@ -3,13 +3,30 @@ import { ticketStatusConfig } from '../../../config/ticket_status.config';
 import { getTicketStatusFakeData } from '../../../fake/ticket_status.fake';
 import { delay1s } from '@/lib/delay';
 import { btoa } from 'buffer';
+import { sendBotNotification } from '@/lib/weComeBot';
+import moment from 'moment';
 
-interface Ticket {
+export interface Ticket {
+  id: number;
   subject: string;
+  via: {
+    source: {
+      from: {
+        address: string;
+        name: string;
+      };
+      to: {
+        name: string;
+        address: string;
+      };
+    };
+  };
+  priority: string;
   status: string;
   url: string;
   created_at: string;
   updated_at: string;
+  assignee_id: number;
 }
 
 const zendeskConfig = ticketStatusConfig.datasource.zendesk;
@@ -28,6 +45,7 @@ const getAllBuildStatus = async () => {
 };
 
 const fetchTickets = async () => {
+  const startMoment = moment();
   const emailAddress = zendeskConfig.userEmail;
   const apiToken = zendeskConfig.apiToken;
   const basicToken = btoa(`${emailAddress}/token:${apiToken}`);
@@ -46,6 +64,9 @@ const fetchTickets = async () => {
     nextPageUrl = json.next_page;
     allTickets = allTickets.concat(json.tickets);
   }
+
+  sendBotNotification(allTickets, startMoment.clone());
+
   return allTickets;
 };
 
