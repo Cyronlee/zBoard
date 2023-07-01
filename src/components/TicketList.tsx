@@ -1,6 +1,5 @@
-import { Badge, Box, Flex, Text, Link, VStack } from '@chakra-ui/react';
+import { Badge, Box, Flex, Link, Text, VStack } from '@chakra-ui/react';
 import moment from 'moment';
-import _ from 'lodash';
 import React from 'react';
 
 interface TicketListProps {
@@ -20,7 +19,8 @@ const TicketList = ({ tickets }: TicketListProps) => {
   const renderTicketInfo = (ticket: Ticket, index: number) => {
     let colorScheme;
     if (ticket.status === 'new') colorScheme = 'yellow';
-    else if (ticket.status === 'open') colorScheme = 'red';
+    else if (ticket.status === 'Done') colorScheme='green';
+    else if (ticket.status === 'open' || ticket.status === 'BLOCKED') colorScheme = 'red';
     else if (ticket.status === 'hold') colorScheme = 'gray';
     else colorScheme = 'blue';
 

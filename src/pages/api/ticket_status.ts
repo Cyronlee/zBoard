@@ -13,6 +13,7 @@ interface Ticket {
 }
 
 const zendeskConfig = ticketStatusConfig.datasource.zendesk;
+const jiraConfig = ticketStatusConfig.datasource.jira;
 
 const handler: NextApiHandler = async (req, res) => {
   getAllBuildStatus()
@@ -23,6 +24,9 @@ const handler: NextApiHandler = async (req, res) => {
 const getAllBuildStatus = async () => {
   if (zendeskConfig.enabled) {
     return await fetchTickets();
+  }
+  if (jiraConfig.enabled) {
+    return await fetchJiraIssues();
   }
   return delay1s(getTicketStatusFakeData);
 };
@@ -47,6 +51,51 @@ const fetchTickets = async () => {
     allTickets = allTickets.concat(json.tickets);
   }
   return allTickets;
+};
+
+const fetchJiraIssues = async () => {
+  const emailAddress = jiraConfig.userEmail;
+  const apiToken = jiraConfig.apiToken;
+  const basicToken = btoa(`${emailAddress}:${apiToken}`);
+  const activeSprintUrl = `${jiraConfig.baseUrl}/rest/agile/1.0/board/${jiraConfig.boardId}/sprint?state=active`
+  const response = await fetch(activeSprintUrl, {
+    headers: {
+      Authorization: `Basic ${basicToken}`,
+    },
+  })
+  if (!response.ok) {
+    throw new Error('failed to fetch jira active sprint');
+  }
+
+  const activeSprintJson = await response.json();
+  const activeSprintId = activeSprintJson.values[0].id;
+  const allIssuesUrl = `${jiraConfig.baseUrl}/rest/greenhopper/latest/rapid/charts/sprintreport?rapidViewId=${jiraConfig.boardId}&sprintId=${activeSprintId}`;
+
+  const issuesResponse = await fetch(allIssuesUrl, {
+    headers: {
+      Authorization: `Basic ${basicToken}`,
+    },
+  });
+  if (!issuesResponse.ok) {
+    throw new Error('failed to fetch jira issues in active sprint: ' + activeSprintId);
+  }
+  const issuesJson = await issuesResponse.json();
+  let allJiraIssues: Ticket[] = [];
+  const completedIssues = issuesJson.contents.issuesNotCompletedInCurrentSprint;
+  // you can do some custom order for showing jira issues according to status of your jira issues
+  // @ts-ignore
+  issuesJson.contents.completedIssues.concat(completedIssues).map((issue) => {
+    const jiraIssue = {
+      subject: issue.summary,
+      status: issue.statusName,
+      url: issue.url,
+      created_at: issue.updatedAt,
+      updated_at: issue.updatedAt,
+    };
+    allJiraIssues.push(jiraIssue);
+  })
+
+  return allJiraIssues;
 };
 
 export default handler;
