@@ -11,5 +11,12 @@ export const ticketStatusConfig = {
       // Zendesk viewId you want to monitor
       viewId: '30000000',
     },
+    jira: {
+      enabled: true,
+      baseUrl: process.env.JIRA_BASE_URL,
+      userEmail: process.env.JIRA_USER_EMAIL,
+      apiToken: process.env.JIRA_API_TOKEN,
+      boardId: process.env.JIRA_BOARD_ID,
+    }
   },
 };
