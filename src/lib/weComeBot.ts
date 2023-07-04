@@ -1,11 +1,20 @@
 import moment from 'moment';
+import { kv } from '@vercel/kv';
 
 import { Ticket } from '@/pages/api/ticket_status';
 import { ticketStatusConfig } from '@/../config/ticket_status.config';
 
-export const sendBotNotification = (tickets: Ticket[], startMoment: moment.Moment) => {
-  sendNewReceivedTickets(tickets, startMoment.clone());
-  sendNewUpdatedTickets(tickets, startMoment.clone());
+export const sendBotNotification = async (tickets: Ticket[]) => {
+  let lastSendTime: string | null = await kv.get<string>('last_send_time');
+
+  let thisMoment = moment();
+  if (lastSendTime != null) {
+    console.log(`start sending after ${lastSendTime}`);
+    await sendNewReceivedTickets(tickets, moment(lastSendTime));
+    await sendNewUpdatedTickets(tickets, moment(lastSendTime));
+  }
+
+  await kv.set('last_send_time', thisMoment.format());
 };
 
 const buildCardBody = (noticeType: string, ticket: Ticket) => {
@@ -83,23 +92,16 @@ const findAssigneeName = (assigneeId: number) => {
   return assignee ? assignee.name : 'Team';
 };
 
-const sendNewReceivedTickets = (tickets: Ticket[], startMoment: moment.Moment) => {
+const sendNewReceivedTickets = (tickets: Ticket[], lastSendMoment: moment.Moment) => {
   tickets.forEach((ticket) => {
     if (ticket.status !== 'new') {
       return;
     }
-    if (
-      moment(ticket.created_at).isBefore(
-        startMoment.clone().subtract(ticketStatusConfig.refreshIntervalSeconds, 'seconds')
-      )
-    ) {
+    if (moment(ticket.created_at).isBefore(lastSendMoment)) {
       console.log(
         `new received will not send ${ticket.id} cus ${moment(
           ticket.updated_at
-        ).format()} isBefore ${startMoment
-          .clone()
-          .subtract(ticketStatusConfig.refreshIntervalSeconds, 'seconds')
-          .format()}`
+        ).format()} isBefore ${lastSendMoment.format()}`
       );
       return;
     }
@@ -108,23 +110,16 @@ const sendNewReceivedTickets = (tickets: Ticket[], startMoment: moment.Moment) =
   });
 };
 
-const sendNewUpdatedTickets = (tickets: Ticket[], startMoment: moment.Moment) => {
+const sendNewUpdatedTickets = (tickets: Ticket[], lastSendMoment: moment.Moment) => {
   tickets.forEach((ticket) => {
     if (ticket.status !== 'open') {
       return;
     }
-    if (
-      moment(ticket.updated_at).isBefore(
-        startMoment.clone().subtract(ticketStatusConfig.refreshIntervalSeconds, 'seconds')
-      )
-    ) {
+    if (moment(ticket.updated_at).isBefore(lastSendMoment)) {
       console.log(
         `new updated will not send ${ticket.id} cus ${moment(
           ticket.updated_at
-        ).format()} isBefore ${startMoment
-          .clone()
-          .subtract(ticketStatusConfig.refreshIntervalSeconds, 'seconds')
-          .format()}`
+        ).format()} isBefore ${lastSendMoment.format()}`
       );
       return;
     }

@@ -45,7 +45,6 @@ const getAllBuildStatus = async () => {
 };
 
 const fetchTickets = async () => {
-  const startMoment = moment();
   const emailAddress = zendeskConfig.userEmail;
   const apiToken = zendeskConfig.apiToken;
   const basicToken = btoa(`${emailAddress}/token:${apiToken}`);
@@ -65,7 +64,7 @@ const fetchTickets = async () => {
     allTickets = allTickets.concat(json.tickets);
   }
 
-  sendBotNotification(allTickets, startMoment.clone());
+  sendBotNotification(allTickets);
 
   return allTickets;
 };
