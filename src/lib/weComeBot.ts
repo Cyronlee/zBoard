@@ -7,14 +7,15 @@ import { ticketStatusConfig } from '@/../config/ticket_status.config';
 export const sendBotNotification = async (tickets: Ticket[]) => {
   let lastSendTime: string | null = await kv.get<string>('last_send_time');
 
-  let thisMoment = moment();
+  console.log(`start sending after ${lastSendTime}`);
+  await kv.set('last_send_time', moment().format());
+
   if (lastSendTime != null) {
-    console.log(`start sending after ${lastSendTime}`);
     await sendNewReceivedTickets(tickets, moment(lastSendTime));
     await sendNewUpdatedTickets(tickets, moment(lastSendTime));
   }
 
-  await kv.set('last_send_time', thisMoment.format());
+  console.log(`finish sending after ${lastSendTime}`);
 };
 
 const buildCardBody = (noticeType: string, ticket: Ticket) => {
@@ -24,7 +25,7 @@ const buildCardBody = (noticeType: string, ticket: Ticket) => {
     template_card: {
       card_type: 'text_notice',
       source: {
-        icon_url: 'https://cdn-icons-png.flaticon.com/128/6188/6188613.png',
+        // icon_url: 'https://cdn-icons-png.flaticon.com/128/6188/6188613.png',
         desc: noticeType,
         desc_color: 0,
       },
@@ -92,38 +93,22 @@ const findAssigneeName = (assigneeId: number) => {
   return assignee ? assignee.name : 'Team';
 };
 
-const sendNewReceivedTickets = (tickets: Ticket[], lastSendMoment: moment.Moment) => {
-  tickets.forEach((ticket) => {
-    if (ticket.status !== 'new') {
-      return;
-    }
-    if (moment(ticket.created_at).isBefore(lastSendMoment)) {
-      console.log(
-        `new received will not send ${ticket.id} cus ${moment(
-          ticket.updated_at
-        ).format()} isBefore ${lastSendMoment.format()}`
-      );
-      return;
-    }
-
-    sendToWeCome(buildCardBody('New ticket received', ticket));
-  });
+const sendNewReceivedTickets = async (tickets: Ticket[], lastSendMoment: moment.Moment) => {
+  let ticketsToBeSent = tickets.filter(
+    (ticket) => ticket.status === 'new' && moment(ticket.created_at).isSameOrAfter(lastSendMoment)
+  );
+  for (const ticket of ticketsToBeSent) {
+    console.log(`new received ticket ${ticket.id} will be sent`);
+    await sendToWeCome(buildCardBody('New ticket received', ticket));
+  }
 };
 
-const sendNewUpdatedTickets = (tickets: Ticket[], lastSendMoment: moment.Moment) => {
-  tickets.forEach((ticket) => {
-    if (ticket.status !== 'open') {
-      return;
-    }
-    if (moment(ticket.updated_at).isBefore(lastSendMoment)) {
-      console.log(
-        `new updated will not send ${ticket.id} cus ${moment(
-          ticket.updated_at
-        ).format()} isBefore ${lastSendMoment.format()}`
-      );
-      return;
-    }
-
-    sendToWeCome(buildCardBody('Ticket updated to open', ticket));
-  });
+const sendNewUpdatedTickets = async (tickets: Ticket[], lastSendMoment: moment.Moment) => {
+  let ticketsToBeSent = tickets.filter(
+    (ticket) => ticket.status === 'open' && moment(ticket.updated_at).isSameOrAfter(lastSendMoment)
+  );
+  for (const ticket of ticketsToBeSent) {
+    console.log(`new updated ticket ${ticket.id} will be sent`);
+    await sendToWeCome(buildCardBody('Ticket updated to open', ticket));
+  }
 };

@@ -64,7 +64,7 @@ const fetchTickets = async () => {
     allTickets = allTickets.concat(json.tickets);
   }
 
-  sendBotNotification(allTickets);
+  await sendBotNotification(allTickets);
 
   return allTickets;
 };

@@ -1,6 +1,6 @@
 export const ticketStatusConfig = {
   title: 'Ticket Status',
-  refreshIntervalSeconds: 120,
+  refreshIntervalSeconds: 300,
   datasource: {
     zendesk: {
       enabled: true,
