@@ -17,13 +17,16 @@ import TicketList, { Ticket } from './TicketList';
 import { useErrorToast } from '@/lib/customToast';
 import RefreshWrapper from '@/components/RefreshWrapper';
 import { ticketStatusConfig } from '../../config/ticket_status.config';
+import moment from 'moment';
 
 const TicketOverview = (props: SystemProps) => {
   const toastError = useErrorToast();
 
   const fetchData = async () => {
-    const res = await fetch('/api/ticket_status');
+    let lastFetchTicketStatusTime = localStorage.getItem('zboard:last_fetch_ticket_status_time');
+    const res = await fetch('/api/ticket_status?lastFetchTime=' + lastFetchTicketStatusTime);
     if (res.ok) {
+      localStorage.setItem('zboard:last_fetch_ticket_status_time', moment().format());
       return await res.json();
     } else {
       toastError(await res.text());

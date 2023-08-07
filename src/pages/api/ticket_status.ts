@@ -4,7 +4,6 @@ import { getTicketStatusFakeData } from '../../../fake/ticket_status.fake';
 import { delay1s } from '@/lib/delay';
 import { btoa } from 'buffer';
 import { sendBotNotification } from '@/lib/weComeBot';
-import moment from 'moment';
 
 export interface Ticket {
   id: number;
@@ -32,19 +31,19 @@ export interface Ticket {
 const zendeskConfig = ticketStatusConfig.datasource.zendesk;
 
 const handler: NextApiHandler = async (req, res) => {
-  getAllBuildStatus()
+  getAllBuildStatus(req.query['lastFetchTime'])
     .then((response) => res.status(200).json(response))
     .catch((err) => res.status(500).send(err.message));
 };
 
-const getAllBuildStatus = async () => {
+const getAllBuildStatus = async (lastFetchTime: any) => {
   if (zendeskConfig.enabled) {
-    return await fetchTickets();
+    return await fetchTickets(lastFetchTime);
   }
   return delay1s(getTicketStatusFakeData);
 };
 
-const fetchTickets = async () => {
+const fetchTickets = async (lastFetchTime: any) => {
   const emailAddress = zendeskConfig.userEmail;
   const apiToken = zendeskConfig.apiToken;
   const basicToken = btoa(`${emailAddress}/token:${apiToken}`);
@@ -64,7 +63,7 @@ const fetchTickets = async () => {
     allTickets = allTickets.concat(json.tickets);
   }
 
-  await sendBotNotification(allTickets);
+  await sendBotNotification(allTickets, lastFetchTime);
 
   return allTickets;
 };

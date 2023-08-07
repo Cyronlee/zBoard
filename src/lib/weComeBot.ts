@@ -1,15 +1,14 @@
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 
 import { Ticket } from '@/pages/api/ticket_status';
 import { ticketStatusConfig } from '@/../config/ticket_status.config';
 
-export const sendBotNotification = async (tickets: Ticket[]) => {
-  let lastSendTime: string | null = moment().format();
-
-  if (lastSendTime != null) {
-    await sendNewReceivedTickets(tickets, moment(lastSendTime));
-    await sendNewUpdatedTickets(tickets, moment(lastSendTime));
+export const sendBotNotification = async (tickets: Ticket[], lastSendTime: string | null) => {
+  if (lastSendTime == null) {
+    lastSendTime = moment().subtract(ticketStatusConfig.refreshIntervalSeconds, 'seconds').format();
   }
+  await sendNewReceivedTickets(tickets, moment(lastSendTime));
+  await sendNewUpdatedTickets(tickets, moment(lastSendTime));
 
   console.log(`finish sending after ${lastSendTime}`);
 };
