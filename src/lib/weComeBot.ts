@@ -1,14 +1,10 @@
 import moment from 'moment';
-import { kv } from '@vercel/kv';
 
 import { Ticket } from '@/pages/api/ticket_status';
 import { ticketStatusConfig } from '@/../config/ticket_status.config';
 
 export const sendBotNotification = async (tickets: Ticket[]) => {
-  let lastSendTime: string | null = await kv.get<string>('last_send_time');
-
-  console.log(`start sending after ${lastSendTime}`);
-  await kv.set('last_send_time', moment().format());
+  let lastSendTime: string | null = moment().format();
 
   if (lastSendTime != null) {
     await sendNewReceivedTickets(tickets, moment(lastSendTime));
