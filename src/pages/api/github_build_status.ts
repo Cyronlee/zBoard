@@ -80,7 +80,7 @@ const getStatus = async ({
   branch: string;
   workflowId: number;
 }) => {
-  const url = `${githubActionsConfig.baseUrl}/repos/${owner}/${repo}/actions/workflows/${workflowId}/runs?per_page=1&branch=${branch}`;
+  const url = `${githubActionsConfig.baseUrl}/repos/${owner}/${repo}/actions/workflows/${workflowId}/runs?per_page=1`;
   const response = await fetch(url, {
     headers: {
       Authorization: `Bearer ${githubActionsConfig.apiToken}`,
