@@ -25,7 +25,9 @@ const AlarmToggle = () => {
             <WarningIcon color='gray'/>
           </Tooltip>
         </FormLabel>
-        <Switch id='alarm' size='lg' isChecked={alarmToggle} onChange={() => {setAlarmToggle(!alarmToggle)}}/>
+        <Switch id='alarm' size='lg' isChecked={alarmToggle} onChange={(ev) => {
+          setAlarmToggle(!!ev)
+        }}/>
       </FormControl>
     </>
   );
