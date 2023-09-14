@@ -17,6 +17,7 @@ import { siteConfig } from '@/../../config/site.config';
 import ThemeToggle from '@/components/ThemeToggle';
 import { ChevronDownIcon, MinusIcon } from '@chakra-ui/icons';
 import Link from 'next/link';
+import AlarmToggle from './Alarm/AlarmToggle';
 
 const CollapseNavbar = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -47,8 +48,9 @@ const CollapseNavbar = () => {
             </Heading>
           </Link>
           <HStack>
+            <AlarmToggle/>
             <Menu>
-              <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+              <MenuButton as={Button} rightIcon={<ChevronDownIcon />} width='150px'>
                 Pages
               </MenuButton>
               <MenuList>

@@ -7,11 +7,11 @@ import {
   Text,
   VStack,
   Skeleton,
-  SystemProps,
   useColorModeValue,
 } from '@chakra-ui/react';
 import { RepeatIcon } from '@chakra-ui/icons';
 import moment from 'moment';
+import { isEmpty } from 'lodash';
 
 interface RefreshWrapperProps<T> {
   title: string;
@@ -19,6 +19,7 @@ interface RefreshWrapperProps<T> {
   refreshIntervalSeconds?: number;
   render: (data: T[]) => JSX.Element;
   showRefreshButton?: boolean;
+  remainOldDataOnError?: boolean;
   [key: string]: any;
 }
 
@@ -28,6 +29,7 @@ const RefreshWrapper = <T,>({
   refreshIntervalSeconds = 0,
   render,
   showRefreshButton = true,
+  remainOldDataOnError = false,
   ...props
 }: RefreshWrapperProps<T>) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -41,7 +43,9 @@ const RefreshWrapper = <T,>({
     setIsRefreshing(true);
     try {
       const newData = await onRefresh();
-      setData(newData);
+      if (!remainOldDataOnError || ( remainOldDataOnError && !isEmpty(newData) )) {
+        setData(newData);
+      }
       setLastUpdatedAt(moment().format('HH:mm:ss'));
     } catch (error) {
       console.error(error);
