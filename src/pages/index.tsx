@@ -5,7 +5,7 @@ import ProjectTimeline from '@/components/ProjectTimeline';
 import CollapseNavbar from '@/components/CollapseNavbar';
 import UpdateChecker from '@/components/UpdateChecker';
 import OwnerRotationOverview from '@/components/OwnerRotationOverview';
-import AlarmToggleProvider from './AlarmToggleContext';
+import { AlarmToggleProvider } from '../context/AlarmToggleContext';
 
 export default function Home() {
   return (

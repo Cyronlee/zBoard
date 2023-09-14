@@ -8,7 +8,7 @@ import {
 import { LinkIcon } from '@chakra-ui/icons';
 import { MdBuild } from 'react-icons/md';
 import AlarmContainer from './Alarm/AlarmContainer';
-import { useAlarmToggle } from '../pages/AlarmToggleContext';
+import { useAlarmToggle } from '../context/AlarmToggleContext';
 
 const AcknowledgeBox = () => {
   const [isACKED, setIsACKED] = useState(false);

@@ -14,7 +14,7 @@ export const AlarmToggleContext = createContext<AlarmToggleContextType>({
   setAlarmToggle: () => {},
 });
 
-const AlarmToggleProvider: React.FC<AlarmToggleProviderProps> = ({ children }) => {
+export const AlarmToggleProvider: React.FC<AlarmToggleProviderProps> = ({ children }) => {
   const [alarmToggle, setAlarmToggle] = useState(true);
 
   return (
@@ -25,5 +25,3 @@ const AlarmToggleProvider: React.FC<AlarmToggleProviderProps> = ({ children }) =
 };
 
 export const useAlarmToggle = () => useContext(AlarmToggleContext);
-
-export default AlarmToggleProvider;

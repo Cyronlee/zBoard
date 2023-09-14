@@ -5,7 +5,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import React from 'react';
-import { useAlarmToggle } from '../../pages/AlarmToggleContext';
+import { useAlarmToggle } from '../../context/AlarmToggleContext';
 import { WarningIcon } from '@chakra-ui/icons';
 
 const AlarmToggle = () => {
@@ -25,9 +25,7 @@ const AlarmToggle = () => {
             <WarningIcon color='gray'/>
           </Tooltip>
         </FormLabel>
-        <Switch id='alarm' size='lg' isChecked={alarmToggle} onChange={(ev) => {
-          setAlarmToggle(!!ev)
-        }}/>
+        <Switch id='alarm' size='lg' isChecked={alarmToggle} onChange={() => {setAlarmToggle(!alarmToggle)}}/>
       </FormControl>
     </>
   );
