@@ -1,6 +1,6 @@
 import { NextApiHandler } from 'next';
 import { buildStatusConfig } from '@/../config/build_status.config';
-import axios from 'axios';
+import { get } from '@/lib/httpClient';
 
 interface workflowRunResponse {
   total_count: number;
@@ -82,7 +82,7 @@ const getStatus = async ({
   workflowId: number;
 }) => {
   const url = `${githubActionsConfig.baseUrl}/repos/${owner}/${repo}/actions/workflows/${workflowId}/runs?per_page=1&branch=${branch}`;
-  const response = await axios.get(url, {
+  const response = await get(url, {
     headers: {
       Authorization: `Bearer ${githubActionsConfig.apiToken}`,
     },

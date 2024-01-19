@@ -3,7 +3,7 @@ import moment, { Moment } from 'moment';
 import { getProjectTimelineFakeData } from '../../../fake/project_timeline.fake';
 import { delay1s } from '@/lib/delay';
 import { projectTimelineConfig } from '../../../config/project_timeline.config';
-import axios from 'axios';
+import { get } from '@/lib/httpClient';
 
 interface CardTransition {
   column_id: number;
@@ -63,7 +63,7 @@ const fetchCards = async (startDate: string, endDate: string) => {
   const fields = searchParams.fields.join(',');
   const expand = searchParams.expand.join(',');
   const cardsAPI = `${kanbanConfig.baseUrl}/api/v2/cards?board_ids=${kanbanConfig.boardId}&column_ids=${columnIds}&type_ids=${typeIds}&fields=${fields}&expand=${expand}&in_current_position_since_from_date=${startDate}`;
-  const response = await axios.get(cardsAPI, {
+  const response = await get(cardsAPI, {
     headers: {
       apikey: kanbanConfig.apikey || '',
     },
@@ -107,7 +107,7 @@ const buildCardInfo = (card: TimelineCard, buildUserInfo: (userId: number) => Us
 const fetchUserInfo = async (userIds: number[]) => {
   const uniqueUserIds = [...new Set(userIds)].filter((id) => id).join(',');
   const userAPI = `${kanbanConfig.baseUrl}/api/v2/users?user_ids=${uniqueUserIds}&fields=user_id,username,realname,avatar`;
-  const response = await axios.get(userAPI, {
+  const response = await get(userAPI, {
     headers: {
       apikey: kanbanConfig.apikey || '',
     },
