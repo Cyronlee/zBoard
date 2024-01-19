@@ -3,6 +3,7 @@ import { ticketStatusConfig } from '../../../config/ticket_status.config';
 import { getTicketStatusFakeData } from '../../../fake/ticket_status.fake';
 import { delay1s } from '@/lib/delay';
 import { btoa } from 'buffer';
+import { get } from '@/lib/httpClient';
 
 interface Ticket {
   subject: string;
@@ -34,15 +35,15 @@ const fetchTickets = async () => {
   let nextPageUrl = `${zendeskConfig.baseUrl}/api/v2/views/${zendeskConfig.viewId}/tickets?sort_by=updated_at&sort_order=desc`;
   let allTickets: Ticket[] = [];
   while (nextPageUrl) {
-    const response = await fetch(nextPageUrl, {
+    const response = await get(nextPageUrl, {
       headers: {
         Authorization: `Basic ${basicToken}`,
       },
     });
-    if (!response.ok) {
+    if (response.status !== 200) {
       throw new Error('failed to fetch zendesk tickets');
     }
-    const json = await response.json();
+    const json = response.data;
     nextPageUrl = json.next_page;
     allTickets = allTickets.concat(json.tickets);
   }

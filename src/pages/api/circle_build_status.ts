@@ -1,6 +1,7 @@
 import { NextApiHandler } from 'next';
 import _ from 'lodash';
 import { buildStatusConfig } from '../../../config/build_status.config';
+import { get } from '@/lib/httpClient';
 
 interface PipelineTriggerActor {
   login: string;
@@ -96,9 +97,9 @@ const getLatestWorkflow = async (pipelineId: string): Promise<Workflow> => {
 
 const fetchPipelines = async (projectSlug: string, branch: string): Promise<Pipelines> => {
   const url = `https://circleci.com/api/v2/project/${projectSlug}/pipeline?branch=${branch}&circle-token=${circleCIConfig.apiToken}`;
-  const response = await fetch(url);
-  let json: Pipelines = await response.json();
-  if (!response.ok) {
+  const response = await get(url);
+  let json: Pipelines = response.data;
+  if (response.status !== 200) {
     throw new Error(JSON.stringify(json));
   }
   return json;
@@ -106,9 +107,9 @@ const fetchPipelines = async (projectSlug: string, branch: string): Promise<Pipe
 
 const fetchWorkflows = async (pipelineId: string): Promise<Workflows> => {
   const url = `https://circleci.com/api/v2/pipeline/${pipelineId}/workflow?circle-token=${circleCIConfig.apiToken}`;
-  const response = await fetch(url);
-  let json: Workflows = await response.json();
-  if (!response.ok) {
+  const response = await get(url);
+  let json: Workflows = response.data;
+  if (response.status !== 200) {
     throw new Error(JSON.stringify(json));
   }
   return json;
