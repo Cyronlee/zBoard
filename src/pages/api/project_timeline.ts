@@ -3,6 +3,7 @@ import moment, { Moment } from 'moment';
 import { getProjectTimelineFakeData } from '../../../fake/project_timeline.fake';
 import { delay1s } from '@/lib/delay';
 import { projectTimelineConfig } from '../../../config/project_timeline.config';
+import axios from 'axios';
 
 interface CardTransition {
   column_id: number;
@@ -62,15 +63,15 @@ const fetchCards = async (startDate: string, endDate: string) => {
   const fields = searchParams.fields.join(',');
   const expand = searchParams.expand.join(',');
   const cardsAPI = `${kanbanConfig.baseUrl}/api/v2/cards?board_ids=${kanbanConfig.boardId}&column_ids=${columnIds}&type_ids=${typeIds}&fields=${fields}&expand=${expand}&in_current_position_since_from_date=${startDate}`;
-  const response = await fetch(cardsAPI, {
+  const response = await axios.get(cardsAPI, {
     headers: {
       apikey: kanbanConfig.apikey || '',
     },
   });
-  if (!response.ok) {
-    throw new Error(await response.text());
+  if (response.status !== 200) {
+    throw new Error(response.data);
   }
-  const json = await response.json();
+  const json = response.data;
 
   const userIds: number[] = json.data.data.flatMap(
     ({ owner_user_id, co_owner_ids }: { owner_user_id: number; co_owner_ids: number[] }) => [
@@ -106,12 +107,12 @@ const buildCardInfo = (card: TimelineCard, buildUserInfo: (userId: number) => Us
 const fetchUserInfo = async (userIds: number[]) => {
   const uniqueUserIds = [...new Set(userIds)].filter((id) => id).join(',');
   const userAPI = `${kanbanConfig.baseUrl}/api/v2/users?user_ids=${uniqueUserIds}&fields=user_id,username,realname,avatar`;
-  const response = await fetch(userAPI, {
+  const response = await axios.get(userAPI, {
     headers: {
       apikey: kanbanConfig.apikey || '',
     },
   });
-  const json = await response.json();
+  const json = response.data;
 
   return (userId: number) => {
     const user = json.data.find((user: KanbanUser) => user.user_id === userId);
