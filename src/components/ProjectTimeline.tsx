@@ -148,6 +148,7 @@ const Timeline = (props: SystemProps) => {
         borderRadius="20px"
         justifyContent="space-between"
         alignItems="center"
+        zIndex={1}
       >
         <Flex ml={2} flexDirection="column" alignItems="start">
           <Text fontSize="md" noOfLines={1}>
@@ -192,7 +193,7 @@ const Timeline = (props: SystemProps) => {
             height: '400px',
             width: '2px',
             backgroundColor: 'red.500',
-            zIndex: -1,
+            // zIndex: 3,
           }}
         >
           {dayNumber}
@@ -214,7 +215,7 @@ const Timeline = (props: SystemProps) => {
             rowStart={1}
             rowEnd={cards.length + 1}
             backgroundColor={weekendGridBgColor}
-            zIndex="-3"
+            // zIndex="1"
           />
         );
     });
@@ -278,7 +279,7 @@ const Timeline = (props: SystemProps) => {
           colStart={index + 1}
           borderY="1px solid"
           borderColor={borderColor}
-          zIndex="-2"
+          // zIndex="4"
           h="40px"
           backgroundColor={isWeekend ? weekendGridBgColor : gridBgColor}
         >
@@ -297,6 +298,7 @@ const Timeline = (props: SystemProps) => {
       border="1px solid"
       borderRadius="8px"
       borderColor={borderColor}
+      bgColor={useColorModeValue('white', 'gray.800')}
       {...props}
     >
       <Flex

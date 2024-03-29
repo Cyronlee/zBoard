@@ -66,6 +66,7 @@ const RefreshWrapper = <T,>({
         padding="12px"
         border="1px"
         borderColor={borderColor}
+        bgColor={useColorModeValue('white', 'gray.800')}
         borderRadius="16px"
         spacing="8px"
         w="100%"
