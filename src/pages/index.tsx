@@ -5,6 +5,7 @@ import ProjectTimeline from '@/components/ProjectTimeline';
 import CollapseNavbar from '@/components/CollapseNavbar';
 import UpdateChecker from '@/components/UpdateChecker';
 import OwnerRotationOverview from '@/components/OwnerRotationOverview';
+import DashboardPreview from '@/components/DashboardPreview';
 import Preview from '@/pages/preview';
 
 export default function Home() {
@@ -13,7 +14,7 @@ export default function Home() {
       <UpdateChecker />
       <CollapseNavbar />
       <Box flex="1" width="100vw" overflow="hidden">
-        <Preview />
+        <DashboardPreview />
       </Box>
 
       {/*<VStack px="8px" flex="1" width="100vw" overflow="hidden">*/}
