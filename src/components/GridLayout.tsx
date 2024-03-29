@@ -15,6 +15,9 @@ import React, {
 } from 'react';
 import { useMemoizedFn } from 'ahooks';
 import styled from '@emotion/styled';
+import { CloseButton, IconButton } from '@chakra-ui/react';
+import { BsTrash3Fill } from 'react-icons/bs';
+import LayoutItemComponent from '@/components/LayoutItemComponent';
 
 function getMouseOffset(event: MouseEvent, target?: HTMLElement) {
   const bounds = (target || (event.target as HTMLElement)).getBoundingClientRect();
@@ -24,9 +27,11 @@ function getMouseOffset(event: MouseEvent, target?: HTMLElement) {
   };
 }
 
-const bound = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+const bound = (value: number, min: number, max: number) => {
+  return Math.min(Math.max(value, min), max);
+};
 
-const mutateLayout = ({
+export const mutateLayout = ({
   container,
   rows,
   cols,
@@ -245,44 +250,6 @@ export const Draggable: FC<{ children: JSX.Element } & DraggableProps> = ({
   );
 };
 
-interface LayoutItemComponentProps {
-  layout: Layout;
-  render: (layout: Layout) => ReactElement;
-  draggable?: boolean;
-  resizable?: boolean;
-  onLayoutChange?: (newLayout: Layout) => void;
-  onLayoutChangeEnd?: (newLayout: Layout) => void;
-  selected?: boolean;
-  onSelectedChange?: (selected: boolean) => void;
-}
-
-const LayoutWrapper = styled('div', {
-  shouldForwardProp: (propName) => !['draggable', 'layout'].includes(propName),
-})<{
-  layout: Layout;
-  draggable: boolean;
-  selected?: boolean;
-}>`
-  position: relative;
-  grid-area: ${({ layout }) =>
-    `${layout.y + 1}/${layout.x + 1}/${layout.y + layout.h + 1}/${layout.x + layout.w + 1}`};
-  cursor: ${({ draggable, selected }) => (draggable && selected ? 'move' : 'inherit')};
-  // ${({ selected }) => selected && 'filter: drop-shadow(#0bc5ea 0px 0px 1px);'};
-  ${({ selected }) => selected && 'box-shadow: 1px 1px 1px #0bc5ea, -1px -1px 1px #0bc5ea;'};
-`;
-
-const ResizeHandle = styled.div`
-  position: absolute;
-  right: 0px;
-  bottom: 0px;
-  border: 0px solid black;
-  border-right-width: 5px;
-  border-bottom-width: 5px;
-  width: 15px;
-  height: 15px;
-  cursor: se-resize;
-`;
-
 const DroppingShadow = styled.div`
   transition: 200ms;
   grid-area: 1/1 / auto/auto;
@@ -290,167 +257,6 @@ const DroppingShadow = styled.div`
   opacity: 0.1;
   display: none;
 `;
-
-const LayoutItemComponent: FC<LayoutItemComponentProps> = ({
-  layout,
-  render,
-  draggable = false,
-  resizable = false,
-  onLayoutChange,
-  onLayoutChangeEnd,
-  selected,
-  onSelectedChange,
-}) => {
-  const { getContainer, cols, rows, columnGap, rowGap, padding } = useContext(GridLayoutContext);
-  const elRef = useRef<HTMLDivElement>(null);
-  const element = render(layout);
-  const mouseDownMetaRef = useRef<null | {
-    clientX: number;
-    clientY: number;
-    type: 'move' | 'resize';
-  }>(null);
-
-  const draggableProps = draggable
-    ? {
-        onMouseDown(e: React.MouseEvent) {
-          e.stopPropagation();
-          if (!selected) return;
-          mouseDownMetaRef.current = {
-            clientX: e.clientX,
-            clientY: e.clientY,
-            type: 'move',
-          };
-        },
-      }
-    : null;
-
-  const getNewLayoutByOffset = useMemoizedFn(
-    (
-      offset: {
-        x: number;
-        y: number;
-      },
-      type: 'move' | 'resize'
-    ) => {
-      return mutateLayout({
-        container: getContainer()!,
-        rows,
-        cols,
-        columnGap,
-        rowGap,
-        padding,
-        layout,
-        offset,
-        type,
-      });
-    }
-  );
-
-  useEffect(() => {
-    if (!draggable && !resizable) return;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      e.stopPropagation();
-      if (!mouseDownMetaRef.current) return;
-
-      const { clientX, clientY, type } = mouseDownMetaRef.current;
-      const { x, y, w, h, boundingRect } = getNewLayoutByOffset(
-        {
-          x: e.clientX - clientX,
-          y: e.clientY - clientY,
-        },
-        type
-      );
-
-      Object.assign(elRef.current!.style, {
-        position: 'absolute',
-        width: `${boundingRect.width}px`,
-        height: `${boundingRect.height}px`,
-        left: `${boundingRect.left}px`,
-        top: `${boundingRect.top}px`,
-        gridArea: 'auto',
-      });
-      onLayoutChange?.({
-        ...layout,
-        x,
-        y,
-        w,
-        h,
-      });
-    };
-    const handleMouseUp = (e: MouseEvent) => {
-      e.stopPropagation();
-      if (!mouseDownMetaRef.current) return;
-
-      const { clientX, clientY, type } = mouseDownMetaRef.current;
-      const { x, y, w, h } = getNewLayoutByOffset(
-        {
-          x: e.clientX - clientX,
-          y: e.clientY - clientY,
-        },
-        type
-      );
-
-      Object.assign(elRef.current!.style, {
-        position: 'relative',
-        width: 'auto',
-        height: 'auto',
-        left: 'auto',
-        top: 'auto',
-        gridArea: `${y + 1}/${x + 1}/${y + h + 1}/${x + w + 1}`,
-      });
-      onLayoutChangeEnd?.({
-        ...layout,
-        x,
-        y,
-        w,
-        h,
-      });
-      mouseDownMetaRef.current = null;
-    };
-
-    document.body.addEventListener('mousemove', handleMouseMove);
-    document.body.addEventListener('mouseup', handleMouseUp);
-
-    return () => {
-      document.body.removeEventListener('mousemove', handleMouseMove);
-      document.body.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [layout, draggable, resizable, onLayoutChange, onLayoutChangeEnd, getNewLayoutByOffset]);
-
-  return (
-    <LayoutWrapper
-      key={layout.id}
-      ref={elRef}
-      layout={layout}
-      draggable={draggable}
-      selected={selected}
-      {...draggableProps}
-      onClick={(e) => {
-        e.stopPropagation();
-        if (!draggable && !resizable) return;
-        if (!selected) onSelectedChange?.(true);
-      }}
-    >
-      {element}
-      {resizable && selected && (
-        // TODO: adjust styles and allow custom resizeHandle
-        <ResizeHandle
-          draggable={false}
-          onMouseDown={(e) => {
-            e.stopPropagation();
-
-            mouseDownMetaRef.current = {
-              clientX: e.clientX,
-              clientY: e.clientY,
-              type: 'resize',
-            };
-          }}
-        />
-      )}
-    </LayoutWrapper>
-  );
-};
 
 export interface Layout {
   component: string;
@@ -465,7 +271,7 @@ export interface Layout {
   maxH?: number;
 }
 
-const GridLayoutContext = createContext({
+export const GridLayoutContext = createContext({
   layouts: [] as Layout[],
   padding: 0,
   cols: 12,
@@ -680,6 +486,7 @@ export const GridLayout: FC<GridLayoutProps> = ({
 
               setSelectedItem(null);
             }}
+            onDeleted={removeSelectedItem}
           />
         ))}
         <DroppingShadow ref={shadowRef} />

@@ -1,10 +1,11 @@
-import { ComponentProps, useEffect } from 'react';
+import React, { ComponentProps, useEffect } from 'react';
 import Image from 'next/image';
 import styled from '@emotion/styled';
 import {
   Button,
   InputGroup,
   InputLeftAddon,
+  Text,
   Popover,
   ListItem,
   NumberDecrementStepper,
@@ -18,36 +19,41 @@ import {
   List,
   useToast,
   InputRightAddon,
+  IconButton,
 } from '@chakra-ui/react';
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next';
 import omit from 'lodash/omit';
 import { GridLayout, DragAndDropProvider, Draggable } from '@/components/GridLayout';
 import ProjectTimeline from '@/components/ProjectTimeline';
-import ProjectTimelinePreview from '@/components/ProjectTimeline.preview.png';
+import ProjectTimelineThumbnail from '@/components/ProjectTimeline.preview.png';
 import TicketStatusOverview from '@/components/TicketStatusOverview';
-import TicketStatusOverviewPreview from '@/components/TicketStatusOverview.preview.png';
+import TicketStatusThumbnail from '@/components/TicketStatusOverview.preview.png';
 import BuildStatusOverview from '@/components/BuildStatusOverview';
-import BuildStatusOverviewPreview from '@/components/BuildStatusOverview.preview.png';
+import BuildStatusThumbnail from '@/components/BuildStatusOverview.preview.png';
 import OwnerRotationOverview from '@/components/OwnerRotationOverview';
-import OwnerRotationOverviewPreview from '@/components/OwnerRotationOverview.preview.png';
+import OwnerRotationThumbnail from '@/components/OwnerRotationOverview.preview.png';
 import { BsFillPlayFill } from 'react-icons/bs';
+import { MdPreview } from 'react-icons/md';
 import { GrConfigure } from 'react-icons/gr';
 import { PageConfigState, usePageConfigStore } from '@/stores/pageConfig';
 import { getPageConfig } from './api/page_config';
+import { MinusIcon } from '@chakra-ui/icons';
+import { ArrowBackIcon } from '@chakra-ui/icons';
+import { useRouter } from 'next/router';
 
-const COMPONENTS = [
+const ALL_COMPONENTS = [
   {
     name: 'ProjectTimeline',
     Component: (props: ComponentProps<typeof ProjectTimeline>) => (
       <ProjectTimeline h="100%" {...props} />
     ),
-    preview: ProjectTimelinePreview,
+    preview: ProjectTimelineThumbnail,
     layout: {
       w: 8,
       minW: 2,
-      h: 7,
+      h: 6,
       minH: 2,
-      maxH: 9,
+      // maxH: 9,
     },
   },
   {
@@ -55,13 +61,13 @@ const COMPONENTS = [
     Component: (props: ComponentProps<typeof ProjectTimeline>) => (
       <TicketStatusOverview h="100%" maxWidth="auto" {...props} />
     ),
-    preview: TicketStatusOverviewPreview,
+    preview: TicketStatusThumbnail,
     layout: {
-      w: 4,
+      w: 3,
       minW: 2,
       h: 6,
       minH: 2,
-      maxH: 9,
+      // maxH: 9,
     },
   },
   {
@@ -69,13 +75,13 @@ const COMPONENTS = [
     Component: (props: ComponentProps<typeof ProjectTimeline>) => (
       <BuildStatusOverview h="100%" maxWidth="auto" {...props} />
     ),
-    preview: BuildStatusOverviewPreview,
+    preview: BuildStatusThumbnail,
     layout: {
       w: 9,
       minW: 2,
       h: 6,
       minH: 2,
-      maxH: 9,
+      // maxH: 9,
     },
   },
   {
@@ -83,7 +89,7 @@ const COMPONENTS = [
     Component: (props: ComponentProps<typeof ProjectTimeline>) => (
       <OwnerRotationOverview h="100%" maxWidth="auto" {...props} />
     ),
-    preview: OwnerRotationOverviewPreview,
+    preview: OwnerRotationThumbnail,
     layout: {
       w: 2,
       minW: 2,
@@ -145,6 +151,7 @@ export default function Builder({
   pageConfigFromServer,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const toast = useToast();
+  const router = useRouter();
   const { pageConfig, setPageConfig, setVersion } = usePageConfigStore();
 
   useEffect(() => {
@@ -178,136 +185,149 @@ export default function Builder({
     });
   };
 
+  const LayoutSettings = () => (
+    <Popover>
+      <PopoverTrigger>
+        <IconButton aria-label="Layout Settings" icon={<GrConfigure />} />
+        {/*<Button size="sm" ml="10px" flex="none">*/}
+        {/*  <GrConfigure style={{ fontSize: 18 }}></GrConfigure>*/}
+        {/*</Button>*/}
+      </PopoverTrigger>
+      <PopoverContent minWidth="240px" width="240px">
+        <PopoverBody>
+          <List spacing="10px">
+            <ListItem>
+              <InputGroup size="sm">
+                <InputLeftAddon borderLeftRadius="md" width="80px">
+                  rows
+                </InputLeftAddon>
+                <NumberInput
+                  borderRadius="md"
+                  min={1}
+                  value={pageConfig.rows}
+                  onChange={(_, rows) => setPageConfig({ rows })}
+                >
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+              </InputGroup>
+            </ListItem>
+            <ListItem>
+              <InputGroup size="sm" flex="none">
+                <InputLeftAddon borderLeftRadius="md" width="80px">
+                  cols
+                </InputLeftAddon>
+                <NumberInput
+                  borderRadius="md"
+                  min={1}
+                  value={pageConfig.cols}
+                  onChange={(_, cols) => setPageConfig({ cols })}
+                >
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+              </InputGroup>
+            </ListItem>
+            <ListItem>
+              <InputGroup size="sm" flex="none">
+                <InputLeftAddon borderLeftRadius="md" width="80px">
+                  rowGap
+                </InputLeftAddon>
+                <NumberInput
+                  borderRadius="md"
+                  min={0}
+                  value={pageConfig.rowGap || 0}
+                  onChange={(_, rowGap) => setPageConfig({ rowGap })}
+                >
+                  <NumberInputField />
+                </NumberInput>
+                <InputRightAddon>px</InputRightAddon>
+              </InputGroup>
+            </ListItem>
+            <ListItem unselectable="on">
+              <InputGroup size="sm" flex="none">
+                <InputLeftAddon borderLeftRadius="md" width="80px">
+                  colGap
+                </InputLeftAddon>
+                <NumberInput
+                  borderRadius="md"
+                  min={0}
+                  value={pageConfig.columnGap || 0}
+                  onChange={(_, columnGap) => setPageConfig({ columnGap })}
+                >
+                  <NumberInputField />
+                </NumberInput>
+                <InputRightAddon>px</InputRightAddon>
+              </InputGroup>
+            </ListItem>
+            <ListItem unselectable="on">
+              <InputGroup size="sm" flex="none">
+                <InputLeftAddon borderLeftRadius="md" width="80px">
+                  padding
+                </InputLeftAddon>
+                <NumberInput
+                  borderRadius="md"
+                  min={0}
+                  value={pageConfig.padding || 0}
+                  onChange={(_, padding) => setPageConfig({ padding })}
+                >
+                  <NumberInputField />
+                </NumberInput>
+                <InputRightAddon>px</InputRightAddon>
+              </InputGroup>
+            </ListItem>
+          </List>
+        </PopoverBody>
+      </PopoverContent>
+    </Popover>
+  );
+
   return (
     <DragAndDropProvider>
       <div>
         <Header>
-          <div></div>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Popover>
-              <PopoverTrigger>
-                <Button size="sm" ml="10px" flex="none">
-                  <GrConfigure style={{ fontSize: 18 }}></GrConfigure>
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent minWidth="240px" width="240px">
-                <PopoverBody>
-                  <List spacing="10px">
-                    <ListItem>
-                      <InputGroup size="sm">
-                        <InputLeftAddon borderLeftRadius="md" width="80px">
-                          rows
-                        </InputLeftAddon>
-                        <NumberInput
-                          borderRadius="md"
-                          min={1}
-                          value={pageConfig.rows}
-                          onChange={(_, rows) => setPageConfig({ rows })}
-                        >
-                          <NumberInputField />
-                          <NumberInputStepper>
-                            <NumberIncrementStepper />
-                            <NumberDecrementStepper />
-                          </NumberInputStepper>
-                        </NumberInput>
-                      </InputGroup>
-                    </ListItem>
-                    <ListItem>
-                      <InputGroup size="sm" flex="none">
-                        <InputLeftAddon borderLeftRadius="md" width="80px">
-                          cols
-                        </InputLeftAddon>
-                        <NumberInput
-                          borderRadius="md"
-                          min={1}
-                          value={pageConfig.cols}
-                          onChange={(_, cols) => setPageConfig({ cols })}
-                        >
-                          <NumberInputField />
-                          <NumberInputStepper>
-                            <NumberIncrementStepper />
-                            <NumberDecrementStepper />
-                          </NumberInputStepper>
-                        </NumberInput>
-                      </InputGroup>
-                    </ListItem>
-                    <ListItem>
-                      <InputGroup size="sm" flex="none">
-                        <InputLeftAddon borderLeftRadius="md" width="80px">
-                          rowGap
-                        </InputLeftAddon>
-                        <NumberInput
-                          borderRadius="md"
-                          min={0}
-                          value={pageConfig.rowGap || 0}
-                          onChange={(_, rowGap) => setPageConfig({ rowGap })}
-                        >
-                          <NumberInputField />
-                        </NumberInput>
-                        <InputRightAddon>px</InputRightAddon>
-                      </InputGroup>
-                    </ListItem>
-                    <ListItem unselectable="on">
-                      <InputGroup size="sm" flex="none">
-                        <InputLeftAddon borderLeftRadius="md" width="80px">
-                          rowGap
-                        </InputLeftAddon>
-                        <NumberInput
-                          borderRadius="md"
-                          min={0}
-                          value={pageConfig.columnGap || 0}
-                          onChange={(_, columnGap) => setPageConfig({ columnGap })}
-                        >
-                          <NumberInputField />
-                        </NumberInput>
-                        <InputRightAddon>px</InputRightAddon>
-                      </InputGroup>
-                    </ListItem>
-                    <ListItem unselectable="on">
-                      <InputGroup size="sm" flex="none">
-                        <InputLeftAddon borderLeftRadius="md" width="80px">
-                          padding
-                        </InputLeftAddon>
-                        <NumberInput
-                          borderRadius="md"
-                          min={0}
-                          value={pageConfig.padding || 0}
-                          onChange={(_, padding) => setPageConfig({ padding })}
-                        >
-                          <NumberInputField />
-                        </NumberInput>
-                        <InputRightAddon>px</InputRightAddon>
-                      </InputGroup>
-                    </ListItem>
-                  </List>
-                </PopoverBody>
-              </PopoverContent>
-            </Popover>
-            <Button
-              size="sm"
-              ml="10px"
-              title="Preview"
-              flex="none"
-              onClick={() => window.open('/preview')}
-            >
-              <BsFillPlayFill style={{ fontSize: 24 }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <IconButton
+              aria-label="Back"
+              icon={<ArrowBackIcon />}
+              onClick={() => router.push('/')}
+            />
+            <Text fontSize="xl" fontWeight="bold">
+              Customize homepage
+            </Text>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <LayoutSettings />
+            <Button size="md" title="Preview" onClick={() => window.open('/preview')}>
+              Preview
             </Button>
-            <Button
-              size="sm"
-              ml="10px"
-              title="Preview"
-              colorScheme="cyan"
-              flex="none"
-              color="white"
-              onClick={publish}
-            >
+            {/*<Button*/}
+            {/*  size="sm"*/}
+            {/*  ml="10px"*/}
+            {/*  title="Preview"*/}
+            {/*  flex="none"*/}
+            {/*  onClick={() => window.open('/preview')}*/}
+            {/*>*/}
+            {/*  <MdPreview style={{ fontSize: 24 }}></MdPreview>*/}
+            {/*  /!*<BsFillPlayFill style={{ fontSize: 24 }} />*!/*/}
+            {/*</Button>*/}
+            <Button size="md" title="Publish" colorScheme="blue" onClick={publish}>
               Publish
             </Button>
           </div>
         </Header>
         <Container>
           <LeftAside id="components">
-            {COMPONENTS.map(({ name, preview, layout }) => {
+            {ALL_COMPONENTS.filter(
+              (component) =>
+                !pageConfig.layouts.some((layout) => layout.component === component.name)
+            ).map(({ name, preview, layout }) => {
               return (
                 <Draggable
                   key={name}
@@ -317,6 +337,7 @@ export default function Builder({
                   }}
                 >
                   <ComponentItem>
+                    <Text>{name}</Text>
                     <Image src={preview} alt="ProjectTimeline preview" draggable={false} />
                   </ComponentItem>
                 </Draggable>
@@ -330,7 +351,7 @@ export default function Builder({
               layouts={pageConfig.layouts}
               onLayoutsChange={(layouts) => setPageConfig({ layouts })}
               itemRender={({ component }) => {
-                const { Component } = COMPONENTS.find(({ name }) => name === component)!;
+                const { Component } = ALL_COMPONENTS.find(({ name }) => name === component)!;
                 return <Component w="100%" h="100%" />;
               }}
               rowGap={pageConfig.rowGap}
@@ -341,7 +362,8 @@ export default function Builder({
               resizable
             />
           </Main>
-          <RightAside id="widget-config"></RightAside>
+          {/*TODO*/}
+          {/*<RightAside id="widget-config"></RightAside>*/}
         </Container>
       </div>
     </DragAndDropProvider>
