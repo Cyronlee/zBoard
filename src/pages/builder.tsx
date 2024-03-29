@@ -1,103 +1,35 @@
-import React, { ComponentProps, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import styled from '@emotion/styled';
 import {
   Button,
+  IconButton,
   InputGroup,
   InputLeftAddon,
-  Text,
-  Popover,
+  InputRightAddon,
+  List,
   ListItem,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  PopoverTrigger,
-  PopoverContent,
+  Popover,
   PopoverBody,
-  List,
+  PopoverContent,
+  PopoverTrigger,
+  Text,
   useToast,
-  InputRightAddon,
-  IconButton,
 } from '@chakra-ui/react';
-import type { InferGetServerSidePropsType, GetServerSideProps } from 'next';
+import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import omit from 'lodash/omit';
-import { GridLayout, DragAndDropProvider, Draggable } from '@/components/GridLayout';
-import ProjectTimeline from '@/components/ProjectTimeline';
-import ProjectTimelineThumbnail from '@/components/ProjectTimeline.preview.png';
-import TicketStatusOverview from '@/components/TicketStatusOverview';
-import TicketStatusThumbnail from '@/components/TicketStatusOverview.preview.png';
-import BuildStatusOverview from '@/components/BuildStatusOverview';
-import BuildStatusThumbnail from '@/components/BuildStatusOverview.preview.png';
-import OwnerRotationOverview from '@/components/OwnerRotationOverview';
-import OwnerRotationThumbnail from '@/components/OwnerRotationOverview.preview.png';
-import { BsFillPlayFill } from 'react-icons/bs';
-import { MdPreview } from 'react-icons/md';
+import { DragAndDropProvider, Draggable, GridLayout } from '@/components/GridLayout';
 import { GrConfigure } from 'react-icons/gr';
 import { PageConfigState, usePageConfigStore } from '@/stores/pageConfig';
 import { getPageConfig } from './api/page_config';
-import { MinusIcon } from '@chakra-ui/icons';
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
-
-const ALL_COMPONENTS = [
-  {
-    name: 'ProjectTimeline',
-    Component: (props: ComponentProps<typeof ProjectTimeline>) => (
-      <ProjectTimeline h="100%" {...props} />
-    ),
-    preview: ProjectTimelineThumbnail,
-    layout: {
-      w: 8,
-      minW: 2,
-      h: 6,
-      minH: 2,
-      // maxH: 9,
-    },
-  },
-  {
-    name: 'TicketStatusOverview',
-    Component: (props: ComponentProps<typeof ProjectTimeline>) => (
-      <TicketStatusOverview h="100%" maxWidth="auto" {...props} />
-    ),
-    preview: TicketStatusThumbnail,
-    layout: {
-      w: 3,
-      minW: 2,
-      h: 6,
-      minH: 2,
-      // maxH: 9,
-    },
-  },
-  {
-    name: 'BuildStatusOverview',
-    Component: (props: ComponentProps<typeof ProjectTimeline>) => (
-      <BuildStatusOverview h="100%" maxWidth="auto" {...props} />
-    ),
-    preview: BuildStatusThumbnail,
-    layout: {
-      w: 9,
-      minW: 2,
-      h: 6,
-      minH: 2,
-      // maxH: 9,
-    },
-  },
-  {
-    name: 'OwnerRotationOverview',
-    Component: (props: ComponentProps<typeof ProjectTimeline>) => (
-      <OwnerRotationOverview h="100%" maxWidth="auto" {...props} />
-    ),
-    preview: OwnerRotationThumbnail,
-    layout: {
-      w: 2,
-      minW: 2,
-      h: 6,
-      minH: 4,
-    },
-  },
-];
+import { zBoardComponents } from '@/data/zBoardComponents';
 
 const ComponentItem = styled.div`
   /* TODO: adjust styles */
@@ -288,6 +220,10 @@ export default function Builder({
     </Popover>
   );
 
+  const unusedComponents = zBoardComponents.filter(
+    (component) => !pageConfig.layouts.some((layout) => layout.component === component.name)
+  );
+
   return (
     <DragAndDropProvider>
       <div>
@@ -324,25 +260,26 @@ export default function Builder({
         </Header>
         <Container>
           <LeftAside id="components">
-            {ALL_COMPONENTS.filter(
-              (component) =>
-                !pageConfig.layouts.some((layout) => layout.component === component.name)
-            ).map(({ name, preview, layout }) => {
-              return (
-                <Draggable
-                  key={name}
-                  dropData={{
-                    component: name,
-                    layout,
-                  }}
-                >
-                  <ComponentItem>
-                    <Text>{name}</Text>
-                    <Image src={preview} alt="ProjectTimeline preview" draggable={false} />
-                  </ComponentItem>
-                </Draggable>
-              );
-            })}
+            {unusedComponents.length === 0 ? (
+              <Text>No more component here...</Text>
+            ) : (
+              unusedComponents.map(({ name, preview, layout }) => {
+                return (
+                  <Draggable
+                    key={name}
+                    dropData={{
+                      component: name,
+                      layout,
+                    }}
+                  >
+                    <ComponentItem>
+                      <Text>{name}</Text>
+                      <Image src={preview} alt="ProjectTimeline preview" draggable={false} />
+                    </ComponentItem>
+                  </Draggable>
+                );
+              })
+            )}
           </LeftAside>
           <Main>
             <GridLayout
@@ -351,7 +288,7 @@ export default function Builder({
               layouts={pageConfig.layouts}
               onLayoutsChange={(layouts) => setPageConfig({ layouts })}
               itemRender={({ component }) => {
-                const { Component } = ALL_COMPONENTS.find(({ name }) => name === component)!;
+                const { Component } = zBoardComponents.find(({ name }) => name === component)!;
                 return <Component w="100%" h="100%" />;
               }}
               rowGap={pageConfig.rowGap}
