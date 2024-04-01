@@ -27,7 +27,8 @@ import { DragAndDropProvider, Draggable, GridLayout } from '@/components/GridLay
 import { GrConfigure } from 'react-icons/gr';
 import { PageConfigState, usePageConfigStore } from '@/stores/pageConfig';
 import { getPageConfig } from './api/page_config';
-import { ArrowBackIcon } from '@chakra-ui/icons';
+import { ArrowBackIcon, SettingsIcon } from '@chakra-ui/icons';
+
 import { useRouter } from 'next/router';
 import { zBoardComponents } from '@/data/zBoardComponents';
 
@@ -115,12 +116,14 @@ export default function Builder({
       duration: 3000,
       position: 'top',
     });
+
+    router.push('/');
   };
 
   const LayoutSettings = () => (
     <Popover>
       <PopoverTrigger>
-        <IconButton aria-label="Layout Settings" icon={<GrConfigure />} />
+        <IconButton aria-label="Layout Settings" icon={<SettingsIcon />} />
         {/*<Button size="sm" ml="10px" flex="none">*/}
         {/*  <GrConfigure style={{ fontSize: 18 }}></GrConfigure>*/}
         {/*</Button>*/}
@@ -240,18 +243,8 @@ export default function Builder({
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <LayoutSettings />
-            <Button size="md" title="Preview" onClick={() => window.open('/preview')}>
-              Preview
-            </Button>
-            {/*<Button*/}
-            {/*  size="sm"*/}
-            {/*  ml="10px"*/}
-            {/*  title="Preview"*/}
-            {/*  flex="none"*/}
-            {/*  onClick={() => window.open('/preview')}*/}
-            {/*>*/}
-            {/*  <MdPreview style={{ fontSize: 24 }}></MdPreview>*/}
-            {/*  /!*<BsFillPlayFill style={{ fontSize: 24 }} />*!/*/}
+            {/*<Button size="md" title="Preview" onClick={() => window.open('/preview')}>*/}
+            {/*  Preview*/}
             {/*</Button>*/}
             <Button size="md" title="Publish" colorScheme="blue" onClick={publish}>
               Publish
