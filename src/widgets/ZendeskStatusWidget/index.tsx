@@ -16,7 +16,7 @@ import {
 import TicketList, { Ticket } from './TicketList';
 import { useErrorToast } from '@/lib/customToast';
 import RefreshWrapper from '@/components/RefreshWrapper';
-import { ticketStatusConfig } from '../../config/ticket_status.config';
+import { ticketStatusConfig } from '@/../config/ticket_status.config';
 
 const TicketOverview = (props: SystemProps) => {
   const toastError = useErrorToast();
