@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { Box, Card, CardBody, Heading, HStack, Text } from '@chakra-ui/react';
-import { Member } from '@/components/OwnerRotationOverview';
+import { Member } from '@/widgets/OwnerRotationWidget/index';
 import moment from 'moment';
 
 interface OwnerRotationProps {

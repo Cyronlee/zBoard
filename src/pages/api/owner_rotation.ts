@@ -1,6 +1,6 @@
 import { NextApiHandler } from 'next';
 import { ownerRotationConfig } from '../../../config/owner_rotation.config';
-import { Member, Rotation } from '@/components/OwnerRotationOverview';
+import { Member, Rotation } from '../../widgets/OwnerRotationWidget';
 import { delay1s } from '@/lib/delay';
 import { fetchFieldsFromApiTable } from '@/lib/apiTableFetcher';
 import { fetchFieldsFromGoogleSheet } from '@/lib/googleSheetFetcher';

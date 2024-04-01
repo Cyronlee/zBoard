@@ -80,11 +80,11 @@ const CollapseNavbar = () => {
               onClick={() => router.push('/builder')}
             />
             <ThemeToggle />
-            <IconButton
-              aria-label="Hide Navbar"
-              icon={<MinusIcon />}
-              onClick={() => setIsOpen(false)}
-            />
+            {/*<IconButton*/}
+            {/*  aria-label="Hide Navbar"*/}
+            {/*  icon={<MinusIcon />}*/}
+            {/*  onClick={() => setIsOpen(false)}*/}
+            {/*/>*/}
           </HStack>
         </Flex>
       </Collapse>

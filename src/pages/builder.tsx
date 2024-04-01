@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import Image from 'next/image';
 import styled from '@emotion/styled';
 import {
+  Box,
   Button,
   IconButton,
   InputGroup,
@@ -30,7 +31,8 @@ import { getPageConfig } from './api/page_config';
 import { ArrowBackIcon, SettingsIcon } from '@chakra-ui/icons';
 
 import { useRouter } from 'next/router';
-import { zBoardComponents } from '@/data/zBoardComponents';
+import { zBoardWidgets } from '@/widgets';
+import GrayBox from '@/components/ui/GrayBox';
 
 const ComponentItem = styled.div`
   /* TODO: adjust styles */
@@ -223,7 +225,7 @@ export default function Builder({
     </Popover>
   );
 
-  const unusedComponents = zBoardComponents.filter(
+  const unusedComponents = zBoardWidgets.filter(
     (component) => !pageConfig.layouts.some((layout) => layout.component === component.name)
   );
 
@@ -281,8 +283,12 @@ export default function Builder({
               layouts={pageConfig.layouts}
               onLayoutsChange={(layouts) => setPageConfig({ layouts })}
               itemRender={({ component }) => {
-                const { Component } = zBoardComponents.find(({ name }) => name === component)!;
-                return <Component w="100%" h="100%" />;
+                const widget = zBoardWidgets.find(({ name }) => name === component);
+                return widget ? (
+                  <widget.Component w="100%" h="100%" />
+                ) : (
+                  <GrayBox>{component} Widget Not found</GrayBox>
+                );
               }}
               rowGap={pageConfig.rowGap}
               columnGap={pageConfig.columnGap}
