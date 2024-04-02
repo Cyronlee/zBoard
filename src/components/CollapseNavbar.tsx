@@ -16,9 +16,14 @@ import {
 import { siteConfig } from '@/../../config/site.config';
 import ThemeToggle from '@/components/ThemeToggle';
 import { ChevronDownIcon, MinusIcon } from '@chakra-ui/icons';
+import { MdDashboard } from 'react-icons/md';
+
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 const CollapseNavbar = () => {
+  const router = useRouter();
+
   const [isOpen, setIsOpen] = useState(true);
 
   const borderColor = useColorModeValue('gray.300', 'gray.400');
@@ -47,34 +52,39 @@ const CollapseNavbar = () => {
             </Heading>
           </Link>
           <HStack>
-            <Menu>
-              <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                Pages
-              </MenuButton>
-              <MenuList>
-                <Link href="/">
-                  <MenuItem>Dashboard</MenuItem>
-                </Link>
-                <Link href="/example/build-status-overview">
-                  <MenuItem>Build Status</MenuItem>
-                </Link>
-                <Link href="/example/ticket-status-overview">
-                  <MenuItem>Ticket Status</MenuItem>
-                </Link>
-                <Link href="/example/project-timeline">
-                  <MenuItem>Project Timeline</MenuItem>
-                </Link>
-                <Link href="/example/owner-rotation-overview">
-                  <MenuItem>Owner Rotation</MenuItem>
-                </Link>
-              </MenuList>
-            </Menu>
-            <ThemeToggle />
+            {/*<Menu>*/}
+            {/*  <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>*/}
+            {/*    Pages*/}
+            {/*  </MenuButton>*/}
+            {/*  <MenuList>*/}
+            {/*    <Link href="/">*/}
+            {/*      <MenuItem>Dashboard</MenuItem>*/}
+            {/*    </Link>*/}
+            {/*    <Link href="/example/build-status-overview">*/}
+            {/*      <MenuItem>Build Status</MenuItem>*/}
+            {/*    </Link>*/}
+            {/*    <Link href="/example/ticket-status-overview">*/}
+            {/*      <MenuItem>Ticket Status</MenuItem>*/}
+            {/*    </Link>*/}
+            {/*    <Link href="/example/project-timeline">*/}
+            {/*      <MenuItem>Project Timeline</MenuItem>*/}
+            {/*    </Link>*/}
+            {/*    <Link href="/example/owner-rotation-overview">*/}
+            {/*      <MenuItem>Owner Rotation</MenuItem>*/}
+            {/*    </Link>*/}
+            {/*  </MenuList>*/}
+            {/*</Menu>*/}
             <IconButton
-              aria-label="Hide Navbar"
-              icon={<MinusIcon />}
-              onClick={() => setIsOpen(false)}
+              aria-label="Customize homepage"
+              icon={<MdDashboard />}
+              onClick={() => router.push('/builder')}
             />
+            <ThemeToggle />
+            {/*<IconButton*/}
+            {/*  aria-label="Hide Navbar"*/}
+            {/*  icon={<MinusIcon />}*/}
+            {/*  onClick={() => setIsOpen(false)}*/}
+            {/*/>*/}
           </HStack>
         </Flex>
       </Collapse>

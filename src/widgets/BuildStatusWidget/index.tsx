@@ -1,7 +1,7 @@
 import { SystemProps, Grid } from '@chakra-ui/react';
-import BuildStatusCard, { BuildStatus } from '@/components/BuildStatusCard';
+import BuildStatusCard, { BuildStatus } from '@/widgets/BuildStatusWidget/BuildStatusCard';
 import RefreshWrapper from '@/components/RefreshWrapper';
-import { buildStatusConfig } from '../../config/build_status.config';
+import { buildStatusConfig } from '@/../config/build_status.config';
 import { useErrorToast } from '@/lib/customToast';
 
 const BuildStatusOverview = (props: SystemProps) => {

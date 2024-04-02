@@ -1,5 +1,5 @@
 import React from 'react';
-import OwnerRotationCard from '@/components/OwnerRotationCard';
+import OwnerRotationCard from '@/widgets/OwnerRotationWidget/OwnerRotationCard';
 import { Flex, SystemProps } from '@chakra-ui/react';
 import RefreshWrapper from '@/components/RefreshWrapper';
 import { useErrorToast } from '@/lib/customToast';
@@ -41,7 +41,7 @@ const getIcon = (iconName: string, color: string) => {
   return <CalendarIcon color={softColor} />;
 };
 
-const OwnerRotationOverview = (props: SystemProps) => {
+const Index = (props: SystemProps) => {
   const toastError = useErrorToast();
 
   const fetchData = async () => {
@@ -91,4 +91,4 @@ const OwnerRotationOverview = (props: SystemProps) => {
   );
 };
 
-export default OwnerRotationOverview;
+export default Index;
