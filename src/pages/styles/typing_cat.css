@@ -1,7 +1,7 @@
 .typing-cat{
     position: absolute;
     z-index: 100;
-    top: 160px;
+    top: 130px;
     right: 0;
     min-height: 300px;
     min-width: 500px;
@@ -10,52 +10,51 @@
         width: 100%;
         overflow: visible;
     }
-    #bongo-cat{
-        fill: transparent;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-        stroke-width: 4;
-    }
+}
+#bongo-cat{
+    fill: transparent;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 4;
+}
 
-    .laptop-cover,
-    .headphone .band {
-        fill: none;
-    }
-    .paw, .head {
-        fill: #1a1e2d;
-        stroke: #ffcc81;
-    }
-    .laptop-keyboard {
-        stroke-width: 2;
-    }
+.laptop-cover,
+.headphone .band {
+    fill: none;
+}
+.paw, .head {
+    fill: #1a1e2d;
+    stroke: #ffcc81;
+}
+.laptop-keyboard {
+    stroke-width: 2;
+}
 
-    .terminal-code {
-        stroke-width: 5;
-    }
-    .music .note{
-        stroke: #ff61d8;
-    }
-    .laptop-base,
-    .laptop-cover,
-    .paw .pads {
-        fill: #1a1e2d;
-        stroke: #ff61d8;
-    }
-    .table line,
-    .headphone .band,
-    .headphone .speaker path:nth-child(3) {
-        stroke: #a5ea9b;
-    }
-    .terminal-frame,
-    .laptop-keyboard,
-    .headphone .speaker path:nth-child(2) {
-        fill: #1a1e2d;
-        stroke: #569cfa;
-    }
+.terminal-code {
+    stroke-width: 5;
+}
+.music .note{
+    stroke: #ff61d8;
+}
+.laptop-base,
+.laptop-cover,
+.paw .pads {
+    fill: #1a1e2d;
+    stroke: #ff61d8;
+}
+.table line,
+.headphone .band,
+.headphone .speaker path:nth-child(3) {
+    stroke: #a5ea9b;
+}
+.terminal-frame,
+.laptop-keyboard,
+.headphone .speaker path:nth-child(2) {
+    fill: #1a1e2d;
+    stroke: #569cfa;
+}
 
-    .terminal-code,
-    .headphone .speaker path:first-child {
-        stroke: #7ed1e2;
-    }
-
+.terminal-code,
+.headphone .speaker path:first-child {
+    stroke: #7ed1e2;
 }
