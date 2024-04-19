@@ -22,12 +22,13 @@ import { MdDashboard } from 'react-icons/md';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import SwingingCat from '@/components/ui/SwingingCat';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const CollapseNavbar = () => {
   const router = useRouter();
 
   const [isOpen, setIsOpen] = useState(true);
-  const [showCat, setShowCat] = useState(true);
+  const [showCat, setShowCat] = useState(false);
 
   const borderColor = useColorModeValue('gray.300', 'gray.400');
 
@@ -42,7 +43,7 @@ const CollapseNavbar = () => {
       borderBottom={isOpen ? '1px solid' : ''}
       borderColor={borderColor}
     >
-      {showCat && <SwingingCat />}
+      <AnimatePresence>{showCat && <SwingingCat />}</AnimatePresence>
       <Collapse in={isOpen} animateOpacity>
         <Flex justify="space-between" align="center" p="3">
           <Link href="/">
