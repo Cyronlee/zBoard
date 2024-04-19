@@ -15,16 +15,19 @@ import {
 } from '@chakra-ui/react';
 import { siteConfig } from '@/../../config/site.config';
 import ThemeToggle from '@/components/ThemeToggle';
-import { ChevronDownIcon, MinusIcon } from '@chakra-ui/icons';
+import { FaCat } from 'react-icons/fa';
+
 import { MdDashboard } from 'react-icons/md';
 
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import SwingingCat from '@/components/ui/SwingingCat';
 
 const CollapseNavbar = () => {
   const router = useRouter();
 
   const [isOpen, setIsOpen] = useState(true);
+  const [showCat, setShowCat] = useState(true);
 
   const borderColor = useColorModeValue('gray.300', 'gray.400');
 
@@ -39,6 +42,7 @@ const CollapseNavbar = () => {
       borderBottom={isOpen ? '1px solid' : ''}
       borderColor={borderColor}
     >
+      {showCat && <SwingingCat />}
       <Collapse in={isOpen} animateOpacity>
         <Flex justify="space-between" align="center" p="3">
           <Link href="/">
@@ -74,6 +78,11 @@ const CollapseNavbar = () => {
             {/*    </Link>*/}
             {/*  </MenuList>*/}
             {/*</Menu>*/}
+            <IconButton
+              aria-label="Show Cat"
+              icon={<FaCat />}
+              onClick={() => setShowCat((bool) => !bool)}
+            />
             <IconButton
               aria-label="Customize homepage"
               icon={<MdDashboard />}
