@@ -5,6 +5,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import theme from '@/theme/theme';
 import { siteConfig } from '@/../config/site.config';
 import { Analytics } from '@vercel/analytics/react';
+import './styles/typing_cat.css'
 
 export default function App({ Component, pageProps }: AppProps) {
   return (

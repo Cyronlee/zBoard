@@ -17,6 +17,7 @@ import {
 import { orderBy } from 'lodash';
 import { useErrorToast } from '@/lib/customToast';
 import { projectTimelineConfig } from '@/../config/project_timeline.config';
+import TypingCat from "@/components/TypingCat";
 
 interface OwnerItem {
   name: string;
@@ -296,6 +297,7 @@ const Timeline = (props: SystemProps) => {
       w="100%"
       border="1px solid"
       borderRadius="8px"
+      position="relative"
       borderColor={borderColor}
       {...props}
     >
@@ -342,6 +344,7 @@ const Timeline = (props: SystemProps) => {
           )}
         </Box>
       </Flex>
+      <TypingCat />
     </Box>
   );
 };
