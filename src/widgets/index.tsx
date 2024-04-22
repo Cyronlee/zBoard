@@ -20,7 +20,7 @@ export const zBoardWidgets = [
       minW: 2,
       h: 7,
       minH: 2,
-      maxH: 9,
+      // maxH: 9,
     },
   },
   {
@@ -34,7 +34,7 @@ export const zBoardWidgets = [
       minW: 2,
       h: 6,
       minH: 2,
-      maxH: 9,
+      // maxH: 12,
     },
   },
   {
@@ -48,7 +48,7 @@ export const zBoardWidgets = [
       minW: 2,
       h: 6,
       minH: 2,
-      maxH: 9,
+      // maxH: 12,
     },
   },
   {
@@ -62,6 +62,7 @@ export const zBoardWidgets = [
       minW: 2,
       h: 6,
       minH: 4,
+      // maxH: 12,
     },
   },
 ];
