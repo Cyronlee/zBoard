@@ -17,6 +17,49 @@ export interface PageConfigState {
   setPageConfig: (config: Partial<PageConfig>) => void;
 }
 
+const defaultPageConfigLayouts: Layout[] = [
+  {
+    id: 'OwnerRotation-1',
+    component: 'OwnerRotation',
+    w: 2,
+    minW: 2,
+    h: 7,
+    minH: 4,
+    x: 0,
+    y: 0,
+  },
+  {
+    id: 'TicketStatus-1',
+    component: 'TicketStatus',
+    w: 3,
+    minW: 2,
+    h: 7,
+    minH: 2,
+    x: 9,
+    y: 0,
+  },
+  {
+    id: 'BuildStatus-1',
+    component: 'BuildStatus',
+    w: 7,
+    minW: 2,
+    h: 7,
+    minH: 2,
+    x: 2,
+    y: 0,
+  },
+  {
+    id: 'ProjectTimeline-1',
+    component: 'ProjectTimeline',
+    w: 12,
+    minW: 2,
+    h: 5,
+    minH: 2,
+    x: 0,
+    y: 7,
+  },
+];
+
 export const usePageConfigStore = create<PageConfigState>()(
   persist(
     (set, get) => ({
@@ -27,7 +70,7 @@ export const usePageConfigStore = create<PageConfigState>()(
         rowGap: 8,
         columnGap: 8,
         padding: 8,
-        layouts: [],
+        layouts: defaultPageConfigLayouts,
       },
       setVersion: (version) => {
         set({ version });
