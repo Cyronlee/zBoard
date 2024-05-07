@@ -71,17 +71,17 @@ const getBuildStatus = async ({
   branch: string;
 }) => {
   const latestPipeline: Pipeline = await getLatestPipeline(projectSlug, branch);
-  const { login, avatar_url } = latestPipeline.trigger.actor;
-  const latestWorkflow: Workflow = await getLatestWorkflow(latestPipeline.id);
+  const { login, avatar_url } = latestPipeline?.trigger?.actor || {};
+  const latestWorkflow: Workflow = await getLatestWorkflow(latestPipeline?.id);
   return {
     platform: 'CircleCI',
     projectName: projectName,
     branch,
     username: login,
     avatarUrl: avatar_url,
-    commitSubject: latestPipeline.vcs.commit?.subject || 'automatically triggered',
-    status: latestWorkflow.status,
-    stopTime: latestWorkflow.created_at,
+    commitSubject: latestPipeline?.vcs?.commit?.subject || 'automatically triggered',
+    status: latestWorkflow?.status,
+    stopTime: latestWorkflow?.created_at,
   };
 };
 
@@ -91,6 +91,9 @@ const getLatestPipeline = async (projectSlug: string, branch: string): Promise<P
 };
 
 const getLatestWorkflow = async (pipelineId: string): Promise<Workflow> => {
+  if (!pipelineId) {
+    return {} as Workflow;
+  }
   const workflows = await fetchWorkflows(pipelineId);
   return _.orderBy(workflows.items, 'created_at', 'desc')[0];
 };
