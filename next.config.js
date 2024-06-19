@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const { version } = require('./package.json');
+const path = require('path')
+
 
 const nextConfig = {
   reactStrictMode: true,
@@ -10,6 +12,9 @@ const nextConfig = {
       })
     );
     return config;
+  },
+  sassOptions: {
+    includePaths: [path.join(__dirname, 'styles')],
   },
 };
 

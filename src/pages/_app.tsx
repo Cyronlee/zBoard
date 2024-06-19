@@ -1,11 +1,10 @@
-import '@/styles/globals.css';
+import '@/styles/globals.scss';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { ChakraProvider } from '@chakra-ui/react';
 import theme from '@/theme/theme';
 import { siteConfig } from '@/../config/site.config';
 import { Analytics } from '@vercel/analytics/react';
-import './styles/typing_cat.css'
 
 export default function App({ Component, pageProps }: AppProps) {
   return (

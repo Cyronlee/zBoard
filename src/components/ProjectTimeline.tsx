@@ -17,7 +17,8 @@ import {
 import { orderBy } from 'lodash';
 import { useErrorToast } from '@/lib/customToast';
 import { projectTimelineConfig } from '@/../config/project_timeline.config';
-import TypingCat from "@/components/TypingCat";
+import TypingCat from '@/components/CatContainer/TypingCat';
+import SwingCat from '@/components/CatContainer/SwingCat';
 
 interface OwnerItem {
   name: string;
@@ -345,6 +346,7 @@ const Timeline = (props: SystemProps) => {
         </Box>
       </Flex>
       <TypingCat />
+      <SwingCat />
     </Box>
   );
 };
