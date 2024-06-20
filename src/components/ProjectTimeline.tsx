@@ -346,7 +346,6 @@ const Timeline = (props: SystemProps) => {
         </Box>
       </Flex>
       <TypingCat />
-      <SwingCat />
     </Box>
   );
 };

@@ -6,7 +6,7 @@ import gsap from "gsap";
 interface TypingCatProps {
 }
 
-const Index: FC<TypingCatProps> = (props: TypingCatProps) => {
+const TypingCat: FC<TypingCatProps> = (props: TypingCatProps) => {
   const {} = props;
   const catTyping = ()=>{
     const ID = "bongo-cat";
@@ -120,4 +120,4 @@ const Index: FC<TypingCatProps> = (props: TypingCatProps) => {
     </div>
   );
 };
-export default Index;
+export default TypingCat;
